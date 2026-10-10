@@ -7,7 +7,7 @@ Architecture reference. Keep it true when behavior changes.
 StormCard turns a Miami-Dade location into a one-page hurricane action card in **Kreyòl, Español or English**, then answers follow-up questions, **including with no internet**: offline, Gemma 4 runs locally on the device running StormCard.
 
 - **Event:** Hack for Humanity: Miami, Oct 10 2026 · build ends 15:30, submit by 15:45 (target 15:00).
-- **Track:** 01 Four Forces, One City (Air + Water). **Prizes stacked:** MLH Best Open-Source AI (open-weight Gemma 4 running locally) + Best Use of Gemma 4 (Gemini API).
+- **Track:** 01 Four Forces, One City (Air + Water).
 - **Persona:** Madame Joseph (**composite**): 74, Little Haiti, Creole only, small dog, no car, using it alone on her phone.
 - **Deployment model today:** one machine runs Flask + Ollama (the laptop for the demo); a phone on the same Wi-Fi opens it as a home-screen app. **Future:** Gemma 4 E2B on the phone itself and a county "open it once, works offline" notice. Offline answers come from Gemma 4 running locally on the device running StormCard (the laptop today; phones use it over its Wi-Fi).
 

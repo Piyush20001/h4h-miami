@@ -4,10 +4,9 @@
 
 Built for [Hack for Humanity: Miami](https://github.com/AI-Collective-Hackathons/hack-for-humanity-miami), October 10, 2026, The LAB Miami.
 
-## Track and prizes
+## Track
 
 - **Track:** 01 Four Forces, One City (Air + Water)
-- **Prizes targeted:** MLH Best Open-Source AI Project, MLH Best Use of Gemma 4
 
 ## The problem
 
