@@ -41,7 +41,7 @@ License MIT. Gemma: link the official Gemma terms in the README.
 app.py            Flask routes (§6); Miami-Dade bounds check (422 outside)
 geo.py            get_zone, find_shelters (pets: confirmed first, unknown kept), find_special_needs, find_bus_pickups
 llm.py            generate(prompt, force_offline, deadline) -> (text, "gemini"|"ollama"); warm()
-status.py         internet() probe (20 s cache, HUB_OFFLINE=1 offline rehearsal), mark_down()
+status.py         internet() probe (5 s cache; page polls every 5 s and trusts the browser offline event; HUB_OFFLINE=1 offline rehearsal), mark_down()
 agent.py          Ask agent: JSON tool loop, ≤3 steps, 60 s budget, grounding check, Kreyòl/Spanish keyword map,
                   on_step streaming, draft_message (code-built SMS), nearest pickup always named by code
 route.py          offline walking routes (A* on county street centerlines, no expressways) -> path + turn steps
@@ -112,7 +112,7 @@ Online `gemma-4-26b-a4b-it` (Gemini API); offline `gemma4:e2b-it-qat` (Ollama: `
 
 ## 9. UI Flow (PRODUCT.md holds the design intent)
 
-Card adds: "Need a ride?" panel (nearest pickup, walking route + turn list, Point my way, 311), recommended shelter as green "GO HERE" pin, SOS sheet in the dock (911 / text my location / 311, never auto-sends), Point my way overlay (camera + smoothed compass, follows route to next turn, mini route map; HTTPS only: `python app.py --https` or a tunnel). First-run GSAP welcome (3 beats, skippable, `?welcome=1` to replay) → storm card + **Language** → **Place** (presets; GPS needs HTTPS) → **Household** toggles (pet, no car, medical, kids) → **Card**: compact storm strip, navy zone plate, backend badge, map (Google + zone overlay + home/shelters/bus markers, or SVG chart offline) with legend, shelter arrow plates (bearing, reason word, Directions link), single red 311 line, household sections (medical/EEAP checklist, pets, no-car + bus pickups, kids), card text, "How StormCard decided", **Ask** (chips, online/offline light, per-answer badge + trace). Fast GSAP motion (≤0.28 s, reduced-motion aware). Phone install via Safari Add to Home Screen (`docs/MOBILE.md`).
+Card adds: "Need a ride?" panel (nearest pickup, walking route + turn list, Point my way, 311), recommended shelter as green "GO HERE" pin, SOS sheet in the dock ("Read this to 911" summary: location, Creole interpreter, household, zone; then 911 / text my location / 311; never auto-dials or sends), "Your next 3 steps" (code-chosen, appear when the card finishes), Ask chip "What should I do right now?" (code chains get_zone → evacuation_help|find_shelters → packing_list, model writes 3 steps, code-built fallback), Point my way overlay (camera + smoothed compass, follows route to next turn, mini route map; HTTPS only: `python app.py --https` or a tunnel). First-run GSAP welcome (3 beats, skippable, `?welcome=1` to replay) → storm card + **Language** → **Place** (presets; GPS needs HTTPS) → **Household** toggles (pet, no car, medical, kids) → **Card**: compact storm strip, navy zone plate, backend badge, map (Google + zone overlay + home/shelters/bus markers, or SVG chart offline) with legend, shelter arrow plates (bearing, reason word, Directions link), single red 311 line, household sections (medical/EEAP checklist, pets, no-car + bus pickups, kids), card text, "How StormCard decided", **Ask** (chips, online/offline light, per-answer badge + trace). Fast GSAP motion (≤0.28 s, reduced-motion aware). Phone install via Safari Add to Home Screen (`docs/MOBILE.md`).
 
 ## 10. Data Flow
 
