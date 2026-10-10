@@ -285,8 +285,9 @@
     if (window.SC && SC.hub && SC.hub.internet === false) return null;
     var a = document.createElement("a");
     a.className = "plate-dirs";
-    a.href = "https://www.google.com/maps/dir/?api=1&origin=" + home.lat + "," + home.lng +
-      "&destination=" + s.lat + "," + s.lng + "&travelmode=" + (walk ? "walking" : "driving");
+    /* no origin: Google Maps starts from the phone's live location */
+    a.href = "https://www.google.com/maps/dir/?api=1&destination=" + s.lat + "," + s.lng +
+      "&travelmode=" + (walk ? "walking" : "driving");
     a.target = "_blank";
     a.rel = "noopener";
     a.textContent = tx(walk ? "busDirs" : "dirs");

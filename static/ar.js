@@ -82,7 +82,7 @@
   }
   function paint() {
     if (!ov || !target) return;
-    var live = here && gpsAcc !== null && gpsAcc <= 60;
+    var live = here && gpsAcc !== null && gpsAcc <= 150;
     var from = live ? here : target.home;
     var d = miles(from, target), b = bearing(from, target);
     var dist = t("arDist", { d: d < 0.1 ? d.toFixed(2) : d.toFixed(1), c: card(b) });
@@ -106,7 +106,7 @@
     ov.querySelector(".ar-hint").textContent = hint;
     ov.querySelector(".ar-sensor").textContent = [
       heading === null ? t("arCompassWait") : t("arCompassOk"),
-      live ? t("arGpsOk") : t("arGpsWait")
+      gpsAcc === null ? t("arGpsWait") : live ? t("arGpsOk") + " ±" + Math.round(gpsAcc * 3.28) + " ft" : t("arGpsWeak", { f: Math.round(gpsAcc * 3.28) })
     ].join(" · ");
   }
 

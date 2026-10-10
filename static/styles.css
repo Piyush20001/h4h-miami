@@ -573,3 +573,9 @@ body.ar-open { overflow: hidden; }
 .ssms { background: var(--ink); color: #fff; }
 .s311 { background: var(--sheet); color: var(--ink); border: 2px solid var(--ink); }
 .sos-note { margin: 0; font-size: var(--meta); color: var(--ink-2); line-height: 1.4; }
+
+.ride.is-folded .tab { display: none; }
+.ride-fold { margin-top: 16px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--sheet); }
+.ride-fold > summary { min-height: 56px; padding: 14px 16px; font-weight: 800; cursor: pointer; list-style-position: inside; }
+.ride-fold[open] > summary { border-bottom: 1px solid var(--grid); }
+.ride-fold > div { padding: 12px; }

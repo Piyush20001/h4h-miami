@@ -373,9 +373,9 @@
     return w;
   }
 
-  function busList(r) {
+  function busList(r, any) {
     var f = (r && r.facts) || {};
-    if (!f.flags || !f.flags.no_car) return [];
+    if (!any && (!f.flags || !f.flags.no_car)) return [];
     var l = (r.api && r.api.bus_pickups) || f.bus_pickups || r.bus_pickups || [];
     return l.filter(function (b) { return b && typeof b.lat === "number" && typeof b.lng === "number"; }).slice(0, 2);
   }
@@ -659,11 +659,23 @@
     var sec = $("ride"), body = $("rideBody");
     var f = (r.facts && r.facts.flags) || {};
     body.textContent = "";
-    sec.hidden = !f.no_car;
-    if (!f.no_car) return;
-    $("h-ride").textContent = t("rideH");
+    var all = busList(r, true);
+    sec.hidden = !f.no_car && !all.length;
+    if (sec.hidden) return;
+    sec.classList.toggle("is-folded", !f.no_car);
+    if (!f.no_car) {
+      /* car box unticked: the same help, folded, so nobody has to go back to find it */
+      var det = h("details", "ride-fold");
+      det.appendChild(h("summary", null, t("rideFold")));
+      var inner = h("div");
+      det.appendChild(inner);
+      body.appendChild(det);
+      $("h-ride").textContent = "";
+      body = inner;
+    }
+    if (f.no_car) $("h-ride").textContent = t("rideH");
     var home = r.home || st.home || (r.facts && r.facts.home);
-    var bl = busList(r);
+    var bl = all;
     if (!bl.length) {
       body.appendChild(SC.setText(h("p", "p"), t("carText")));
       body.appendChild(telBtn(t("carCall")));

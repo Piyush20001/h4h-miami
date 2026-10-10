@@ -46,8 +46,7 @@ def _facts(body):
              "home": {"lat": lat, "lng": lng}}
     if flags.get("medical"):
         facts["special_needs_shelters"] = geo.find_special_needs(lat, lng)
-    if flags.get("no_car"):
-        facts["bus_pickups"] = geo.find_bus_pickups(lat, lng)
+    facts["bus_pickups"] = geo.find_bus_pickups(lat, lng)  # always: the card offers it collapsed when the car box is unticked
     return facts
 
 
