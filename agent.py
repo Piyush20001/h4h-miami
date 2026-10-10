@@ -61,7 +61,7 @@ def _section_by_prefix(n):
 
 def _latlng(card):
     if isinstance(card, dict):
-        for src in (card, (card.get("facts") or {}).get("home") or {}, card.get("facts") or {}):
+        for src in (card, card.get("home") or {}, (card.get("facts") or {}).get("home") or {}, card.get("facts") or {}):
             try:
                 return float(src["lat"]), float(src["lng"])
             except (KeyError, TypeError, ValueError):

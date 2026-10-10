@@ -159,3 +159,7 @@ def test_idk_with_pickup_becomes_just_the_fact():
     card = {"facts": {"home": {"lat": 25.83, "lng": -80.189}}}
     out = agent._with_pickup(agent.IDK["en"], card, "en", [{"tool": "evacuation_help"}])
     assert out.startswith("Nearest evacuation bus pickup") and agent.IDK["en"] not in out
+
+
+def test_latlng_reads_home_from_bare_facts():
+    assert agent._latlng({"home": {"lat": 25.8005, "lng": -80.1993}}) == (25.8005, -80.1993)

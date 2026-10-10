@@ -57,24 +57,29 @@ def _gemini(prompt: str, cap: float | None = None) -> str:
         ex.shutdown(wait=False)
 
 
-def _ollama_chat(model: str, messages: list, options: dict, timeout: float) -> str:
+KEEP_ALIVE = os.getenv("OLLAMA_KEEP_ALIVE", "2h")  # stay loaded: a cold load cost 30 s on the first offline answer
+
+
+def _ollama_chat(model: str, messages: list, options: dict, timeout: float, fmt: str | None = None) -> str:
     url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/")
-    r = requests.post(
-        f"{url}/api/chat",
-        json={"model": model, "messages": messages, "stream": False, "think": False, "options": options},
-        timeout=timeout,
-    )
+    body = {"model": model, "messages": messages, "stream": False, "think": False,
+            "keep_alive": KEEP_ALIVE, "options": options}
+    if fmt:
+        body["format"] = fmt  # constrained decoding: the small model cannot emit broken JSON
+    r = requests.post(f"{url}/api/chat", json=body, timeout=timeout)
     r.raise_for_status()
     return (r.json()["message"]["content"] or "").strip()
 
 
 def _ollama(prompt: str, cap: float | None = None) -> str:
     model = os.getenv("OLLAMA_MODEL", "gemma4:e2b-it-qat")
+    wants_json = prompt.rstrip().endswith("YOUR JSON REPLY:")  # the Ask agent's step prompt
     text = _ollama_chat(
         model,
         [{"role": "user", "content": prompt}],
-        {"num_predict": 400, "num_ctx": 4096},
+        {"num_predict": 400, "num_ctx": 4096, "temperature": 0.3},
         min(OLLAMA_TIMEOUT, cap or float("inf")),
+        "json" if wants_json else None,
     )
     if not text:
         raise LLMError("empty Ollama response")

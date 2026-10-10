@@ -236,6 +236,14 @@ def ask_stream():
                     headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"})
 
 
+def _warm_local_model():
+    """Load local Gemma in the background at startup so the first offline answer is fast."""
+    threading.Thread(target=llm.warm, daemon=True).start()
+
+
+_warm_local_model()
+
+
 if __name__ == "__main__":
     import sys
     if "--https" in sys.argv:
