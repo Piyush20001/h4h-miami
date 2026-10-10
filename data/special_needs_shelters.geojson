@@ -1,0 +1,128 @@
+{
+ "type": "FeatureCollection",
+ "source": "https://services.arcgis.com/3wFbqsFPLeKqOlIK/arcgis/rest/services/Risk_Shelter_Inventory_Special_Needs/FeatureServer/0",
+ "source_note": "FDEM statewide Special Needs Risk Shelter Inventory, COUNTY=MIAMI-DADE, deduplicated by building. Planning candidates only; special-needs shelters require registration (EEAP). Call 311 to confirm.",
+ "as_of": "2021-08-31",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Florida International University",
+    "address": "11290 SW 12th St",
+    "city": "Miami",
+    "zip": "33199",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E",
+    "special_needs": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.378083,
+     25.757597
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Booker T. Washington HS",
+    "address": "1200 NW 6th Ave",
+    "city": "Miami",
+    "zip": "33136",
+    "pet_friendly": null,
+    "ehpa": "Yes",
+    "evacuation_zone": "E",
+    "special_needs": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.204806,
+     25.786547
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Jose Marti MAST Academy (6-12)",
+    "address": "5701 W 24th Ave",
+    "city": "Hialeah",
+    "zip": "33016",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No",
+    "special_needs": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.330322,
+     25.87452
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Miami Jackson HS",
+    "address": "1751 NW 36th St",
+    "city": "Miami",
+    "zip": "33142",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No",
+    "special_needs": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.225016,
+     25.810704
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Miami Edison HS",
+    "address": "6161 NW 5th Ct",
+    "city": "Miami",
+    "zip": "33127",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No",
+    "special_needs": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.204686,
+     25.831612
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Ruben Dario MS",
+    "address": "350 NW 97th Ave",
+    "city": "Miami",
+    "zip": "33172",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E",
+    "special_needs": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.354363,
+     25.771548
+    ]
+   }
+  }
+ ]
+}

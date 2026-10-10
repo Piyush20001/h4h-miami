@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StormCard - Wallet Pass</title>
+<style>
+:root{--ground:#f5f7fa;--ink:#0f1b2d;--teal:#0a7c66;--red:#d64545;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#dfe4ea;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink)}
+.phone{width:390px;height:844px;overflow:hidden;background:var(--ground);padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px}
+.pass{background:var(--white);border-radius:28px;box-shadow:0 1px 2px rgba(15,27,45,.12),0 12px 28px rgba(15,27,45,.14);overflow:hidden;flex:1;display:flex;flex-direction:column;min-height:0}
+.head{background:var(--ink);color:var(--white);height:60px;padding:0 18px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800}
+.lang{font-size:15px;font-weight:700;letter-spacing:.04em;color:#c9d3e0}
+.lang b{color:var(--white);background:var(--teal);border-radius:8px;padding:4px 7px}
+.zone{padding:16px 20px 14px;border-bottom:2px dashed #cfd6df;position:relative}
+.label{font-size:20px;font-weight:800;letter-spacing:.06em;color:var(--teal)}
+.big{font-size:96px;line-height:1;font-weight:900;margin:6px 0 8px;letter-spacing:-.02em}
+.safe{font-size:22px;font-weight:700;line-height:1.25;display:flex;gap:10px;align-items:flex-start}
+.safe svg{flex:none;margin-top:2px}
+.row{padding:0 20px;min-height:84px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e3e8ee;font-size:20px;font-weight:600;line-height:1.25}
+.row .n{flex:1}
+.row small{display:block;font-size:20px;font-weight:800;color:var(--teal);margin-top:2px}
+.tag{font-size:12px;color:#5b6678;background:#eef1f5;border-radius:6px;padding:2px 6px;align-self:flex-start;margin-top:6px;font-weight:600}
+.foot{margin-top:auto;background:#fdecec;border-top:3px solid var(--red);padding:12px 20px;font-size:20px;font-weight:700;line-height:1.3;display:flex;gap:12px;align-items:center}
+.btn{height:68px;border-radius:20px;background:var(--teal);color:var(--white);font-size:26px;font-weight:800;border:0;width:100%;box-shadow:0 6px 14px rgba(10,124,102,.35);font-family:inherit}
+</style>
+</head>
+<body>
+<main class="phone">
+  <section class="pass">
+    <div class="head">
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="5" fill="#fff"/><path d="M16 3a13 13 0 0 1 13 13M16 29A13 13 0 0 1 3 16" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+        StormCard
+      </div>
+      <div class="lang"><b>KRE</b> · ES · EN</div>
+    </div>
+    <div class="zone">
+      <div class="label">ZÒN TANPÈT OU</div>
+      <div class="big">ZÒN C</div>
+      <div class="safe">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#0a7c66"/><path d="M7.5 14.5l4.5 4.5 8.5-9.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Se pa zòn asirans inondasyon an.</span>
+      </div>
+    </div>
+    <div class="row"><div class="n">Miami Edison Senior High<small>0.8 mi</small></div><span style="font-size:30px">🐾</span></div>
+    <div class="row"><div class="n">Toussaint L'Ouverture Elementary<small>1.1 mi</small></div></div>
+    <div class="row"><div class="n">North Miami Beach Senior High<small>4.6 mi</small><span class="tag">egzanp done</span></div><span style="font-size:30px">🐾</span></div>
+    <div class="foot">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" style="flex:none"><path d="M9 6l5 0 2 7-3 2c2 4 4 6 7 8l2-3 7 2 0 5c0 2-2 3-4 3C14 30 4 20 4 10c0-2 2-4 5-4z" fill="#d64545" transform="scale(.9)"/></svg>
+      <span>Rele 311 pou konfime yon abri louvri anvan ou ale.</span>
+    </div>
+  </section>
+  <button class="btn">Kote pou m ale →</button>
+</main>
+</body>
+</html>

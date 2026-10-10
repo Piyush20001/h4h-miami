@@ -1,0 +1,769 @@
+{
+ "type": "FeatureCollection",
+ "source": "https://services.arcgis.com/3wFbqsFPLeKqOlIK/arcgis/rest/services/Risk_Shelter_Inventory_General/FeatureServer/0",
+ "source_note": "FDEM statewide General Risk Shelter Inventory, COUNTY=MIAMI-DADE. Not the county live open-shelter list; planning candidates only, call 311 to confirm open.",
+ "as_of": "2021-08-31",
+ "sample_data": false,
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Florida International University",
+    "address": "11290 SW 12th St",
+    "city": "Miami",
+    "zip": "33199",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.378083,
+     25.757597
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "American HS",
+    "address": "18350 NW 67th Ave",
+    "city": "Miami",
+    "zip": "33015",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.308519,
+     25.939606
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Andover MS",
+    "address": "121 NE 207th St",
+    "city": "Miami Gardens",
+    "zip": "33179",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.199948,
+     25.966855
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Bob Graham Education Center",
+    "address": "15901 NW 79th Ave",
+    "city": "Miami Lakes",
+    "zip": "33016",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.328293,
+     25.917394
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Bob Graham Education Center PLC",
+    "address": "8875 NW 143 St",
+    "city": "Miami Lakes",
+    "zip": "33018",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.343962,
+     25.903723
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Brentwood ES Center",
+    "address": "3101 NW 191st St",
+    "city": "Miami Gardens",
+    "zip": "33056",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.252621,
+     25.949057
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Lawton Chiles MS",
+    "address": "8190 NW 197th St",
+    "city": "Miami",
+    "zip": "33015",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.334318,
+     25.950715
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Citrus Grove MS",
+    "address": "2153 NW 3rd St",
+    "city": "Miami",
+    "zip": "33125",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.230115,
+     25.776749
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Country Club MS",
+    "address": "18305 NW 75th Pl",
+    "city": "Miami",
+    "zip": "33015",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.322766,
+     25.939706
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "John I Smith MS",
+    "address": "5005 NW 112th Ave",
+    "city": "Doral",
+    "zip": "33178",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.37661,
+     25.819494
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Marjory Stoneman Douglas ES",
+    "address": "11901 SW 2nd St",
+    "city": "Miami",
+    "zip": "33184",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.388096,
+     25.768736
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Charles R Drew K-8",
+    "address": "1775 NW 60th St",
+    "city": "Miami",
+    "zip": "33142",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.227107,
+     25.830821
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Dante Fascell ES",
+    "address": "15625 SW 80th St",
+    "city": "Miami",
+    "zip": "33193",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.445283,
+     25.693399
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Dr Carlos J Finlay ES",
+    "address": "851 SW 117th Ave",
+    "city": "Miami",
+    "zip": "33184",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.381555,
+     25.759191
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Barbara Goleman HS",
+    "address": "14100 NW 89th Ave",
+    "city": "Miami Lakes",
+    "zip": "33018",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.345767,
+     25.901232
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Joe Hall ES",
+    "address": "1901 SW 134th Ave",
+    "city": "Miami",
+    "zip": "33175",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.412183,
+     25.749857
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Hammocks MS",
+    "address": "9889 Hammocks Blvd",
+    "city": "Miami",
+    "zip": "33196",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.442,
+     25.674216
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Kinloch Park MS",
+    "address": "4340 NW 3rd St",
+    "city": "Miami",
+    "zip": "33126",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.266826,
+     25.773944
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Dr Michael M Krop HS",
+    "address": "1410 NE 215th St",
+    "city": "Miami",
+    "zip": "33179",
+    "pet_friendly": true,
+    "ehpa": "No",
+    "evacuation_zone": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.173339,
+     25.971483
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Florida International University",
+    "address": "1180 SW 113th Ave",
+    "city": "Miami",
+    "zip": "33174",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.378545,
+     25.761899
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Miami Carol City HS",
+    "address": "3301 Miami Gardens Dr",
+    "city": "Miami Gardens",
+    "zip": "33056",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.255303,
+     25.940699
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Miami Northwestern HS",
+    "address": "1100 NW 71st St",
+    "city": "Miami",
+    "zip": "33150",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.213918,
+     25.838983
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Robert Morgan Educational Center",
+    "address": "18180 SW 122nd Ave",
+    "city": "Miami",
+    "zip": "33177",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.390479,
+     25.599989
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "North Miami Beach HS",
+    "address": "1247 NE 167th St",
+    "city": "Miami",
+    "zip": "33162",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.175288,
+     25.929908
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "North Miami HS",
+    "address": "13110 NE 8th Ave",
+    "city": "North Miami",
+    "zip": "33161",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.183952,
+     25.896943
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "North Miami MS",
+    "address": "700 NE 137th St",
+    "city": "North Miami",
+    "zip": "33161",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.183827,
+     25.900992
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Norwood ES",
+    "address": "19810 NW 14th Ct",
+    "city": "Miami",
+    "zip": "33169",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.226992,
+     25.955488
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Agenoria S Paschal/Olinda ES",
+    "address": "5536 NW 21st Ave",
+    "city": "Miami",
+    "zip": "33142",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.231317,
+     25.825817
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Orchard Villa ES",
+    "address": "5720 NW 13th Ave",
+    "city": "Miami",
+    "zip": "33142",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.219396,
+     25.827788
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Palm Lakes ES",
+    "address": "7450 W 16th Ave",
+    "city": "Hialeah",
+    "zip": "33014",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.316752,
+     25.890308
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Palm Springs North ES",
+    "address": "17615 NW 82nd Ave",
+    "city": "Hialeah",
+    "zip": "33015",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.333942,
+     25.934614
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Kelsey L Pharr ES",
+    "address": "2000 NW 46th St",
+    "city": "Miami",
+    "zip": "33142",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.229711,
+     25.816323
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Ronald Reagan HS",
+    "address": "8600 NW 107th Ave",
+    "city": "Doral",
+    "zip": "33178",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.371452,
+     25.852591
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Richmond Heights MS",
+    "address": "15015 SW 103rd Ave",
+    "city": "Miami",
+    "zip": "33176",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.359602,
+     25.629689
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Shenandoah ES",
+    "address": "1023 SW 21st Ave",
+    "city": "Miami",
+    "zip": "33135",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.228179,
+     25.762792
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Ben Sheppard ES",
+    "address": "5700 W 24th Ave",
+    "city": "Hialeah",
+    "zip": "33016",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "No"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.332254,
+     25.874412
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Stirrup ES",
+    "address": "330 NW 97th Ave",
+    "city": "Miami",
+    "zip": "33172",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.353952,
+     25.769958
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "E. Darwin Fuchs Pavillion",
+    "address": "10901 SW 24th St",
+    "city": "Miami",
+    "zip": "33165",
+    "pet_friendly": true,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.371727,
+     25.747972
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Van Blanton ES",
+    "address": "10327 NW 11th Ave",
+    "city": "Miami",
+    "zip": "33150",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.215433,
+     25.870149
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Booker T. Washington HS",
+    "address": "1200 NW 6th Ave",
+    "city": "Miami",
+    "zip": "33136",
+    "pet_friendly": null,
+    "ehpa": "No",
+    "evacuation_zone": "E"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.204806,
+     25.786547
+    ]
+   }
+  }
+ ]
+}

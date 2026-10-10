@@ -21,7 +21,8 @@ _TBD_
 
 ## Data sources
 
-_Cite every dataset used._
+- **Storm surge planning zones (A–E):** Miami-Dade County, [StormSurgePlanningZone_Multipart](https://services.arcgis.com/8Pc9XBTAsYuxx9Ny/ArcGIS/rest/services/StormSurgePlanningZone_Multipart/FeatureServer/0) (`ZONEID`). Saved as `data/zones.geojson`.
+- **Shelters:** Florida Division of Emergency Management, [Risk Shelter Inventory (General)](https://services.arcgis.com/3wFbqsFPLeKqOlIK/arcgis/rest/services/Risk_Shelter_Inventory_General/FeatureServer/0), filtered to Miami-Dade, as of 2021-08-31 (40 buildings). Saved as `data/shelters.geojson`. Miami-Dade's own evacuation-center layers return no rows outside an activation, so these are **planning candidates only: call 311 to confirm a shelter is open.** Pet eligibility is shown only where the source says "Yes"; blank means unknown.
 
 ## Running locally
 
@@ -32,7 +33,10 @@ pip install -r requirements.txt
 cp .env.example .env   # paste your key from https://aistudio.google.com/apikey
 python gemma.py "your prompt"                 # text
 python gemma.py "describe this" photo.jpg     # text + image
+flask --app app run --host 0.0.0.0 --port 8000   # StormCard at http://localhost:8000
 ```
+
+Tests: `python test_geo.py && python test_prompts_card.py`
 
 Set `GEMMA_MODEL=gemma-4-31b-it` in `.env` to switch to the larger Gemma 4 model.
 

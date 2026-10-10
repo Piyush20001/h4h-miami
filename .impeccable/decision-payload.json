@@ -1,0 +1,184 @@
+{
+ "title": "Choose StormCard's visual world",
+ "question": "The roll assigned the Hurricane Tracking Chart. Keep it, take an alternate, or re-roll.",
+ "options": [
+  {
+   "id": "assigned",
+   "label": "Hurricane Tracking Chart",
+   "kicker": "THE ROLL",
+   "lineage": "The newspaper / grocery-bag hurricane tracking chart Miami families tape to the fridge every season",
+   "thesis": "Her card is her own tracking chart: the storm's world, plotted around her house.",
+   "palette": [
+    "#eaf4f4",
+    "#0b2a4a",
+    "#d7261e",
+    "#f2a900",
+    "#1f7a4d"
+   ],
+   "materials": [
+    "newsprint chart paper",
+    "lat/long grid",
+    "storm-symbol red",
+    "county zone bands"
+   ],
+   "viewport": "Phone. Top: language switch (KRE \u00b7 ES \u00b7 EN) and the StormCard mark. Hero: a giant zone plate, 'Z\u00f2n B', set like the chart's legend band, with one line 'not your flood-insurance zone'. Below: a tracking-chart grid panel with HER HOUSE plotted and three shelters plotted as numbered markers with miles. Primary action: 'Kote pou m ale' (Where to go) full-width button.",
+   "risk": "Can read as a weather-TV graphic if the grid becomes decoration instead of her real location and shelters.",
+   "raised": [
+    {
+     "from": "ikeda-datamatics",
+     "raise": "Total contrast commitment: text is pure navy on paper or pure white on navy, never grey."
+    },
+    {
+     "from": "rw-timetable-slide-rack",
+     "raise": "Two type sizes only on each screen, both large; rank is carried by weight, case and reversal."
+    },
+    {
+     "from": "wayfinding-cartography-signage-midnight-transit-diagram",
+     "raise": "Routes from her house to each shelter drawn only at 0/45/90 degrees on the chart."
+    },
+    {
+     "from": "rw-centre-rail-reference-setting",
+     "raise": "States are printed marks: toggles are hollow at rest, filled when on, struck when unavailable."
+    },
+    {
+     "from": "japanese-high-density-web",
+     "raise": "Every card section carries a small header tab (What this means / Where to go / What to bring / What to do now) with a strict hairline border system."
+    }
+   ],
+   "html": ".impeccable/mocks/decision/assigned.html",
+   "htmlFrame": "390x844"
+  },
+  {
+   "id": "model-pick",
+   "label": "Evacuation Route Signage",
+   "kicker": "IMPECCABLE\u2019S PICK",
+   "lineage": "Florida's blue-and-white Hurricane Evacuation Route road signs and county zone placards",
+   "thesis": "StormCard speaks in the signs she already obeys on the road.",
+   "palette": [
+    "#0a3d91",
+    "#ffffff",
+    "#ffd400",
+    "#111111"
+   ],
+   "materials": [
+    "reflective sign blue",
+    "highway sign lettering",
+    "arrow plates"
+   ],
+   "viewport": "Phone. Full-blue header plate with the hurricane glyph and 'StormCard'. A white sign panel reading 'ZONE B' in highway lettering, then three arrow plates, one per shelter, each with miles and a pet glyph.",
+   "risk": "The most familiar route for public-safety apps; can feel like a government form.",
+   "html": ".impeccable/mocks/decision/model-pick.html",
+   "htmlFrame": "390x844"
+  },
+  {
+   "id": "challenger-ticket-wallet",
+   "label": "Jet-Age Ticket Wallet",
+   "verdict": "competitive",
+   "lineage": "Carbon-copy airline ticket coupons and baggage tags (the Miami-Port-au-Prince route)",
+   "thesis": "Her plan as a ticket wallet: each step is a coupon she tears off, nothing disappears.",
+   "palette": [
+    "#14284b",
+    "#c8102e",
+    "#ffffff",
+    "#5b3a8c"
+   ],
+   "materials": [
+    "coupon stock",
+    "carbon numerals",
+    "VOID / VALIDATED stamps"
+   ],
+   "viewport": "Phone. Stacked coupon stubs: Language, Place, Household, then the Card coupon with zone and shelters printed in carbon fields.",
+   "case": "Fuses well: the diaspora knows ticket coupons and the step-by-step flow is clear; loses on audience identification for a hurricane moment.",
+   "risk": "Travel metaphor can confuse 'going to a shelter' with 'taking a trip'.",
+   "hero": "https://impeccable.style/worlds/cards/vernacular-ephemera-jet-age-ticket-wallet-hero.webp",
+   "board": "https://impeccable.style/worlds/cards/vernacular-ephemera-jet-age-ticket-wallet.webp",
+   "html": ".impeccable/mocks/decision/challenger-ticket-wallet.html",
+   "htmlFrame": "390x844"
+  },
+  {
+   "id": "challenger-transit",
+   "label": "Midnight Transit Diagram",
+   "verdict": "declined",
+   "lineage": "Metro rail enamel diagrams",
+   "palette": [
+    "#0b1a3a",
+    "#e63946",
+    "#2a6fdb",
+    "#f4a300"
+   ],
+   "materials": [
+    "enamel",
+    "45/90 lines"
+   ],
+   "case": "Fuses poorly: shelters are not stations and a dark ground hurts older eyes in daylight.",
+   "kept": "Routes drawn only at 0/45/90 degrees.",
+   "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram-hero.webp"
+  },
+  {
+   "id": "challenger-datamatics",
+   "label": "Data-Sublime Field",
+   "verdict": "declined",
+   "lineage": "black-and-white barcode data art",
+   "palette": [
+    "#000000",
+    "#ffffff"
+   ],
+   "materials": [
+    "barcode fields",
+    "strobe"
+   ],
+   "case": "Declined: strobing and data density are hostile to a stressed 74-year-old.",
+   "kept": "Total contrast commitment, no grey text.",
+   "hero": "https://impeccable.style/worlds/cards/ikeda-datamatics-hero.webp"
+  },
+  {
+   "id": "challenger-highdensity",
+   "label": "Japanese High-Density Web",
+   "verdict": "declined",
+   "lineage": "dense module portals",
+   "palette": [
+    "#ffffff",
+    "#111111",
+    "#e60012"
+   ],
+   "materials": [
+    "hairline modules",
+    "tabs"
+   ],
+   "case": "Declined: tiny type fails the large-type requirement.",
+   "kept": "Header tabs on every section with a strict hairline border system.",
+   "hero": "https://impeccable.style/worlds/cards/japanese-high-density-web-hero.webp"
+  }
+ ],
+ "reroll": {
+  "registers": [
+   "safer",
+   "bolder"
+  ]
+ },
+ "buildPath": {
+  "value": "code",
+  "toggle": false
+ },
+ "canon": true,
+ "canonCard": {
+  "label": "The category standard",
+  "thesis": "A clean public-safety app (FEMA / county alert app), executed impeccably.",
+  "palette": [
+   "#ffffff",
+   "#111827",
+   "#1d4ed8",
+   "#dc2626"
+  ],
+  "materials": [
+   "white cards",
+   "system sans",
+   "status pills"
+  ],
+  "viewport": "Phone. White header, zone pill, three shelter list rows with chevrons, a blue primary button.",
+  "risk": "Indistinguishable from every government app by design.",
+  "html": ".impeccable/mocks/decision/canon.html",
+  "htmlFrame": "390x844"
+ },
+ "steer": true
+}

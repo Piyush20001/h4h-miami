@@ -1,2 +1,5 @@
 google-genai
 python-dotenv
+flask
+requests
+pytest

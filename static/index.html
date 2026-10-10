@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15293d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>StormCard</title>
+<link rel="icon" href="brand/stormcard-logo.png" type="image/png">
+<link rel="apple-touch-icon" href="brand/stormcard-logo.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <button type="button" class="back" id="back" hidden>
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5L8 12L15 19" /></svg>
+      <span data-i18n="back">Back</span>
+    </button>
+    <div class="mark" aria-label="StormCard">
+      <img src="brand/stormcard-logo.png" width="32" height="32" alt="">
+      <span>StormCard</span>
+    </div>
+    <div class="langsw" role="group" id="langsw" data-i18n-attr="aria-label:langSwitch">
+      <button type="button" data-lang="kre" aria-pressed="false" lang="ht">KRE</button>
+      <button type="button" data-lang="es" aria-pressed="false" lang="es">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+    </div>
+  </div>
+  <div class="steps" id="steps" hidden>
+    <ol aria-hidden="true"><li></li><li></li><li></li></ol>
+    <p id="steptext"></p>
+  </div>
+</header>
+
+<main id="main" class="app">
+
+  <!-- 1. Language -->
+  <section class="screen" id="s-lang" aria-labelledby="h-lang">
+    <h1 id="h-lang" tabindex="-1" data-i18n="langTitle">Choose your language</h1>
+    <p class="hint" data-i18n="langHint">Tap a button to start.</p>
+    <div class="stack" id="langbtns">
+      <button type="button" class="bigopt" data-pick="kre" lang="ht"><span class="lbl">Kreyòl</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+      <button type="button" class="bigopt" data-pick="es" lang="es"><span class="lbl">Español</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+      <button type="button" class="bigopt" data-pick="en" lang="en"><span class="lbl">English</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+    </div>
+    <div class="saved" id="saved" hidden>
+      <button type="button" class="btn btn-ghost" id="openSaved"><span data-i18n="openSaved">Open my saved card</span></button>
+      <p class="meta" id="savedMeta"></p>
+    </div>
+  </section>
+
+  <!-- 2. Place -->
+  <section class="screen" id="s-place" aria-labelledby="h-place" hidden>
+    <h1 id="h-place" tabindex="-1" data-i18n="placeTitle">Where do you live?</h1>
+    <p class="hint" data-i18n="placeHint">Pick the closest place.</p>
+    <div class="stack">
+      <button type="button" class="bigopt" data-place="Little Haiti" data-lat="25.8300" data-lng="-80.1890"><span class="lbl">Little Haiti</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+      <button type="button" class="bigopt" data-place="Hialeah" data-lat="25.8576" data-lng="-80.2781"><span class="lbl">Hialeah</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+      <button type="button" class="bigopt" data-place="Brickell" data-lat="25.7617" data-lng="-80.1918"><span class="lbl">Brickell</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+    </div>
+    <button type="button" class="btn btn-ghost loc" id="useLoc">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2V5M12 19V22M2 12H5M19 12H22"/></svg>
+      <span id="useLocText" data-i18n="useLoc">Use my location</span>
+    </button>
+    <p class="msg" id="locMsg" role="status" hidden></p>
+  </section>
+
+  <!-- 3. Household -->
+  <section class="screen" id="s-household" aria-labelledby="h-household" hidden>
+    <h1 id="h-household" tabindex="-1" data-i18n="householdTitle">Who is with you?</h1>
+    <p class="hint" data-i18n="householdHint">Tap everything that fits.</p>
+    <div class="tiles">
+      <button type="button" class="tile" data-flag="pet" aria-pressed="false">
+        <span class="mk" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12.5L10 17.5L19 7"/></svg></span>
+        <svg class="ico" viewBox="0 0 32 32" width="44" height="44" aria-hidden="true"><ellipse cx="9" cy="13" rx="2.6" ry="3.4"/><ellipse cx="14.5" cy="8.5" rx="2.6" ry="3.4"/><ellipse cx="21.5" cy="8.5" rx="2.6" ry="3.4"/><ellipse cx="27" cy="13" rx="2.6" ry="3.4" transform="translate(-2 0)"/><path d="M18 14C21 14 24 18 24 21.5C24 25 21.5 26 18 25C14.500 26 11 25 11 21.500C11 18 14.500 14 18 14Z" transform="translate(-2 0)"/></svg>
+        <span class="tl" data-i18n="pet">Pet</span>
+      </button>
+      <button type="button" class="tile" data-flag="no_car" aria-pressed="false">
+        <span class="mk" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12.5L10 17.5L19 7"/></svg></span>
+        <svg class="ico" viewBox="0 0 32 32" width="44" height="44" aria-hidden="true"><path d="M5 20V15L8 9H24L27 15V20H5Z"/><path d="M5 15H27"/><circle cx="10" cy="22" r="2.600"/><circle cx="22" cy="22" r="2.600"/><path d="M4 4L28 28"/></svg>
+        <span class="tl" data-i18n="nocar">No car</span>
+      </button>
+      <button type="button" class="tile" data-flag="medical" aria-pressed="false">
+        <span class="mk" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12.5L10 17.5L19 7"/></svg></span>
+        <svg class="ico" viewBox="0 0 32 32" width="44" height="44" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="4"/><path d="M16 9V23M9 16H23"/></svg>
+        <span class="tl" data-i18n="medical">Medical needs</span>
+      </button>
+      <button type="button" class="tile" data-flag="kids" aria-pressed="false">
+        <span class="mk" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12.5L10 17.5L19 7"/></svg></span>
+        <svg class="ico" viewBox="0 0 32 32" width="44" height="44" aria-hidden="true"><circle cx="11" cy="8" r="3.200"/><path d="M5 26V17C5 14.500 7.500 13 11 13S17 14.500 17 17V26"/><circle cx="23" cy="14" r="2.600"/><path d="M19.500 26V21C19.500 19 21 18 23 18S26.500 19 26.500 21V26"/></svg>
+        <span class="tl" data-i18n="kids">Kids</span>
+      </button>
+    </div>
+    <button type="button" class="btn btn-primary" id="make"><span data-i18n="makeCard">Make my card</span></button>
+  </section>
+
+  <!-- 4. Loading -->
+  <section class="screen" id="s-loading" aria-labelledby="h-loading" hidden>
+    <h1 id="h-loading" tabindex="-1" data-i18n="loadingTitle">Gemma is writing your card…</h1>
+    <div class="bar" role="progressbar" aria-busy="true" data-i18n-attr="aria-label:loadingTitle"><span></span></div>
+    <p class="hint" data-i18n="loadingHint">Your zone and shelters are ready. This can take up to a minute.</p>
+    <p class="hint slow" id="loadingSlow" data-i18n="loadingSlow" hidden>It takes longer when the model runs on the laptop.</p>
+    <button type="button" class="btn btn-ghost" id="cancel"><span data-i18n="cancel">Cancel</span></button>
+  </section>
+
+  <!-- Error (card generation) -->
+  <section class="screen" id="s-error" aria-labelledby="h-error" hidden>
+    <h1 id="h-error" tabindex="-1" data-i18n="errTitle">We could not make your card.</h1>
+    <p class="hint" data-i18n="errBody">Check your connection and try again.</p>
+    <button type="button" class="btn btn-primary" id="retry"><span data-i18n="retry">Try again</span></button>
+  </section>
+
+  <!-- 5. Card -->
+  <section class="screen card-screen" id="s-card" aria-labelledby="h-card" hidden>
+    <h1 class="sr" id="h-card" tabindex="-1" data-i18n="cardTitle">Your card</h1>
+
+    <div class="col-a">
+      <div class="plate" id="plate" role="group"></div>
+      <p class="plate-note" id="plateNote"></p>
+
+      <section class="chart-panel" aria-labelledby="h-chart">
+        <h2 class="tab" id="h-chart" data-i18n="chartTitle">Your map</h2>
+        <div id="chart"></div>
+      </section>
+    </div>
+
+    <div class="col-b">
+      <section class="shelters" aria-labelledby="h-shel">
+        <div class="shel-head">
+          <h2 id="h-shel" data-i18n="sheltersTitle">Shelters near you</h2>
+          <span class="tag" data-i18n="sample">sample data</span>
+        </div>
+        <ol class="plates" id="plates"></ol>
+        <p class="meta" id="tapHint" data-i18n="tapHint">Tap a shelter to see its route.</p>
+      </section>
+
+      <article class="cardtext" id="cardtext"></article>
+
+      <div class="again" id="again" hidden>
+        <button type="button" class="btn btn-ghost" id="againBtn"><span id="againText"></span></button>
+      </div>
+
+      <details class="how" id="how">
+        <summary><span data-i18n="how">How we decided</span></summary>
+        <div class="how-body" id="howBody"></div>
+      </details>
+
+      <section class="ask" id="ask" aria-labelledby="h-ask">
+        <h2 id="h-ask" data-i18n="askTitle">Ask a question</h2>
+        <p class="hint" data-i18n="askHint">We answer only from what your card says.</p>
+        <p class="meta" id="chipsLabel" data-i18n="chipsLabel">Common questions</p>
+        <div class="chips" role="group" aria-labelledby="chipsLabel" id="chips">
+          <button type="button" class="chip" data-chip="chip1"></button>
+          <button type="button" class="chip" data-chip="chip2"></button>
+          <button type="button" class="chip" data-chip="chip3"></button>
+        </div>
+        <form id="askForm" class="askform" autocomplete="off">
+          <label class="sr" for="askInput" data-i18n="askLabel">Your question</label>
+          <input id="askInput" type="text" maxlength="300" data-i18n-attr="placeholder:askPlaceholder" enterkeyhint="send">
+          <button type="submit" class="btn btn-primary" id="askSend"><span data-i18n="send">Send</span></button>
+        </form>
+        <button type="button" class="switch" id="offline" role="switch" aria-checked="false">
+          <span class="knob" aria-hidden="true"></span>
+          <span class="swtext"><b data-i18n="offlineSwitch">Force offline</b><small data-i18n="offlineHint">Use only the model on this laptop.</small></span>
+        </button>
+        <ol class="thread" id="thread" aria-live="polite" aria-relevant="additions text"></ol>
+      </section>
+    </div>
+  </section>
+</main>
+
+<div class="dock" id="dock" hidden>
+  <div class="dock-in">
+    <button type="button" class="btn btn-primary" id="dockAsk">
+      <span data-i18n="askBtn">Ask a question</span>
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 5V19M6 13L12 19L18 13"/></svg>
+    </button>
+  </div>
+</div>
+
+<script src="i18n.js"></script>
+<script src="i18n-agent.js"></script>
+<script src="chart.js"></script>
+<script src="card.js"></script>
+<script src="ask.js"></script>
+</body>
+</html>

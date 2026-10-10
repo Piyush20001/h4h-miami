@@ -11,3 +11,5 @@ dist/
 build/
 .next/
 .archify/
+.gstack/
+.impeccable/questions/
