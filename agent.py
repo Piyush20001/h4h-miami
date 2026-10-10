@@ -189,7 +189,10 @@ TOOLS = {f.__name__: f for f in (find_shelters, get_zone, packing_list, lookup_g
 _MSG_WORDS = {"family", "text", "message", "fanmi", "ekri", "mesaj", "familia", "mensaje", "texto"}
 
 
-_NOW_WORDS = {"now", "kounye", "kounya", "ahora", "first", "premye", "primero"}
+_NOW_WORDS = {"now", "kounye", "kounya", "ahora"}
+_DO_WORDS = {"do", "should", "fe", "fè", "hacer", "hago", "debo", "dwe"}
+_MSG_VERBS = {"text", "message", "mesaj", "mensaje", "texto", "ekri", "send", "voye", "enviar"}
+_MSG_WHO = {"family", "fanmi", "familia"}
 _PLAN_CODE = {
     "kre": ["Si gen lòd evakyasyon: ale nan pwen bis {bus}.", "Si gen lòd evakyasyon: abri {shel}. Rele 311 pou konfime li louvri.",
             "Prepare sak ou: {items}.", "Voye plan ou bay fanmi ou."],
@@ -204,11 +207,13 @@ _PLAN_END = {"kre": "Rele 311 pou konfime.", "es": "Llame al 311 para confirmar.
 
 
 def _wants_now(question):
-    return bool(_words(question) & _NOW_WORDS)
+    w = _words(question)
+    return bool(w & _NOW_WORDS) and bool(w & _DO_WORDS)  # "what do I do now", not "is it open now"
 
 
 def _wants_message(question):
-    return bool(_words(question) & _MSG_WORDS)
+    w = _words(question)
+    return bool(w & _MSG_VERBS) and bool(w & _MSG_WHO)  # "text my family", not "my family has a car"
 
 
 def _emit(trace, on_step, item=None):
@@ -306,7 +311,7 @@ def _fallback(question, card, lang, force_offline, trace, reason, deadline=None,
         text, backend = llm.generate(prompt, force_offline, deadline=deadline)
         answer = text.strip()
         if not answer or not _grounded(answer, card, []):
-            return {"answer": IDK[lang], "backend": backend, "trace": trace}
+            return {"answer": _with_pickup(IDK[lang], card, lang, trace), "backend": backend, "trace": trace}
         return {"answer": _with_pickup(answer, card, lang, trace), "backend": backend, "trace": trace}
     except Exception:
         return {"answer": IDK[lang], "backend": "facts_only", "trace": trace}
@@ -362,7 +367,7 @@ def _plan_now(question, card, lang, force_offline, on_step, trace, steps):
     _emit(trace, on_step, {"tool": "get_zone", "args": {}, "result_summary": zsum})
     steps.append({"tool": "get_zone", "args": {}, "raw": json.dumps(zres, ensure_ascii=False)[:600]})
     flags = (card.get("facts") or {}).get("flags") or card.get("flags") or {}
-    second = "evacuation_help" if (zres.get("zone") in ("A", "B", "C") or flags.get("no_car")) else "find_shelters"
+    second = "evacuation_help" if flags.get("no_car") else "find_shelters"  # matches the card's next-3-steps
     args = {} if second == "evacuation_help" else {"pet": bool(flags.get("pet"))}
     res, summ = TOOLS[second](card, **args)
     _emit(trace, on_step, {"tool": second, "args": args, "result_summary": summ})
@@ -443,7 +448,7 @@ def _run(question, card, lang, force_offline, on_step):
             answer = obj["answer"].strip()
             if not _grounded(answer, card, steps):
                 _emit(trace, on_step, {"tool": "check", "args": {}, "result_summary": "answer had an unverified fact; replaced"})
-                return {"answer": IDK[lang], "backend": backend, "trace": trace}
+                return {"answer": _with_pickup(IDK[lang], card, lang, trace), "backend": backend, "trace": trace}
             return {"answer": _with_pickup(answer, card, lang, trace), "backend": backend, "trace": trace}
         name = obj.get("tool")
         if final or name not in TOOLS:
