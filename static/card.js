@@ -722,7 +722,8 @@
     var card = h("div", "ride-card");
     var top = h("div", "ride-top");
     var ico = h("span", "ride-ico");
-    ico.appendChild(svgIcon("M6 5H18V16H6ZM6 11H18M8.500 19V16M15.500 19V16", 26));
+    var bimg = h("img"); bimg.src = "icons/ui/bus.png"; bimg.width = 36; bimg.height = 36; bimg.alt = "";
+    ico.appendChild(bimg);
     top.appendChild(ico);
     var nm = h("div", "ride-nm");
     nm.appendChild(h("span", "ride-k", t("rideNear")));

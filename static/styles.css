@@ -601,3 +601,7 @@ body.ar-open { overflow: hidden; }
 .ar-mini .m-done { fill: none; stroke: #9aa9b5; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
 .ar-mini .m-end { fill: var(--green); stroke: #fff; stroke-width: 2; }
 .ar-mini .m-me { fill: var(--ink); stroke: #fff; stroke-width: 2.5; }
+
+img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
+.ride-ico { background: var(--blue-wash); }
+.ride-ico img { display: block; width: 34px; height: 34px; object-fit: contain; }
