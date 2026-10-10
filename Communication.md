@@ -34,3 +34,14 @@ The ARCHI shelter source (311 MapServer layer 78) returns 0 rows right now, and 
 
 **6. Gemini API key**
 Do we have a shared `GEMINI_API_KEY`? I need it from ~12:15 to tune the Kreyòl/Español/English card.
+
+## 2026-10-10 12:00 EDT: Stuti Agarwal (Card partner) → AI partner
+
+**7. Data sources changed from ARCHI §10 (update §10 when you can)**
+- Zones: `StormSurgePlanningZone_Multipart` (county layer, ZONEID already A–E). The ARCHI `Current_Hurricane_Evac` layer merges some small Zone A tiles into "no zone", so we didn't use it. CATEGORY mapping, for reference: 1→A … 5→E, 0 = no zone.
+- Shelters: no county layer has rows, so we use the **Florida DEM statewide shelter inventory (as of 2021-08-31)**, filtered to Miami-Dade, 40 buildings. They are planning candidates only ("call 311 to confirm open"). Only 2 are marked pet-friendly; blank = unknown, never "yes".
+
+**8. Little Haiti preset moved to 25.83, -80.189 (Zone C)**
+The original 25.83, -80.195 falls in **no zone** (Little Haiti is mostly inland). The new point is still Little Haiti, near NE 2nd Ave. Hialeah is also no zone; Brickell is Zone B. Use the same coordinates for any demo script.
+
+**9. CP1 status:** `POST /api/card` for Little Haiti returns Zone C + 3 shelters (stub card text until `llm.py` lands).
