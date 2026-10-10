@@ -214,9 +214,11 @@
         renderCardText(st.result);
         paintAsk();
       });
-    }).catch(function () {
+    }).catch(function (e) {
       if (my !== runId) return;
       mk.disabled = false;
+      var body = document.querySelector('[data-i18n="errBody"]');
+      if (body) body.textContent = SC.t(e && e.message === "http 422" ? "errOutside" : "errBody");
       show("error");
     }).then(function () { clearTimeout(guard); mk.disabled = false; });
   }
@@ -256,6 +258,30 @@
     return SC.langs.some(function (l) { return SC.tl(l, "CALL_311") === s; });
   }
 
+  /* strip raw URLs; break text into short lines (lines, bullets, sentences) */
+  function cleanLine(x) {
+    return String(x || "").replace(/\(?\bhttps?:\/\/\S+/gi, "").replace(/\bwww\.\S+/gi, "")
+      .replace(/\s+([.,;:!?])/g, "$1").replace(/\s{2,}/g, " ").trim();
+  }
+  function shortLines(text, max, dropCalls) {
+    var out = [], seen = {};
+    String(text).split(/\r?\n/).forEach(function (raw) {
+      var line = cleanLine(raw.replace(/^\s*(?:[-*\u2022]|\d+[.)])\s+/, ""));
+      if (!line) return;
+      (line.match(/[^.!?]+(?:[.!?]+|$)/g) || [line]).forEach(function (sn) {
+        sn = sn.trim();
+        if (!sn || sn.length < 2) return;
+        if (dropCalls && (/\b311\b/.test(sn) || isCallLine(sn))) return;
+        var k = sn.toLowerCase();
+        if (seen[k]) return;
+        seen[k] = 1;
+        out.push(sn);
+      });
+    });
+    return out.slice(0, max);
+  }
+  function tickKey(x) { return String(x).toLowerCase().replace(/[^a-z0-9\u00c0-\u024f]+/g, "-").slice(0, 40); }
+
   function renderCardText(r) {
     var root = $("cardtext");
     root.textContent = "";
@@ -265,26 +291,31 @@
     if (!ct) return;
     if (typeof ct === "string") blocks = parseCard(ct);
     else {
-      ["what_this_means", "where_to_go", "what_to_bring", "what_to_do_now"].forEach(function (k) {
-        if (typeof ct[k] !== "string" || !ct[k].trim()) return;
-        blocks.push({ k: "h", v: t("sec_" + k) });
-        blocks = blocks.concat(parseCard(ct[k]));
-      });
-      Object.keys(ct).forEach(function (k) {
-        if (["what_this_means", "where_to_go", "what_to_bring", "what_to_do_now"].indexOf(k) < 0 && typeof ct[k] === "string" && ct[k].trim()) {
-          blocks = blocks.concat(parseCard(ct[k]));
-        }
-      });
+      if (typeof ct.what_this_means === "string" && ct.what_this_means.trim()) {
+        blocks.push({ k: "h", v: t("sec_what_this_means") });
+        blocks = blocks.concat(parseCard(ct.what_this_means));
+      }
+      if (typeof ct.what_to_bring === "string" && ct.what_to_bring.trim()) {
+        blocks.push({ k: "h", v: t("sec_what_to_bring") });
+        var items = shortLines(ct.what_to_bring, 8, false);
+        if (items.length) blocks.push({ k: "tick", v: items });
+      }
+      if (typeof ct.what_to_do_now === "string" && ct.what_to_do_now.trim()) {
+        blocks.push({ k: "h", v: t("sec_what_to_do_now") });
+        shortLines(ct.what_to_do_now, 4, true).forEach(function (x) { blocks.push({ k: "p", v: x }); });
+      }
     }
     blocks.forEach(function (b) {
       if (b.k === "h") {
         root.appendChild(h("h2", "tab", b.v));
+      } else if (b.k === "tick") {
+        root.appendChild(checklist(b.v.map(function (x) { return { key: tickKey(x), text: x }; }), loadTicks(), "bring."));
       } else if (b.k === "ul") {
         var ul = h("ul", "items");
-        b.v.forEach(function (x) { ul.appendChild(SC.setText(h("li"), x)); });
+        b.v.forEach(function (x) { ul.appendChild(SC.setText(h("li"), cleanLine(x))); });
         root.appendChild(ul);
       } else {
-        root.appendChild(SC.setText(h("p", isCallLine(b.v) ? "p call" : "p"), b.v));
+        root.appendChild(SC.setText(h("p", isCallLine(b.v) ? "p call" : "p"), cleanLine(b.v)));
       }
     });
   }
@@ -327,7 +358,8 @@
     $("warn311").hidden = false;
     SC.setText($("warn311"), t("CALL_311"));
     $("sampleFoot").hidden = r.sample_data === false || list.length === 0;
-    if (!list.length) {
+    var sn = ((r.facts && r.facts.flags) || {}).medical ? (r.special_needs_shelters || [])[0] : null;
+    if (!list.length && !sn) {
       ol.appendChild(SC.setText(h("li", "noshel"), t("noShelters")));
       return;
     }
@@ -369,6 +401,42 @@
       li.appendChild(b);
       ol.appendChild(li);
     });
+    if (sn) {
+      var l4 = h("li");
+      var d4 = h("div", "plate-btn sn");
+      var n4 = h("span", "num");
+      var ns = "http://www.w3.org/2000/svg";
+      var sv = document.createElementNS(ns, "svg");
+      sv.setAttribute("viewBox", "0 0 32 32"); sv.setAttribute("width", 32); sv.setAttribute("height", 32);
+      sv.setAttribute("aria-hidden", "true");
+      var rc = document.createElementNS(ns, "rect");
+      rc.setAttribute("x", 8); rc.setAttribute("y", 8); rc.setAttribute("width", 16); rc.setAttribute("height", 16);
+      rc.setAttribute("transform", "rotate(45 16 16)");
+      var pp = document.createElementNS(ns, "path");
+      pp.setAttribute("d", "M11 16H21M16 11V21");
+      sv.appendChild(rc); sv.appendChild(pp);
+      n4.appendChild(sv);
+      d4.appendChild(n4);
+      var b4 = h("span", "pb");
+      b4.appendChild(h("span", "nm", sn.name || ""));
+      b4.appendChild(h("span", "ad", [sn.address, sn.city].filter(Boolean).join(", ")));
+      var r4 = h("span", "row");
+      if (typeof sn.distance_mi === "number") r4.appendChild(h("span", "dist", sn.distance_mi.toFixed(1) + " " + t("mi")));
+      r4.appendChild(h("span", "why unk", t("sn_tag")));
+      b4.appendChild(r4);
+      b4.appendChild(SC.setText(h("span", "ad"), t("snNote")));
+      d4.appendChild(b4);
+      var hm = r.home || st.home || (r.facts && r.facts.home);
+      if (hm && typeof sn.lat === "number" && typeof sn.lng === "number") {
+        var a4 = h("span", "dir");
+        a4.setAttribute("role", "img");
+        a4.setAttribute("aria-label", t("sn_tag") + ": " + bearing(hm, sn) + "°");
+        a4.appendChild(arrowSvg(bearing(hm, sn)));
+        d4.appendChild(a4);
+      }
+      l4.appendChild(d4);
+      ol.appendChild(l4);
+    }
   }
 
   /* staged trace: same component as the Ask trace (SC.stepRow) */
@@ -381,13 +449,20 @@
     var n = (r.shelters || []).length;
     ol.appendChild(SC.stepRow("done", n === 0 ? t("stNoShel") : n === 1 ? t("stShelter1") : t("stShelters", { n: n })));
     var stage = st.stage || (r.card_text ? "done" : "run");
+    var stat = $("status");
+    stat.textContent = "";
+    stat.className = "status s-" + stage;
     if (stage === "done") {
       var bk = ["gemini", "ollama", "none"].indexOf(r.backend) >= 0 ? r.backend : "none";
       ol.appendChild(SC.stepRow("done", t("stDone"), [h("span", "badge b-" + bk, t("b_" + bk))]));
+      stat.appendChild(h("span", "badge b-" + bk, t("b_" + bk)));
     } else if (stage === "fail") {
       ol.appendChild(SC.stepRow("fail", t("stFail")));
+      stat.textContent = t("stFail");
     } else {
       ol.appendChild(SC.stepRow("run", t("stWriting")));
+      stat.appendChild(h("span", "dot"));
+      stat.appendChild(h("span", null, t("stWriting")));
     }
     $("stageRetry").hidden = stage !== "fail";
   }
@@ -467,7 +542,7 @@
       var box = h("span", "box");
       box.appendChild(svgIcon("M5 12.500L10 17.500L19 7", 18));
       b.appendChild(box);
-      b.appendChild(h("span", "lbl", t(id.label)));
+      b.appendChild(h("span", "lbl", id.text || t(id.label)));
       b.addEventListener("click", function () {
         var o = loadTicks();
         o[key] = !o[key];
@@ -505,16 +580,6 @@
       src.target = "_blank"; src.rel = "noopener noreferrer";
       e.appendChild(src);
       m.appendChild(e);
-      var sn = (r.special_needs_shelters || [])[0];
-      if (sn) {
-        var pl = h("div", "snplate");
-        pl.appendChild(h("span", "sntag", t("snH")));
-        pl.appendChild(h("span", "nm", sn.name || ""));
-        pl.appendChild(h("span", "ad", [sn.address, sn.city].filter(Boolean).join(", ")));
-        if (typeof sn.distance_mi === "number") pl.appendChild(h("span", "dist", sn.distance_mi.toFixed(1) + " " + t("mi")));
-        pl.appendChild(SC.setText(h("span", "c311"), t("snNote")));
-        m.appendChild(pl);
-      }
       host.appendChild(m);
     }
     if (f.pet) {
@@ -562,7 +627,7 @@
       chartCtl = StormChart.render($("chart"), {
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
-        labels: { home: t("home"), mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
+        labels: { home: t("home"), special: t("sn_tag"), mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       });
       renderShelters(r);

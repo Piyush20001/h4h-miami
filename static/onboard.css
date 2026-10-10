@@ -1,0 +1,52 @@
+/* StormCard first-run welcome. Uses tokens from styles.css. */
+.ob { position: fixed; inset: 0; z-index: 1000; background: var(--ground); color: var(--ink);
+  font-family: var(--font); display: flex; justify-content: center; overflow-y: auto; }
+.ob[hidden] { display: none; }
+.ob-col { width: 100%; max-width: 560px; min-height: 100%; display: flex; flex-direction: column;
+  padding: 16px 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.ob-top { display: flex; align-items: center; justify-content: space-between; min-height: 56px; }
+.ob-logo { height: 40px; width: auto; display: block; }
+.ob-skip { min-height: 56px; min-width: 56px; padding: 0 12px; background: none; border: 0; color: var(--blue);
+  font: 700 20px var(--font); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.ob-stage { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 220px; cursor: pointer; }
+.ob-art { width: 100%; max-width: 480px; height: auto; max-height: 46vh; display: block; }
+.ob-art .grid { stroke: var(--grid); stroke-width: 1; fill: none; }
+.ob-art .frame { fill: var(--sheet); stroke: var(--grid); stroke-width: 1.5; }
+.ob-art .route { stroke: var(--blue); stroke-width: 4; fill: none; stroke-linecap: round; }
+.ob-art .home { fill: var(--ink); }
+.ob-art .pin { fill: var(--blue); }
+.ob-art .pin-n { fill: #fff; font: 800 15px var(--font); text-anchor: middle; }
+.ob-art .ink { stroke: var(--ink); stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ob-art .ink-sm { stroke: var(--ink); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ob-art .dotf { fill: var(--ink); }
+.ob-art .lbl { fill: var(--ink); font: 700 13px var(--font); text-anchor: middle; }
+.ob-beat[hidden] { display: none; }
+.ob-chips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; width: 100%; }
+.ob-chip { flex: 1 1 0; min-width: 104px; min-height: 88px; padding: 0 12px; background: var(--sheet); color: var(--ink);
+  border: 2px solid var(--grid); border-radius: var(--r); font: 800 22px var(--font); cursor: pointer; }
+.ob-chip[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-wash); }
+.ob-lang-art { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
+.ob-bigword { font: 800 64px/1 var(--sign); letter-spacing: 0.01em; color: var(--blue); opacity: .0; }
+.ob-words { display: none; }
+.ob-text { text-align: left; padding-top: 8px; }
+.ob-title { margin: 0; padding-bottom: 4px; font: 800 34px/1.12 var(--font); letter-spacing: -0.01em; overflow: hidden; position: relative; }
+.ob-title .vis { display: block; }
+.ob-cap { margin: 10px 0 0; font-size: 20px; line-height: 1.4; color: var(--ink); min-height: 84px; }
+.ob-time { margin: 6px 0 0; font-size: 20px; font-weight: 700; color: var(--ink-2); }
+.ob-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; }
+.ob-dots { display: flex; gap: 10px; }
+.ob-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--blue); background: transparent; }
+.ob-dot.on { background: var(--blue); }
+.ob-go { flex: 1 1 auto; max-width: 280px; min-height: 64px; padding: 0 24px; border-radius: var(--r); cursor: pointer;
+  background: var(--blue); color: #fff; border: 2px solid var(--blue); font: 800 24px var(--font); }
+.ob-go:hover { background: var(--blue-dk); }
+.ob button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.ob-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (min-width: 700px) {
+  .ob-col { padding-top: 32px; }
+  .ob-title { font-size: 40px; }
+  .ob-art { max-height: 50vh; }
+}
+@media (max-height: 640px) { .ob-art { max-height: 32vh; } .ob-cap { min-height: 0; } }
+.ob-beat { width: 100%; display: flex; justify-content: center; }
+.ob-beat[hidden] { display: none; }

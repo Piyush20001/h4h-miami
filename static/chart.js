@@ -3,8 +3,8 @@
 (function () {
   "use strict";
   var NS = "http://www.w3.org/2000/svg";
-  var W = 360, H = 320;
-  var PAD = { l: 50, r: 62, t: 24, b: 50 };
+  var W = 360, H = 256;
+  var PAD = { l: 62, r: 40, t: 20, b: 46 };
 
   function el(tag, attrs, parent) {
     var n = document.createElementNS(NS, tag);
@@ -15,7 +15,7 @@
 
   function niceStep(span) {
     var steps = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2];
-    for (var i = 0; i < steps.length; i++) if (span / steps[i] <= 5) return steps[i];
+    for (var i = 0; i < steps.length; i++) if (span / steps[i] <= 4) return steps[i];
     return 0.5;
   }
 
@@ -103,7 +103,7 @@
 
     /* marker positions, nudged apart so no two are closer than 28px (home is fixed) */
     var spots = shelters.concat(special).map(function (s) { return { x: px(s.lng), y: py(s.lat) }; });
-    var MIN = 28;
+    var MIN = 32;
     for (var pass = 0; pass < 12; pass++) {
       var moved = false;
       for (var a = 0; a < spots.length; a++) {
@@ -192,6 +192,16 @@
     el("path", { d: "M" + PAD.l + " " + (by - 5) + "V" + by + "H" + (PAD.l + bw) + "V" + (by - 5) }, sb);
     var st2 = el("text", { x: PAD.l + bw + 8, y: by + 1 }, sb);
     st2.textContent = String(miles) + " " + (opts.labels.mi || "mi");
+
+    if (special.length) {
+      var lg = el("g", { "class": "c-legend" }, svg);
+      var lt = el("text", { x: W - 10, y: by + 1, "text-anchor": "end" }, lg);
+      lt.textContent = opts.labels.special || "";
+      var lx = W - 10 - String(opts.labels.special || "").length * 7.6 - 16;
+      var ld = el("g", { "class": "c-special", transform: "translate(" + r1(lx) + " " + (by - 4) + ")" }, lg);
+      el("rect", { x: -7, y: -7, width: 14, height: 14, transform: "rotate(45)" }, ld);
+      el("path", { d: "M-3.5 0H3.5M0-3.5V3.5" }, ld);
+    }
 
     host.appendChild(svg);
 

@@ -6,6 +6,7 @@ import geo
 import llm
 import prompts_ask
 import prompts_card
+import storms
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -66,6 +67,14 @@ def card():
         sample_data=geo.SAMPLE_DATA,
         **extra,
     )
+
+
+@app.get("/api/storms")
+def storm_card():
+    """Nearest active Atlantic system from NHC (cached offline). Facts only; NHC owns the forecast."""
+    lat = float(request.args.get("lat", 25.83))
+    lng = float(request.args.get("lng", -80.189))
+    return jsonify(storms.nearest(lat, lng))
 
 
 def _card_as_text(card):
