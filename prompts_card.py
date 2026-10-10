@@ -54,7 +54,7 @@ T = {
         "pet": {True: "pets OK", None: "ask 311 about pets", False: "no pets"},
         "bring": ["Water", "Food for 3 days", "Medicines", "Documents (ID, papers)", "Phone charger"],
         "petbring": "Pet food, leash and carrier",
-        "nocar": "No car? Ask a neighbor, or call 311 for a ride to a shelter.",
+        "nocar": "If you have no car, ask a neighbor for a ride to a shelter, or call 311.",
         "now": "Pack your bag now. Charge your phone. Listen to local news.",
         "medical": {
             "eeap": "Medical needs: if you cannot leave on your own, register with Miami-Dade's Emergency and Evacuation Assistance Program (EEAP). Call 311 to ask for the application. Register early: it closes before an evacuation order. Info: https://www.miamidade.gov/fire/eeap.asp",
@@ -74,7 +74,7 @@ T = {
         "pet": {True: "acepta mascotas", None: "pregunte al 311 por mascotas", False: "no acepta mascotas"},
         "bring": ["Agua", "Comida para 3 días", "Medicinas", "Documentos (identificación, papeles)", "Cargador de teléfono"],
         "petbring": "Comida, correa y transportadora para su mascota",
-        "nocar": "¿No tiene carro? Pida ayuda a un vecino o llame al 311 para que lo lleven a un refugio.",
+        "nocar": "Si no tiene carro, pida a un vecino que lo lleve a un refugio, o llame al 311.",
         "now": "Prepare su bolso ahora. Cargue su teléfono. Escuche las noticias locales.",
         "medical": {
             "eeap": "Necesidades médicas: si no puede salir por su cuenta, inscríbase en el Programa de Asistencia de Emergencia y Evacuación (EEAP) de Miami-Dade. Llame al 311 para pedir la solicitud. Inscríbase temprano: cierra antes de la orden de evacuación. Información: https://www.miamidade.gov/fire/eeap.asp",
@@ -94,7 +94,7 @@ T = {
         "pet": {True: "yo aksepte bèt", None: "mande 311 pou bèt", False: "yo pa aksepte bèt"},
         "bring": ["Dlo", "Manje pou 3 jou", "Medikaman", "Papye enpòtan (ID, dokiman)", "Chajè telefòn"],
         "petbring": "Manje, kòd ak kaj pou bèt ou",
-        "nocar": "Ou pa gen machin? Mande yon vwazen ede w, oswa rele 311 pou yo vin chèche w mennen w nan yon abri.",
+        "nocar": "Si ou pa gen machin, mande yon vwazen mennen w nan yon abri, oswa rele 311.",
         "now": "Prepare sak ou kounye a. Chaje telefòn ou. Koute nouvèl lokal yo.",
         "medical": {
             "eeap": "Bezwen medikal: si ou pa ka kite kay la poukont ou, enskri nan Pwogram Asistans pou Ijans ak Evakyasyon (EEAP) Miami-Dade la. Rele 311 pou mande fòm nan. Enskri bonè: enskripsyon an fèmen anvan lòd evakyasyon an. Plis enfòmasyon: https://www.miamidade.gov/fire/eeap.asp",
