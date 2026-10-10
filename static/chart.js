@@ -47,6 +47,14 @@
   function roadName(n) {
     return String(n || "").replace(/^I (\d+).*$/, "I-$1").replace(/ EXPY$| EXT$/, "").replace(/^FLORIDA TPKE.*$/, "TURNPIKE");
   }
+  var streetsP = null;
+  function streets() {
+    if (!streetsP) {
+      streetsP = fetch("/api/streets").then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { streetsP = null; return null; });
+    }
+    return streetsP;
+  }
   var zonesP = null;
   function zones() {
     if (!zonesP) {
@@ -71,7 +79,7 @@
     }).slice(0, 2);
     if (opts.focusBus && bus.length) { shelters = []; special = []; }
     var rpath = opts.route && opts.route.path ? opts.route.path.map(function (c) { return { lat: c[0], lng: c[1] }; }) : [];
-    var pts = [home].concat(shelters, special, bus, rpath);
+    var pts = [home].concat(shelters, special, rpath.length ? bus.slice(0, 1) : bus, rpath);
 
     var minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
     pts.forEach(function (p) {
@@ -126,7 +134,23 @@
         if (d) el("path", { d: d, "fill-rule": "evenodd", "class": "c-z c-z" + z + (z === homeZone ? " is-home" : "") }, zoneLayer);
       });
     });
+    var streetLayer = el("g", { "class": "c-streets", "clip-path": "url(#" + clipId + ")" }, grid);
     var roadLayer = el("g", { "class": "c-roads", "clip-path": "url(#" + clipId + ")" }, grid);
+    /* zoomed in (a walk, not a county): every side street from the county street file */
+    if ((latHi - latLo) < 0.08) streets().then(function (gj) {
+      if (!gj || !gj.features) return;
+      var d = "";
+      gj.features.forEach(function (f) {
+        if (f.properties.c <= 3) return;
+        var c = f.geometry.coordinates, inV = false, seg = "";
+        for (var i = 0; i < c.length; i++) {
+          if (c[i][0] >= lngLo && c[i][0] <= lngHi && c[i][1] >= latLo && c[i][1] <= latHi) inV = true;
+          seg += (i ? "L" : "M") + px(c[i][0]) + " " + py(c[i][1]);
+        }
+        if (inV) d += seg;
+      });
+      if (d) el("path", { d: d, "class": "c-street" }, streetLayer);
+    });
     var roadLabels = el("g", { "class": "c-roadlbl" }, svg);
     roads().then(function (gj) {
       if (!gj || !gj.features) return;

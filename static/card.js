@@ -654,8 +654,12 @@
     routeCache[k] = "x";
     fetch("/api/route?from=" + p[0] + "," + p[1] + "&to=" + p[2] + "," + p[3])
       .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (d) { routeCache[k] = d || "x"; done(d); })
-      .catch(function () { routeCache[k] = "x"; done(null); });
+      .then(function (d) {
+        routeCache[k] = d || "x";
+        /* the card may have been redrawn meanwhile: redraw whatever card is showing now if it is the same trip */
+        if (d && st.result && routeKey(st.result) === k) renderCard(false);
+      })
+      .catch(function () { routeCache[k] = "x"; });
   }
   SC.routeFor = routeFor;
   function stepText(s) {
@@ -741,12 +745,10 @@
     var rslot = h("div", "ride-rslot");
     if (typeof b.distance_mi === "number") rslot.appendChild(h("p", "ride-walk", t("rideDist", { d: b.distance_mi.toFixed(1) })));
     card.appendChild(rslot);
-    var had = !!routeFor(r);
     loadRoute(r, function (rt) {
-      if (!rt || st.result !== r) return;
+      if (!rt) return;
       rslot.textContent = "";
       rslot.appendChild(routeBlock(rt));
-      if (!had && f.no_car && !st.mapAll) renderCard(false); /* redraw the map with the route line */
     });
     var steps = h("ol", "ride-steps");
     ["rideS1", "rideS2", "rideS3"].forEach(function (k) { steps.appendChild(h("li", null, t(k))); });
@@ -786,7 +788,7 @@
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
         bus: busList(r), zone: r.zone, focusBus: busList(r).length > 0 && !st.mapAll,
         route: busList(r).length && !st.mapAll ? routeFor(r) : null,
-        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), cap: t("chartCap"), rec: t("recTag"), aria: t("chartAria", { n: shel.length }) },
+        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), cap: t(busList(r).length && !st.mapAll && routeFor(r) ? "chartCapRoute" : "chartCap"), rec: t("recTag"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       };
       chartCtl = StormChart.render($("chart"), copts);

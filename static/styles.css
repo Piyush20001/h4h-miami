@@ -605,3 +605,5 @@ body.ar-open { overflow: hidden; }
 img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
 .ride-ico { background: var(--blue-wash); }
 .ride-ico img { display: block; width: 34px; height: 34px; object-fit: contain; }
+
+.c-street { fill: none; stroke: #d6dee3; stroke-width: 0.8; }
