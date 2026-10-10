@@ -5,7 +5,7 @@
   function check() {
     fetch("/api/status", { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { set(!!j.internet); })
+      .then(function (j) { set(!!j.internet && navigator.onLine !== false); })  /* browser says no network: trust it over the server cache */
       .catch(function () { set(false); });  /* server unreachable: treat as offline */
   }
   function set(up) {
