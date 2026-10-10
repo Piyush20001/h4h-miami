@@ -5,13 +5,17 @@ Works on any backend: the model replies with ONE JSON object, either a tool call
 """
 import json
 import re
+import time
+import unicodedata
 
 import geo
 import llm
 import prompts_ask
+import prompts_card
 from prompts_ask import IDK, LANG_NAMES
 
-MAX_STEPS = 4
+MAX_STEPS = 3
+DEADLINE_S = 60  # whole Ask request, under the browser's 120 s abort
 DEFAULT_LATLNG = (25.83, -80.189)  # Little Haiti
 _SECTION_RE = re.compile(r"^## (.+)$", re.M)
 _URL_RE = re.compile(r"^Source:\s*(.+)$", re.M)
@@ -38,8 +42,13 @@ def _sections():
     return out
 
 
+def _plain(w):
+    return "".join(c for c in unicodedata.normalize("NFKD", w) if not unicodedata.combining(c))
+
+
 def _words(s):
-    return {w for w in re.findall(r"[a-z0-9]+", (s or "").lower()) if w not in _STOP and len(w) > 1}
+    toks = [w for w in re.findall(r"\w+", (s or "").lower()) if w not in _STOP and len(w) > 1]
+    return set(toks) | {_plain(w) for w in toks}
 
 
 def _section_by_prefix(n):
@@ -90,8 +99,23 @@ def packing_list(card, pet=False, no_car=False, medical=False, kids=False, **_):
             f"{len(secs)} guidance sections: " + ", ".join(s["title"] for s in secs))
 
 
+# Guidance is English; map common Kreyòl/Spanish question words onto it.
+_SYNONYMS = {
+    "chen": "dog pet", "bèt": "pet", "chat": "cat pet", "perro": "dog pet", "mascota": "pet", "mascotas": "pet",
+    "manje": "food", "comida": "food", "dlo": "water", "agua": "water",
+    "machin": "car transportation", "transpò": "transportation", "carro": "car transportation",
+    "transporte": "transportation", "bis": "bus", "autobús": "bus",
+    "medikaman": "medicine medical", "medicina": "medicine medical", "medikal": "medical", "médico": "medical",
+    "abri": "shelter", "refugio": "shelter", "plen": "full", "lleno": "full",
+    "pote": "bring", "traer": "bring", "kaj": "carrier", "jaula": "carrier", "kòd": "leash", "correa": "leash",
+    "evakye": "evacuation", "evacuar": "evacuation", "lòd": "order orders", "orden": "order orders",
+}
+
+
 def lookup_guidance(card, query="", **_):
-    q = _words(str(query))
+    raw = _words(str(query))
+    mapped = {w for t in raw for w in _SYNONYMS.get(t, "").split()}
+    q = raw | mapped | {w + "s" for w in mapped}  # "pet" also matches "Pets"
     scored = []
     for s in _sections():
         score = len(q & _words(s["title"])) * 3 + len(q & _words(s["body"]))
@@ -188,35 +212,72 @@ TOOL CALLS SO FAR:
 YOUR JSON REPLY:"""
 
 
-def _fallback(question, card, lang, force_offline, trace, reason):
+def _fallback(question, card, lang, force_offline, trace, reason, deadline=None):
     trace.append({"tool": "fallback", "args": {}, "result_summary": reason})
     prompt = prompts_ask.build_ask_prompt(question, _card_text(card), lang)
     try:
-        text, backend = llm.generate(prompt, force_offline)
-        return {"answer": text.strip() or IDK[lang], "backend": backend, "trace": trace}
+        text, backend = llm.generate(prompt, force_offline, deadline=deadline)
+        answer = text.strip()
+        if not answer or not _grounded(answer, card, []):
+            return {"answer": IDK[lang], "backend": backend, "trace": trace}
+        return {"answer": answer, "backend": backend, "trace": trace}
     except Exception:
         return {"answer": IDK[lang], "backend": "facts_only", "trace": trace}
+
+
+_PLACE = re.compile(r"(?i)\b(high|elementary|middle|school|academy|center|centre|church|library|park|pavilion|pavillion|escuela|lek[oò]l|legliz|iglesia|biblioteca)\b|\b(?:HS|MS|ES|K-8|SHS|MSHS)\b")
+
+
+def _grounded(answer, card, steps):
+    """Reject answers that state a zone, address, phone number or place not present in the card or tool results."""
+    known = json.dumps(card, ensure_ascii=False) + " ".join(st.get("raw", "") for st in steps)
+    low = known.lower()
+    if prompts_card._ADDRESS.search(answer) or prompts_card._PHONE.search(answer):
+        return False
+    for m in prompts_card._ZONE.finditer(answer):
+        if m.group(0)[-1].upper() not in re.findall(r'"zone":\s*"([A-E])"', known):
+            return False
+    rest = answer  # every named place must be a shelter we actually have: remove known names, nothing may remain
+    for n in sorted(re.findall(r'"name":\s*"([^"]+)"', known), key=len, reverse=True):
+        rest = re.sub(re.escape(n), " ", rest, flags=re.I)
+    if _PLACE.search(rest):
+        return False
+    return True
 
 
 def run(question, card, lang, force_offline=False):
     lang = lang if lang in LANG_NAMES else "en"
     card = card if card is not None else {}
     trace, steps, backend = [], [], "facts_only"
+    start = time.monotonic()
     for n in range(MAX_STEPS + 1):
-        final = n >= MAX_STEPS
+        final = n >= MAX_STEPS or time.monotonic() - start > DEADLINE_S / 2
         try:
-            text, backend = llm.generate(_prompt(question, card, lang, steps, final), force_offline)
+            text, backend = llm.generate(_prompt(question, card, lang, steps, final), force_offline,
+                                         deadline=start + DEADLINE_S)
+            force_offline = force_offline or backend == "ollama"  # don't re-wait on Gemini once it fell back
         except Exception:
             return {"answer": IDK[lang], "backend": "facts_only", "trace": trace}
         obj = _parse(text)
         if obj is None:
-            return _fallback(question, card, lang, force_offline, trace, "model reply was not valid JSON")
+            return _fallback(question, card, lang, force_offline, trace, "model reply was not valid JSON",
+                             start + DEADLINE_S)
         if isinstance(obj.get("answer"), str) and obj["answer"].strip():
-            return {"answer": obj["answer"].strip(), "backend": backend, "trace": trace}
+            if not trace:  # ground every answer in at least one county source, so the trace shows real work
+                result, summary = TOOLS["lookup_guidance"](card, query=question)
+                trace.append({"tool": "lookup_guidance", "args": {"query": question}, "result_summary": summary})
+                steps.append({"tool": "lookup_guidance", "args": {"query": question},
+                              "raw": json.dumps(result, ensure_ascii=False)[:1800]})
+                continue
+            answer = obj["answer"].strip()
+            if not _grounded(answer, card, steps):
+                trace.append({"tool": "check", "args": {}, "result_summary": "answer had an unverified fact; replaced"})
+                return {"answer": IDK[lang], "backend": backend, "trace": trace}
+            return {"answer": answer, "backend": backend, "trace": trace}
         name = obj.get("tool")
         if final or name not in TOOLS:
             return _fallback(question, card, lang, force_offline, trace,
-                             "step limit reached" if final else "unknown tool or reply")
+                             "step limit reached" if final else "unknown tool or reply", start + DEADLINE_S)
         args = obj.get("args") if isinstance(obj.get("args"), dict) else {}
         try:
             result, summary = TOOLS[name](card, **args)
@@ -225,4 +286,4 @@ def run(question, card, lang, force_offline=False):
         trace.append({"tool": name, "args": args, "result_summary": summary})
         raw = json.dumps(result, ensure_ascii=False)
         steps.append({"tool": name, "args": args, "raw": raw[:1800]})
-    return _fallback(question, card, lang, force_offline, trace, "step limit reached")
+    return _fallback(question, card, lang, force_offline, trace, "step limit reached", start + DEADLINE_S)

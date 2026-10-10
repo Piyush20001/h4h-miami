@@ -230,6 +230,7 @@ def facts_only_card(facts, lang):
 
 # The model may never imply an evacuation order; only officials give one.
 _ORDER = re.compile(r"evacu|evakye|evakiye|evakwe", re.I)
+_PLACE_WORD = re.compile(r"(?i)\b(high|elementary|middle|school|academy|center|centre|church|library|park|pavilion|pavillion|escuela|lek[oò]l|legliz|iglesia|biblioteca)\b|\b(?:HS|MS|ES|K-8|SHS|MSHS)\b")
 
 
 # Small models mangle placeholders (**ZONE**, {SHELTER_1}, [ZONE]); normalise them to {{X}}.
@@ -261,7 +262,8 @@ def build_card(facts, lang, force_offline=False):
         card = {"what_this_means": card["what_this_means"], "where_to_go": base["where_to_go"],
                 "what_to_bring": base["what_to_bring"], "what_to_do_now": card["what_to_do_now"]}
         for k in ("what_this_means", "what_to_do_now"):
-            if _ORDER.search(card[k]):
+            model_part = sections[k]  # before slot filling: any named place here was invented by the model
+            if _ORDER.search(card[k]) or _PLACE_WORD.search(model_part):
                 card[k] = base[k]
         return _with_footer(_with_medical(card, facts, lang), lang), backend
     except Exception:

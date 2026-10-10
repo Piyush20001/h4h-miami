@@ -175,3 +175,21 @@ if __name__ == "__main__":
     print("--- sample facts-only (ht) ---")
     for k, v in pc.facts_only_card(facts(), "kre").items():
         print(f"[{k}]\n{v}")
+
+
+def test_invented_place_in_model_section_replaced(monkeypatch):
+    import prompts_card as pc
+    facts = {"zone": "C", "lang": "en", "flags": {}, "shelters": [{"name": "A", "address": "1 X St", "distance_mi": 1.0, "pet_friendly": None}]}
+    raw = "## WHAT_THIS_MEANS\nGo to Miami Central High School now.\n## WHAT_TO_DO_NOW\nPack water. Call 311.\n"
+    monkeypatch.setattr(pc, "generate", lambda p, f=False: (raw, "gemini"))
+    card, backend = pc.build_card(facts, "en", False)
+    assert "Miami Central" not in card["what_this_means"]
+
+
+def test_invented_abbrev_place_replaced(monkeypatch):
+    import prompts_card as pc
+    facts = {"zone": "C", "lang": "en", "flags": {}, "shelters": []}
+    raw = "## WHAT_THIS_MEANS\nGo to Miami Central HS now.\n## WHAT_TO_DO_NOW\nPack water.\n"
+    monkeypatch.setattr(pc, "generate", lambda p, f=False: (raw, "gemini"))
+    card, _ = pc.build_card(facts, "en", False)
+    assert "Miami Central" not in card["what_this_means"]

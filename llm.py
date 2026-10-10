@@ -4,6 +4,7 @@ generate() only ever raises LLMError. No client or key is touched at import time
 """
 import concurrent.futures
 import os
+import time
 
 import requests
 from dotenv import load_dotenv
@@ -46,8 +47,8 @@ def _gemini_call(prompt: str, timeout: float) -> str:
     return text
 
 
-def _gemini(prompt: str) -> str:
-    timeout = _float_env("GEMINI_TIMEOUT", 30)
+def _gemini(prompt: str, cap: float | None = None) -> str:
+    timeout = min(_float_env("GEMINI_TIMEOUT", 30), cap or float("inf"))
     ex = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     try:
         fut = ex.submit(_gemini_call, prompt, timeout)
@@ -67,13 +68,13 @@ def _ollama_chat(model: str, messages: list, options: dict, timeout: float) -> s
     return (r.json()["message"]["content"] or "").strip()
 
 
-def _ollama(prompt: str) -> str:
+def _ollama(prompt: str, cap: float | None = None) -> str:
     model = os.getenv("OLLAMA_MODEL", "gemma4:e2b-it-qat")
     text = _ollama_chat(
         model,
         [{"role": "user", "content": prompt}],
         {"num_predict": 400, "num_ctx": 4096},
-        OLLAMA_TIMEOUT,
+        min(OLLAMA_TIMEOUT, cap or float("inf")),
     )
     if not text:
         raise LLMError("empty Ollama response")
@@ -94,18 +95,31 @@ def warm() -> bool:
         return False
 
 
-def generate(prompt: str, force_offline: bool = False) -> tuple[str, str]:
-    """Return (text, "gemini" | "ollama"). Raises only LLMError."""
+def generate(prompt: str, force_offline: bool = False, deadline: float | None = None) -> tuple[str, str]:
+    """Return (text, "gemini" | "ollama"). Raises only LLMError.
+    deadline: optional time.monotonic() value; no backend call may run past it."""
+    def left():
+        if deadline is None:
+            return None
+        rem = deadline - time.monotonic()
+        if rem <= 1:
+            raise LLMError("request deadline reached")
+        return rem
+
     gemini_err = None
     if not force_offline:
         try:
-            return _gemini(prompt), "gemini"
+            cap = left()
+            return (_gemini(prompt) if cap is None else _gemini(prompt, cap)), "gemini"
         except BaseException as e:  # incl. timeouts; never leak
             if isinstance(e, (KeyboardInterrupt, SystemExit)):
                 raise
             gemini_err = e
     try:
-        return _ollama(prompt), "ollama"
+        cap = left()
+        return (_ollama(prompt) if cap is None else _ollama(prompt, cap)), "ollama"
+    except LLMError:
+        raise
     except Exception as e:
         raise LLMError(
             f"all backends failed (gemini: {type(gemini_err).__name__ if gemini_err else 'skipped'}; "

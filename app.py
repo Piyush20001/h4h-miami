@@ -15,8 +15,17 @@ def index():
     return app.send_static_file("index.html")
 
 
+MIAMI_DADE = (25.13, 25.98, -80.88, -80.11)  # lat min/max, lng min/max (county bounding box)
+
+
+class OutsideArea(ValueError):
+    pass
+
+
 def _facts(body):
     lat, lng = float(body["lat"]), float(body["lng"])
+    if not (MIAMI_DADE[0] <= lat <= MIAMI_DADE[1] and MIAMI_DADE[2] <= lng <= MIAMI_DADE[3]):
+        raise OutsideArea()
     flags = body.get("flags", {})
     facts = {"zone": geo.get_zone(lat, lng), "lang": body.get("lang", "kre"), "flags": flags,
              "shelters": geo.find_shelters(lat, lng, pet=bool(flags.get("pet")), limit=3),
@@ -24,6 +33,12 @@ def _facts(body):
     if flags.get("medical"):
         facts["special_needs_shelters"] = geo.find_special_needs(lat, lng)
     return facts
+
+
+@app.errorhandler(OutsideArea)
+def outside_area(_):
+    return jsonify(error="outside_miami_dade",
+                   message="StormCard only covers Miami-Dade County. Call 311 or your county emergency office."), 422
 
 
 @app.post("/api/facts")

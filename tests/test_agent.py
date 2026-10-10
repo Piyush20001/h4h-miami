@@ -8,7 +8,7 @@ import prompts_ask
 def script(monkeypatch, replies):
     calls = []
 
-    def fake(prompt, force_offline=False):
+    def fake(prompt, force_offline=False, deadline=None):
         calls.append(prompt)
         r = replies[min(len(calls) - 1, len(replies) - 1)]
         if isinstance(r, Exception):
@@ -76,3 +76,31 @@ def test_tools_deterministic():
     assert len(r["sections"]) >= 4
     r, _ = agent.evacuation_help({})
     assert "311" in json.dumps(r)
+
+
+def test_grounded_rejects_invented_facts():
+    card = {"zone": "C", "shelters": [{"name": "Miami Northwestern HS"}]}
+    assert agent._grounded("Go to Miami Northwestern HS and call 311.", card, [])
+    assert not agent._grounded("Go to Miami Central High School.", card, [])
+    assert not agent._grounded("You are in Zone A.", card, [])
+    assert not agent._grounded("Call 305-555-1234 now.", card, [])
+
+
+def test_unicode_words_match_accents():
+    assert "bet" in agent._words("Èske abri a aksepte bèt?") and "bèt" in agent._words("bèt")
+    assert agent.lookup_guidance({}, query="Èske abri a aksepte bèt?")[1].count("Pets")
+
+
+def test_grounded_checks_every_named_place():
+    card = {"zone": "C", "shelters": [{"name": "Miami Northwestern HS"}]}
+    assert not agent._grounded("Go to Miami Northwestern HS or Miami Central HS.", card, [])
+    assert agent._grounded("Go to Miami Northwestern HS.", card, [])
+
+
+def test_deadline_stops_calls(monkeypatch):
+    import llm, time
+    try:
+        llm.generate("hi", True, deadline=time.monotonic() - 1)
+        assert False, "should raise"
+    except llm.LLMError:
+        pass
