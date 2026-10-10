@@ -49,6 +49,7 @@ T = {
         "nocar": "No car? Ask a neighbor, or call 311 for a ride to a shelter.",
         "now": "Pack your bag now. Charge your phone. Listen to local news.",
         "footer": "Follow official orders from Miami-Dade Emergency Management.",
+        "zone_name": "Storm Surge Zone {z}",
     },
     "es": {
         "zone": "Usted está en la Zona de Marejada Ciclónica {z}. No es la zona del seguro de inundación. Si las autoridades ordenan evacuar su zona, váyase.",
@@ -62,9 +63,10 @@ T = {
         "nocar": "¿No tiene carro? Pida ayuda a un vecino o llame al 311 para que lo lleven a un refugio.",
         "now": "Prepare su bolso ahora. Cargue su teléfono. Escuche las noticias locales.",
         "footer": "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade.",
+        "zone_name": "Zona de Marejada Ciclónica {z}",
     },
     "kre": {
-        "zone": "Ou nan Zòn Evakyasyon {z} pou lanmè k ap monte. Sa a se pa zòn asirans inondasyon an. Si otorite yo bay lòd pou zòn ou an evakye, pati.",
+        "zone": "Ou nan Zòn Lanm Siklòn {z}. Sa a se pa zòn asirans inondasyon an. Si otorite yo bay lòd pou zòn ou an evakye, pati.",
         "nozone": "Ou pa nan yon zòn evakyasyon pou lanmè k ap monte. Si kay ou an an sekirite, ou ka rete lakay ou. Men, prepare w kanmenm.",
         "shelters": "Abri ki tou pre w (pou planifye sèlman):",
         "shelter": "- {name}: {d} mil{pet}. Rele 311 pou konfime li ouvè.",
@@ -75,6 +77,7 @@ T = {
         "nocar": "Ou pa gen machin? Mande yon vwazen ede w, oswa rele 311 pou yo vin chèche w mennen w nan yon abri.",
         "now": "Prepare sak ou kounye a. Chaje telefòn ou. Koute nouvèl lokal yo.",
         "footer": "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo.",
+        "zone_name": "Zòn Lanm Siklòn {z}",
     },
 }
 
@@ -89,11 +92,11 @@ def build_prompt(facts, lang):
     shelters = facts.get("shelters") or []
     model_facts = {
         "zone": "{{ZONE}}" if facts.get("zone") else None,
-        "in_evacuation_zone": bool(facts.get("zone")),
+        "in_surge_zone": bool(facts.get("zone")),
         "flags": flags,
         "shelters": [
             {"name": "{{SHELTER_%d}}" % (i + 1), "distance_mi": s.get("distance_mi"),
-             "pet_friendly": s.get("pet_friendly")}
+             "pet_friendly": {True: "yes", False: "no"}.get(s.get("pet_friendly"), "unknown")}
             for i, s in enumerate(shelters[:3])
         ],
     }
@@ -101,23 +104,26 @@ def build_prompt(facts, lang):
     if not facts.get("zone"):
         notes.append("Not in a surge zone: say they can stay home if it is safe, still prepare, and follow official orders.")
     if flags.get("no_car"):
-        notes.append("No car: tell them to ask a neighbor or call 311 for a ride to a shelter.")
+        notes.append("They have no car: tell them to ask a neighbor or call 311 for a ride to a shelter.")
     if flags.get("medical"):
         notes.append("Medical needs: bring medicines; call 311 to ask about special-needs shelters.")
     if flags.get("kids"):
         notes.append("Kids: bring things for the children.")
     if flags.get("pet"):
-        notes.append("Pet: bring pet food, leash, carrier. Suggest only shelters with pet_friendly true.")
+        notes.append("They have a pet: add pet food, leash and carrier to the list. Only say a shelter takes pets if its pet_friendly is \"yes\"; if \"unknown\", say to call 311 to ask about pets.")
     return (
         f"Write a hurricane action card in {LANG_NAMES[lang]}. {STYLE[lang]}\n"
         "Facts (JSON):\n" + json.dumps(model_facts, ensure_ascii=False) + "\n"
         "Rules:\n"
-        "- 6th-grade reading level. Short sentences. 80-120 words total.\n"
-        + ("- Refer to the zone ONLY as {{ZONE}}.\n" if facts.get("zone") else "")
+        "- 6th-grade reading level. Short sentences. 60-90 words total.\n"
+        + ("- Refer to the zone ONLY as {{ZONE}} (code replaces it with the full zone name; do not write the word zone before it).\n" if facts.get("zone") else "")
         + "- Refer to shelters ONLY as {{SHELTER_1}}, {{SHELTER_2}}, {{SHELTER_3}} (only those listed).\n"
         "- Never write addresses, zone letters, shelter names, or phone numbers. The only number allowed is 311.\n"
         "- Shelters are planning candidates: say to call 311 to confirm it is open.\n"
         "- Do not talk about hurricane categories.\n"
+        "- Being in a zone is NOT an evacuation order. Never say they must leave now or that there is an order. "
+        "Say: if officials order your zone to leave, go.\n"
+        "- WHAT_TO_BRING always lists: water, food for 3 days, medicines, documents, phone charger.\n"
         + "".join(f"- {n}\n" for n in notes)
         + "Output exactly these four headers in English, each followed by the text in "
         f"{LANG_NAMES[lang]}:\n"
@@ -155,7 +161,8 @@ def _valid(raw, facts):
 
 
 def _fill(text, facts):
-    text = text.replace("{{ZONE}}", str(facts.get("zone")))
+    zone_name = T[_lang(facts.get("lang"))]["zone_name"].format(z=facts.get("zone"))
+    text = text.replace("{{ZONE}}", zone_name)
     for i, s in enumerate((facts.get("shelters") or [])[:3]):
         text = text.replace("{{SHELTER_%d}}" % (i + 1), s.get("name", ""))
     return text
