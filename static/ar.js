@@ -7,7 +7,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var NS = "http://www.w3.org/2000/svg";
   var ov = null, video = null, stream = null, watchId = null, target = null;
-  var here = null, heading = null, gpsAcc = null, session = 0, shown = null;
+  var wake = null, here = null, heading = null, gpsAcc = null, session = 0, shown = null;
 
   function h(tag, cls, text) {
     var n = document.createElement(tag);
@@ -35,6 +35,8 @@
     video = h("video", "ar-cam");
     video.setAttribute("playsinline", "");
     video.muted = true;
+    video.setAttribute("autoplay", "");
+    video.setAttribute("muted", "");
     ov.appendChild(video);
 
     var top = h("div", "ar-top");
@@ -95,9 +97,10 @@
       arrow.style.visibility = "visible";
       ov.querySelector(".ar-cardinal").textContent = "";
       var r = ((b - heading) % 360 + 540) % 360 - 180;
-      ahead = Math.abs(r) < (ov.classList.contains("is-ahead") ? 24 : 16); /* hysteresis */
-      hint = ahead ? t("arAhead") : r > 0 ? t("arRight") : t("arLeft");
-      arrow.style.transform = "rotate(" + ease(r).toFixed(1) + "deg)";
+      var near = live && d < 0.03;
+      ahead = Math.abs(r) < (ov.classList.contains("is-ahead") ? 25 : 15); /* hysteresis: no flicker */
+      hint = near ? t("arNear") : ahead ? t("arAhead") : Math.abs(r) > 150 ? t("arBehind") : r > 0 ? t("arRight") : t("arLeft");
+      if (!near) arrow.style.transform = "rotate(" + ease(r).toFixed(1) + "deg)"; /* GPS bearing is noise this close: freeze */
     }
     ov.classList.toggle("is-ahead", ahead);
     ov.querySelector(".ar-hint").textContent = hint;
@@ -149,7 +152,7 @@
       window.addEventListener("deviceorientationabsolute", onOrient, true);
       window.addEventListener("deviceorientation", onOrient, true);
     }
-    ov.querySelector(".ar-note").textContent = secure ? t("arStraight") : t("arNeedHttps") + " " + t("arStraight");
+    ov.querySelector(".ar-note").textContent = (secure ? "" : t("arNeedHttps") + " ") + t("arUpright") + " " + t("arStraight");
   }
 
   function openAr(tg) {
@@ -162,6 +165,7 @@
     ov.hidden = false;
     document.body.classList.add("ar-open");
     startSensors();
+    try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (l) { wake = l; }).catch(function () {}); } catch (e) { /* not supported */ }
     paint();
     ov.querySelector(".ar-close").focus();
   }
@@ -173,6 +177,8 @@
     ov.classList.remove("has-cam", "is-ahead");
     document.body.classList.remove("ar-open");
     if (stream) { stream.getTracks().forEach(function (k) { k.stop(); }); stream = null; }
+    if (video) video.srcObject = null;
+    if (wake) { try { wake.release(); } catch (e) { /* already released */ } wake = null; }
     if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
     watchId = null;
     window.removeEventListener("deviceorientation", onOrient, true);
