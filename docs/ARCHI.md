@@ -32,7 +32,7 @@ StormCard turns a Miami-Dade location into a one-page hurricane action card in *
 | Offline model | Gemma 4 `gemma4:e2b-it-qat` via Ollama, `think: false` (8 GB laptop can't load e4b; e4b if RAM allows) |
 | Persistence | Browser `localStorage` (saved card, checklists, onboarding flag) |
 | Native shell | `ios/` SwiftUI WKWebView wrapper (XcodeGen); demo uses Safari Add to Home Screen instead |
-| Dev | Claude Code (Opus 5.5 + Sonnet 5.5 subagents, Fable advisor), Codex CLI (reviews, image generation), impeccable, frontend-slides, pytest (50 tests) |
+| Dev | Claude Code (Opus 5.5, Sonnet 5.5 subagents, Fable advisor), Codex CLI (code review; image generation for logo and icons), pytest (50 tests) |
 
 License MIT. Gemma: link the official Gemma terms in the README.
 

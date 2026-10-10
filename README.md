@@ -136,7 +136,7 @@ Card quality evals (kre/es/en): `evals/run_evals.py`.
 
 Split per [docs/ARCHI.md](docs/ARCHI.md) section 12.
 
-**AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable for design advice), OpenAI Codex CLI (code review, image generation for logo, icons and slides), the impeccable design skill, the frontend-slides skill, and Gemma 4 (the product model).
+**AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable as advisor), OpenAI Codex CLI (code review; image generation for the logo and icons), and Gemma 4 (the product's model).
 
 ## License and disclaimer
 
