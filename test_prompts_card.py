@@ -29,7 +29,7 @@ def check_card(card, lang):
 
 
 GOOD = (
-    "## WHAT_THIS_MEANS\nOu nan zòn {{ZONE}}. Lanmè ka monte vit.\n"
+    "## WHAT_THIS_MEANS\nOu nan {{ZONE}}. Lanmè ka monte vit.\n"
     "## WHERE_TO_GO\nAle nan {{SHELTER_1}} oswa {{SHELTER_2}}. Rele 311 pou konfime li ouvè.\n"
     "## WHAT_TO_BRING\n- Dlo\n- Manje pou 3 jou\n"
     "## WHAT_TO_DO_NOW\nPrepare sak ou kounye a.\n"
@@ -51,7 +51,7 @@ def test_good_output_filled():
     card, backend = pc.build_card(facts(), "kre")
     assert backend == "gemini"
     check_card(card, "kre")
-    assert "zòn B" in card["what_this_means"]
+    assert "Zòn Lanm Siklòn B" in card["what_this_means"]
     assert "Miami Edison Senior High" in card["where_to_go"]
     assert "Toussaint L'Ouverture Elementary" in card["where_to_go"]
 
@@ -62,9 +62,9 @@ def test_bad_outputs_fall_back():
         "address2": GOOD.replace("Lanmè ka monte vit.", "Ale nan 1301 NW 83rd Street."),
         "zip": GOOD.replace("Lanmè ka monte vit.", "Miami 33127."),
         "zone_en": GOOD.replace("{{ZONE}}", "Zone B"),
-        "zone_ht": GOOD.replace("zòn {{ZONE}}", "zòn C"),
-        "zone_es": GOOD.replace("zòn {{ZONE}}", "zona d").replace("zona d", "Zona D"),
-        "surge": GOOD.replace("zòn {{ZONE}}", "Surge Zone E"),
+        "zone_ht": GOOD.replace("{{ZONE}}", "zòn C"),
+        "zone_es": GOOD.replace("{{ZONE}}", "zona d").replace("zona d", "Zona D"),
+        "surge": GOOD.replace("{{ZONE}}", "Surge Zone E"),
         "missing": GOOD.split("## WHAT_TO_DO_NOW")[0],
         "empty": GOOD.replace("Prepare sak ou kounye a.", ""),
         "phone": GOOD.replace("Rele 311", "Rele 305-555-1234"),
@@ -93,8 +93,8 @@ def test_exception_falls_back():
 def test_zone_none():
     f = facts(zone=None)
     prompt = pc.build_prompt(f, "en")
-    assert "\"in_evacuation_zone\": false" in prompt and "{{ZONE}}" not in prompt
-    fake(GOOD.replace("Ou nan zòn {{ZONE}}.", "Ou pa nan yon zòn evakyasyon."))
+    assert "\"in_surge_zone\": false" in prompt and "{{ZONE}}" not in prompt
+    fake(GOOD.replace("Ou nan {{ZONE}}.", "Ou pa nan yon zòn evakyasyon."))
     card, backend = pc.build_card(f, "kre")
     assert backend == "gemini"
     check_card(card, "kre")
