@@ -79,7 +79,7 @@ flowchart LR
     UI --> LS[(localStorage)]
 ```
 
-StormCard runs on one device (Flask + Ollama). Offline answers come from Gemma 4 running locally on that device (the laptop in today's demo; phones on its Wi-Fi); static assets, fonts and map data are all served locally, so it works with the internet off. Details: [docs/ARCHI.md](docs/ARCHI.md). **Future:** on-phone Gemma 4 E2B, a county "open once to save offline" notice, Gemma 4 E2B on the phone itself.
+StormCard runs on one device (Flask + Ollama). Offline answers come from Gemma 4 running locally on that device (the laptop in today's demo; phones on its Wi-Fi); static assets, fonts and map data are all served locally, so it works with the internet off. **Future:** Gemma 4 E2B on the phone itself, and a county "open it once to save it offline" notice.
 
 ## Run it
 
@@ -130,10 +130,8 @@ Card quality evals (kre/es/en): `evals/run_evals.py`.
 
 ## Team
 
-- **Piyush Mishra:** AI slice (LLM client, agent, Ask, storms, status, UI integration)
-- **Stuti Agarwal:** card slice (geo, prompts, data, evals, mobile/iOS notes)
-
-Split per [docs/ARCHI.md](docs/ARCHI.md) section 12.
+- Piyush Mishra
+- Stuti Agarwal
 
 **AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable as advisor), OpenAI Codex CLI (code review; image generation for the logo and icons), and Gemma 4 (the product's model).
 
