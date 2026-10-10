@@ -14,3 +14,4 @@ build/
 .gstack/
 .impeccable/questions/
 data/storms_cache.json
+certs/

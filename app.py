@@ -7,6 +7,7 @@ from flask import Flask, Response, jsonify, request, stream_with_context
 
 import agent
 import os
+from pathlib import Path
 import time
 
 from dotenv import load_dotenv
@@ -184,4 +185,16 @@ def ask_stream():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    import sys
+    if "--https" in sys.argv:
+        # iPhone Safari only allows camera + compass + GPS on HTTPS: serve a self-signed copy on 8443
+        import subprocess
+        certs = Path(__file__).parent / "certs"
+        certs.mkdir(exist_ok=True)
+        crt, key = certs / "dev.crt", certs / "dev.key"
+        if not crt.exists():
+            subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "30",
+                            "-subj", "/CN=stormcard.local", "-keyout", str(key), "-out", str(crt)], check=True)
+        app.run(host="0.0.0.0", port=8443, ssl_context=(str(crt), str(key)))
+    else:
+        app.run(host="0.0.0.0", port=8000)

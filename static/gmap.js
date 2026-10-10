@@ -156,8 +156,8 @@
         var p = { lat: s.lat, lng: s.lng };
         if (!opts.focusBus) bounds.extend(p);
         var m = new gm.Marker({
-          map: map, position: p, zIndex: 5000 + i, title: s.name || "",
-          icon: circle(13, BLUE),
+          map: map, position: p, zIndex: i === 0 ? 8000 : 5000 + i, title: s.name || "",
+          icon: i === 0 ? circle(17, "#3d7556") : circle(13, BLUE),
           label: { text: String(i + 1), color: "#ffffff", fontWeight: "800", fontSize: "14px" }
         });
         m.sc = true;

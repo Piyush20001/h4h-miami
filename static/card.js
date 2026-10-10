@@ -363,7 +363,13 @@
     var w = h("div", "plate-wrap");
     w.appendChild(plate);
     var dl = window.SCMap ? SCMap.dirLink(home, s, walk) : null;
-    if (dl) { var f = h("div", "plate-foot"); f.appendChild(dl); w.appendChild(f); }
+    var ab = SC.arButton ? SC.arButton(home, s, "shelter") : null;
+    if (dl || ab) {
+      var f = h("div", "plate-foot");
+      if (ab) f.appendChild(ab);
+      if (dl) f.appendChild(dl);
+      w.appendChild(f);
+    }
     return w;
   }
 
@@ -395,10 +401,11 @@
     }
     list.forEach(function (s, i) {
       var li = h("li");
-      var b = h("button", "plate-btn");
+      var b = h("button", "plate-btn" + (i === 0 ? " is-rec" : ""));
       b.type = "button";
       b.setAttribute("aria-pressed", "false");
       b.dataset.i = i;
+      if (i === 0) li.appendChild(h("p", "rec-tag", t("recTag")));
       b.appendChild(h("span", "num", String(i + 1)));
       var body = h("span", "pb");
       body.appendChild(h("span", "nm", s.name || ""));
@@ -688,6 +695,8 @@
     card.appendChild(steps);
     if (f.pet) card.appendChild(h("p", "ride-pet", t("ridePet")));
     var act = h("div", "ride-act");
+    var arb = SC.arButton ? SC.arButton(home, b, "bus") : null;
+    if (arb) { arb.classList.add("ar-btn-big"); card.appendChild(arb); }
     act.appendChild(telBtn(t("busConfirm")));
     var dl = window.SCMap ? SCMap.dirLink(home, b, true) : null;
     if (dl) act.appendChild(dl);
@@ -718,7 +727,7 @@
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
         bus: busList(r), zone: r.zone, focusBus: busList(r).length > 0 && !st.mapAll,
-        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), cap: t("chartCap"), aria: t("chartAria", { n: shel.length }) },
+        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), cap: t("chartCap"), rec: t("recTag"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       };
       chartCtl = StormChart.render($("chart"), copts);

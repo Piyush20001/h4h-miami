@@ -1,49 +1,118 @@
-# h4h-miami
+# StormCard
 
-Our project for [Hack for Humanity: Miami](https://github.com/AI-Collective-Hackathons/hack-for-humanity-miami) — October 10, 2026, The LAB Miami.
+**StormCard turns a Miami-Dade address into a hurricane action card in Kreyòl, Español and English, and keeps answering questions when the internet is down (Gemma 4 runs locally).**
 
-**Team plan + architecture:** [docs/1-plans/PLAN.md](docs/1-plans/PLAN.md) · [docs/ARCHI.md](docs/ARCHI.md)
+Built for [Hack for Humanity: Miami](https://github.com/AI-Collective-Hackathons/hack-for-humanity-miami), October 10, 2026, The LAB Miami.
 
-## Submission info
+## Track and prizes
 
-- **Build for Miami track:** _TBD (01 Four Forces, One City · 02 Wild Miami · 03 Brain Gain · 04 Data to Action)_
-- **MLH challenges entered:** Best Use of Gemma 4 · Best Open-Source AI Project _(confirm before submitting)_
-- **Model used:** **Gemma 4 — `gemma-4-26b-a4b-it`** (Gemma 4 26B A4B IT), accessed through the **Gemini API**. Integration: [`gemma.py`](gemma.py)
+- **Track:** 01 Four Forces, One City (Air + Water)
+- **Prizes targeted:** MLH Best Open-Source AI Project, MLH Best Use of Gemma 4
+
+## The problem
+
+Madame Joseph is a **composite persona**, not a real person: 74, Little Haiti, speaks Haitian Creole and little English, has a small dog, no car.
+
+- Hurricane guidance is mostly English, and she cannot tell which storm surge zone she lives in.
+- Most shelters do not take pets, and she does not know where to go or how to get there without a car.
+- Cell towers and internet fail first, exactly when cloud-only apps stop answering.
 
 ## What it does
 
-_TBD_
+- **Surge zone plate:** her Miami-Dade storm surge planning zone (A to E), in her language.
+- **Shelter candidates that fit her household:** pets, and special-needs shelters for medical needs.
+- **"Need a ride?":** the nearest county evacuation bus pickup. Buses run only when an evacuation is ordered; call 311.
+- **Map:** Google Maps online; offline, an SVG map drawn from county main roads and surge zones.
+- **Ask agent:** follow-up questions with live-streamed tool steps (`find_shelters`, `get_zone`, `packing_list`, `lookup_guidance`, `evacuation_help`, `draft_message`).
+- **"Text my family":** a code-built SMS draft that she sends herself.
+- **NHC storm card:** current storms from the National Hurricane Center.
+- **Automatic online/offline:** no switch; the app probes connectivity and picks the model.
+- **"Point my way" (new):** camera compass arrow toward the bus stop or shelter. Straight-line direction only; needs HTTPS (see [Phone (HTTPS)](#phone-https)).
+- **PWA:** installs to the home screen. First-run welcome screen.
 
-## Tech stack
+## How the AI is used
 
-- Gemma 4 (`gemma-4-26b-a4b-it`) via the Gemini API, using the `google-genai` Python SDK
-- Python 3.10+
+| Mode | Model | Runtime |
+|---|---|---|
+| Online | Gemma 4 `gemma-4-26b-a4b-it` (thinking_level minimal) | Gemini API |
+| Offline | Gemma 4 `gemma4:e2b-it-qat` | Ollama, on the device |
+
+**Facts by code, words by model.** Zone, shelter names, addresses and phones come from county data and are inserted by code into fixed slots; the model writes only the short prose around them. Guardrails:
+
+- Grounding check rejects output that names an invented place, phone number or zone.
+- No claim that an evacuation has been ordered.
+- When unsure, the answer is "I don't know, call 311".
+
+Gemma is used under the [Gemma Terms of Use](https://ai.google.dev/gemma/terms).
 
 ## Data sources
 
-- **Storm surge planning zones (A–E):** Miami-Dade County, [StormSurgePlanningZone_Multipart](https://services.arcgis.com/8Pc9XBTAsYuxx9Ny/ArcGIS/rest/services/StormSurgePlanningZone_Multipart/FeatureServer/0) (`ZONEID`). Saved as `data/zones.geojson`.
-- **Shelters:** Florida Division of Emergency Management, [Risk Shelter Inventory (General)](https://services.arcgis.com/3wFbqsFPLeKqOlIK/arcgis/rest/services/Risk_Shelter_Inventory_General/FeatureServer/0), filtered to Miami-Dade, as of 2021-08-31 (40 buildings). Saved as `data/shelters.geojson`. Miami-Dade's own evacuation-center layers return no rows outside an activation, so these are **planning candidates only: call 311 to confirm a shelter is open.** Pet eligibility is shown only where the source says "Yes"; blank means unknown.
+| Data | Source | Notes |
+|---|---|---|
+| Storm surge zones | Miami-Dade `StormSurgePlanningZone` | `data/zones.geojson` |
+| Shelters | FDEM Risk Shelter Inventory, Miami-Dade, as of 2021-08-31 | Planning candidates only; pet status shown only where the source says "Yes" |
+| Special-needs shelters | FDEM special-needs shelter inventory | Medical-need matching |
+| Evacuation bus pickups | Miami-Dade Emergency Evacuation Bus Pick-Up sites (129) | Cached for offline |
+| Roads | Miami-Dade Highway + MajorRoads layers | `data/roads.geojson`, offline map |
+| Storms | NHC `CurrentStorms.json` | Cached; hidden if unavailable |
+| Guidance | Miami-Dade Emergency Management, ready.gov | `data/guidance.md` |
 
-## Running locally
+**Limitations:** the shelter list is old and no live capacity feed exists, so every shelter is a candidate to confirm with 311. Addresses are located within Miami-Dade bounds only, with no street geocoding. The offline map shows main roads and zones, not turn-by-turn routes. Compass direction is straight-line, not a walking route. Regular Metrobus service is suspended in storms and is not shown.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    U[Resident on phone / laptop] --> UI[static UI]
+    UI -->|facts first| F[/api/facts/] --> G[geo.py] --> D[(zones · shelters · special needs · bus pickups)]
+    UI --> C[/api/card/] --> PC[prompts_card] --> L[llm.py]
+    UI --> A[/api/ask/] --> AG[agent.py tools] --> L
+    AG --> GD[(guidance.md)]
+    UI --> S[/api/storms/] --> N[(NHC feed / cache)]
+    ST[status.py internet probe] -.-> L & UI
+    L -->|online| GM[Gemma 4 · Gemini API]
+    L -->|offline| OL[Gemma 4 · Ollama on this device]
+    UI --> LS[(localStorage)]
+```
+
+Everything runs on one laptop (Flask + Ollama) and phones connect over the same Wi-Fi; static assets, fonts and map data are all served locally, so it works with the internet off. Details: [docs/ARCHI.md](docs/ARCHI.md). **Future:** on-phone Gemma 4 E2B, a county "open once to save offline" notice, community hubs, and a coordinator-run ride board.
+
+## Run it
 
 ```bash
 git clone https://github.com/Piyush20001/h4h-miami.git && cd h4h-miami
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # paste your key from https://aistudio.google.com/apikey
-python gemma.py "your prompt"                 # text
-python gemma.py "describe this" photo.jpg     # text + image
-flask --app app run --host 0.0.0.0 --port 8000   # StormCard at http://localhost:8000
+cp .env.example .env     # set GEMINI_API_KEY (https://aistudio.google.com/apikey); MAPS_API_KEY is optional
+ollama pull gemma4:e2b-it-qat
+python app.py            # http://localhost:8000
 ```
 
-Tests: `python test_geo.py && python test_prompts_card.py`
+- **Offline rehearsal:** `HUB_OFFLINE=1 python app.py` (or turn Wi-Fi off); Ask then uses Ollama.
+- **Phone camera/compass:** needs HTTPS, see [Phone (HTTPS)](#phone-https).
+- Without `MAPS_API_KEY` the map falls back to the offline chart.
 
-Set `GEMMA_MODEL=gemma-4-31b-it` in `.env` to switch to the larger Gemma 4 model.
+### Phone (HTTPS)
+
+iPhone Safari only allows camera and compass on HTTPS. Run `python app.py --https` to serve HTTPS on port 8443 with a self-signed certificate (generated into `certs/`, gitignored). On the iPhone open `https://<laptop-ip>:8443`, tap **Show Details**, then **visit this website**. Phone and laptop must be on the same Wi-Fi. Phone steps: [docs/MOBILE.md](docs/MOBILE.md).
+
+## Tests
+
+```bash
+.venv/bin/python -m pytest -q test_geo.py test_prompts_card.py tests/
+```
+
+Card quality evals (kre/es/en): `evals/run_evals.py`.
 
 ## Team
 
-- [@Piyush20001](https://github.com/Piyush20001)
+- **Piyush Mishra:** AI slice (LLM client, agent, Ask, storms, status, UI integration)
+- **Stuti Agarwal:** card slice (geo, prompts, data, evals, mobile/iOS notes)
 
-## License
+Split per [docs/ARCHI.md](docs/ARCHI.md) section 12.
 
-[MIT](LICENSE)
+**AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable for design advice), OpenAI Codex CLI (code review, Astra advisor), the impeccable design skill, and Gemma 4 (the product model).
+
+## License and disclaimer
+
+[MIT](LICENSE). StormCard is **not an official Miami-Dade product**. Always follow official evacuation orders and call **311** to confirm shelters, buses and zones.

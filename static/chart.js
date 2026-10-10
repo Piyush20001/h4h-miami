@@ -248,8 +248,14 @@
       var delay = 250 + idx * 130;
       routes.push(leader(orig[idx], p));
       var g = el("g", { transform: "translate(" + p.x + " " + p.y + ")" }, markLayer);
+      if (idx === 0) {
+        /* the card's top pick: a ring and a "go here" tag so it reads first */
+        el("circle", { r: 21, "class": "c-rec-ring" }, g);
+        var rt = el("text", { y: -27, "text-anchor": "middle", "class": "c-rec-tag" }, g);
+        rt.textContent = opts.labels.rec || "";
+      }
       var inner = el("g", {
-        "class": "c-shelter",
+        "class": "c-shelter" + (idx === 0 ? " is-rec" : ""),
         style: "animation-delay:" + (delay + 330) + "ms"
       }, g);
       el("circle", { r: 13 }, inner);
