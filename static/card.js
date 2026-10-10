@@ -491,7 +491,7 @@
     stat.textContent = "";
     stat.className = "status s-" + stage;
     if (stage === "done") {
-      var bk = ["gemini", "ollama", "none"].indexOf(r.backend) >= 0 ? r.backend : "none";
+      var bk = badgeKey(r).slice(2); /* light colour follows the label: online green, offline red */
       ol.appendChild(SC.stepRow("done", t("stDone"), [h("span", "badge b-" + bk, t(badgeKey(r)))]));
       stat.appendChild(h("span", "badge b-" + bk, t(badgeKey(r))));
     } else if (stage === "fail") {
@@ -508,7 +508,7 @@
   function renderHow(r) {
     var root = $("howBody");
     root.textContent = "";
-    var badge = h("p", "badge b-" + r.backend, t(badgeKey(r)));
+    var badge = h("p", "badge b-" + badgeKey(r).slice(2), t(badgeKey(r)));
     root.appendChild(badge);
 
     var dl = h("dl", "facts");

@@ -12,9 +12,11 @@
     if (text !== undefined) n.textContent = text;
     return n;
   }
-  function badgeText(b) {
-    return t("b_" + (["gemini", "ollama", "none"].indexOf(b) >= 0 ? b : "none"));
+  function badgeKind(b) {
+    if (b === "gemini" || b === "ollama") return b;
+    return SC.hub && SC.hub.internet === false ? "offline" : "none";
   }
+  function badgeText(b) { return t("b_" + badgeKind(b)); }
 
   function paintChips() {
     document.querySelectorAll("#chips .chip").forEach(function (c) {
@@ -32,8 +34,11 @@
   }
   SC.paintAsk = paintAsk;
   function paintSwitch() {
+    var off = !!(SC.hub && SC.hub.internet === false);
     var el = $("hubStatus");
-    if (el) el.textContent = t(SC.hub && SC.hub.internet === false ? "hubOffline" : "hubOnline");
+    if (el) { el.textContent = t(off ? "hubOffline" : "hubOnline"); el.classList.toggle("is-off", off); }
+    var net = $("net");
+    if (net) { net.classList.toggle("is-off", off); net.querySelector(".net-tx").textContent = t(off ? "b_offline" : "b_gemini"); }
   }
 
   SC.paintHub = paintSwitch;
@@ -111,7 +116,7 @@
   function fill(turn, answer, backend, trace, lang, message) {
     turn.a.textContent = "";
     turn.a.appendChild(SC.setText(h("p", "ans"), answer));
-    turn.a.appendChild(h("p", "badge b-" + backend, badgeText(backend)));
+    turn.a.appendChild(h("p", "badge b-" + badgeKind(backend), badgeText(backend)));
     if (typeof message === "string" && message) turn.a.appendChild(messageBox(message, lang));
     if (Array.isArray(trace)) {
       document.querySelectorAll("#thread details.trace").forEach(function (d) { d.open = false; });

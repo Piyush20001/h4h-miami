@@ -657,3 +657,17 @@ img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
 @media (prefers-reduced-motion: reduce) {
   .step.is-run .mk, .status .dot, .step.is-run .mk::before, .status .dot::before, .step.is-run .mk::after, .status .dot::after { animation: none; }
 }
+
+/* ---------- online / offline light (green online, red offline) ---------- */
+.net { display: inline-flex; align-items: center; gap: 6px; font: 800 14px var(--font); color: var(--green); white-space: nowrap; }
+.net-dot, .hubline::before, .badge.b-gemini::before, .badge.b-ollama::before, .badge.b-none::before, .badge.b-offline::before {
+  content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 3px rgba(61, 117, 86, 0.18); vertical-align: middle; margin-right: 6px;
+}
+.net-dot { margin-right: 0; }
+.net.is-off { color: var(--red); }
+.net.is-off .net-dot, .hubline.is-off::before, .badge.b-ollama::before, .badge.b-offline::before { background: var(--red); box-shadow: 0 0 0 3px rgba(164, 71, 60, 0.18); }
+.badge.b-gemini, .badge.b-none { color: var(--green); }
+.badge.b-ollama, .badge.b-offline { color: var(--red); }
+.hubline.is-off { color: var(--red); font-weight: 700; }
+@media (max-width: 420px) { .net-tx { display: none; } }

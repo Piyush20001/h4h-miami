@@ -46,30 +46,30 @@
   var U = {
     kre: {
       stZone: "Zòn {z}", stShelter1: "1 abri", stShelters: "{n} abri", stNoShel: "Pa gen abri ki matche",
-      stWriting: "Gemma ap ekri kat ou…", stDone: "Kat ou pare",
+      stWriting: "N ap ekri kat ou…", stDone: "Kat ou pare",
       stFail: "Nou pa t ka ekri tèks la. Zòn ak abri yo anwo a bon toujou.",
       stTitle: "Kijan kat la fèt",
       sampleFoot: "Abri sa yo se done egzanp, se pa yon lis an dirèk.",
       call311Btn: "Rele 311", rPet: "bèt kay OK", rNear: "pi pre", rUnk: "bèt kay pa konfime",
-      dirTo: "Direksyon pou abri {n}", askWait: "Kat la poko pare. Tann Gemma fini."
+      dirTo: "Direksyon pou abri {n}", askWait: "Kat la poko pare. Tann yon ti moman."
     },
     es: {
       stZone: "Zona {z}", stShelter1: "1 refugio", stShelters: "{n} refugios", stNoShel: "Ningún refugio coincide",
-      stWriting: "Gemma está escribiendo su tarjeta…", stDone: "Su tarjeta está lista",
+      stWriting: "Escribiendo su tarjeta…", stDone: "Su tarjeta está lista",
       stFail: "No pudimos escribir el texto. La zona y los refugios de arriba siguen siendo correctos.",
       stTitle: "Cómo se hizo la tarjeta",
       sampleFoot: "Estos refugios son datos de muestra, no una lista en vivo.",
       call311Btn: "Llamar 311", rPet: "mascotas OK", rNear: "más cerca", rUnk: "mascotas sin confirmar",
-      dirTo: "Dirección al refugio {n}", askWait: "La tarjeta aún no está lista. Espere a Gemma."
+      dirTo: "Dirección al refugio {n}", askWait: "La tarjeta aún no está lista. Espere un momento."
     },
     en: {
       stZone: "Zone {z}", stShelter1: "1 shelter", stShelters: "{n} shelters", stNoShel: "No matching shelters",
-      stWriting: "Gemma is writing your card…", stDone: "Card ready",
+      stWriting: "Writing your card…", stDone: "Card ready",
       stFail: "We could not write the text. The zone and shelters above are still correct.",
       stTitle: "How the card was made",
       sampleFoot: "These shelters are sample data, not a live list.",
       call311Btn: "Call 311", rPet: "pets OK", rNear: "closest", rUnk: "pets not confirmed",
-      dirTo: "Direction to shelter {n}", askWait: "The card is not ready yet. Wait for Gemma."
+      dirTo: "Direction to shelter {n}", askWait: "The card is not ready yet. Wait a moment."
     }
   };
   Object.keys(U).forEach(function (l) {
