@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StormCard</title>
+<style>
+  body { margin: 0 auto; max-width: 40rem; padding: 1rem; font: 20px/1.5 system-ui, sans-serif; background: #fff; color: #000; }
+  h1 { font-size: 1.8rem; margin: .5rem 0; } h2 { font-size: 1.3rem; margin: 1.2rem 0 .4rem; }
+  .row { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
+  .btn { font: inherit; padding: .6rem 1rem; border: 3px solid #000; background: #fff; color: #000; border-radius: .4rem; cursor: pointer; }
+  .btn.on { background: #000; color: #fff; }
+  .btn.primary { width: 100%; margin-top: 1rem; background: #0b3d91; border-color: #0b3d91; color: #fff; font-weight: bold; }
+  .btn:disabled { opacity: .6; }
+  .toggles { display: grid; gap: .4rem; margin-top: 1rem; }
+  .toggle input { width: 1.4rem; height: 1.4rem; vertical-align: middle; }
+  .zone { font-size: 2rem; font-weight: bold; padding: 1rem; border-radius: .5rem; text-align: center; margin-top: 1rem; }
+  .zone.none { background: #e0e0e0; color: #000; font-size: 1.3rem; }
+  .note { font-size: .9rem; color: #333; }
+  .shelters li { margin-bottom: .8rem; }
+  .tag { display: inline-block; background: #ffeb3b; color: #000; padding: .1rem .5rem; border: 2px solid #000; font-weight: bold; }
+  .error { background: #b00020; color: #fff; padding: .6rem; font-weight: bold; }
+  .how { margin-top: 1.5rem; border: 2px solid #000; padding: .5rem; }
+  .how summary { font-weight: bold; cursor: pointer; }
+  .how pre { font-size: .8rem; overflow-x: auto; background: #f4f4f4; padding: .5rem; }
+  .official { font-weight: bold; border-top: 3px solid #000; padding-top: .6rem; margin-top: 1.5rem; }
+  a { color: #0b3d91; }
+</style>
+</head>
+<body>
+<section id="intake"></section>
+<section id="card"></section>
+<section id="ask"></section>
+<script src="i18n.js"></script>
+<script src="card.js"></script>
+<script src="ask.js"></script>
+</body>
+</html>
