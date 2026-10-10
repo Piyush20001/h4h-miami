@@ -332,6 +332,7 @@ body.on-card .topbar-in { max-width: 1040px; }
 .card-screen { display: flex; flex-direction: column; }
 .card-screen > .col-a, .card-screen > .col-b { display: contents; }
 .zone { order: 1; }
+.next3 { order: 2; }
 .ride { order: 2; }
 .chart-panel { order: 3; }
 .shelters { order: 4; }
@@ -607,3 +608,16 @@ img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
 .ride-ico img { display: block; width: 34px; height: 34px; object-fit: contain; }
 
 .c-street { fill: none; stroke: #d6dee3; stroke-width: 0.8; }
+
+/* your next 3 steps */
+.next3 .tab { margin-top: 20px; }
+.n3 { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.n3-item { width: 100%; display: grid; grid-template-columns: 40px 1fr 22px; gap: 12px; align-items: center; min-height: 72px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--sheet); color: var(--ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; }
+.n3-item:hover { background: var(--blue-wash); }
+.n3-item:focus-visible { outline: 3px solid var(--blue-dk); outline-offset: 2px; }
+.n3-num { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font: 900 18px var(--font); }
+.n3-tx { display: grid; gap: 2px; min-width: 0; }
+.n3-main { font-weight: 800; line-height: 1.2; }
+.n3-sub { font-size: var(--meta); color: var(--ink-2); line-height: 1.3; }
+.n3-go { stroke: var(--ink); fill: none; stroke-width: 2.5; }
+.n3-go path { stroke: var(--ink); fill: none; stroke-width: 2.5; }

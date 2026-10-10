@@ -768,6 +768,51 @@
     }
   }
 
+  /* "Your next 3 steps": chosen by code from her household and the county facts; each one opens what it names */
+  function familyText(r) {
+    var lines = [t("famHead")];
+    lines.push(r.zone ? t("famZone", { z: r.zone }) : t("famNoZone"));
+    var s0 = (r.shelters || [])[0];
+    if (s0 && s0.name) lines.push(t("famShelter", { n: s0.name, a: s0.address || "" }));
+    var f = (r.facts && r.facts.flags) || {}, b = busList(r, true)[0];
+    if (f.no_car && b) lines.push(t("famBus", { n: b.name, a: b.address || "" }));
+    lines.push(t("famCall"));
+    return lines.join("\n");
+  }
+  function renderNext3(r) {
+    var sec = $("next3"), ol = $("n3");
+    ol.textContent = "";
+    var f = (r.facts && r.facts.flags) || {};
+    var b = busList(r, true)[0], s0 = (r.shelters || [])[0];
+    var steps = [];
+    function go(id) { return function () { var n = $(id); if (n) n.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" }); }; }
+    if (f.no_car && b) {
+      var rt = routeFor(r);
+      steps.push({ k: "bus", txt: t("n3Bus", { n: b.name }), sub: rt ? t("n3BusRoute", { d: rt.miles.toFixed(1) }) : t("busIdle"), act: function () { go("ride")(); var d = document.querySelector(".ride-fold"); if (d) d.open = true; } });
+    } else if (s0) {
+      steps.push({ k: "shel", txt: t("n3Shel", { n: s0.name }), sub: t("CALL_311"), act: go("h-shel") });
+    }
+    if (f.medical) steps.push({ k: "med", txt: t("n3Med"), sub: t("eeapCall"), href: "tel:311" });
+    else if (f.pet) steps.push({ k: "pet", txt: t("n3Pet"), sub: t("n3PetSub"), act: function () { var n = document.querySelector(".x-pet"); if (n) n.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" }); } });
+    else steps.push({ k: "bag", txt: t("n3Bag"), sub: t("n3BagSub"), act: go("cardtext") });
+    steps.push({ k: "fam", txt: t("n3Fam"), sub: t("n3FamSub"), href: "sms:?&body=" + encodeURIComponent(familyText(r)) });
+    $("h-next3").textContent = t("n3H");
+    steps.slice(0, 3).forEach(function (st3, i) {
+      var li = h("li");
+      var el = h(st3.href ? "a" : "button", "n3-item");
+      if (st3.href) el.href = st3.href; else { el.type = "button"; el.addEventListener("click", st3.act); }
+      el.appendChild(h("span", "n3-num", String(i + 1)));
+      var tx = h("span", "n3-tx");
+      tx.appendChild(h("span", "n3-main", st3.txt));
+      tx.appendChild(h("span", "n3-sub", st3.sub));
+      el.appendChild(tx);
+      el.appendChild(svgIcon("M9 5L16 12L9 19", 22, "n3-go"));
+      li.appendChild(el);
+      ol.appendChild(li);
+    });
+    sec.hidden = false;
+  }
+
   function renderCard(animate) {
     var r = st.result;
     if (!r) return;
@@ -802,6 +847,7 @@
       }
     } else renderShelters(r);
     renderRide(r);
+    renderNext3(r);
     renderStages();
     renderCardText(r);
     renderExtras(r);

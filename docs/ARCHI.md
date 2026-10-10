@@ -43,13 +43,16 @@ app.py            Flask routes (§6); Miami-Dade bounds check (422 outside)
 geo.py            get_zone, find_shelters (pets: confirmed first, unknown kept), find_special_needs, find_bus_pickups
 llm.py            generate(prompt, force_offline, deadline) -> (text, "gemini"|"ollama"); warm()
 status.py         internet() probe (20 s cache, HUB_OFFLINE=1 rehearsal), mark_down()
-agent.py          Ask agent: JSON tool loop, ≤3 steps, 60 s budget, grounding check, Kreyòl/Spanish keyword map
+agent.py          Ask agent: JSON tool loop, ≤3 steps, 60 s budget, grounding check, Kreyòl/Spanish keyword map,
+                  on_step streaming, draft_message (code-built SMS), nearest pickup always named by code
+route.py          offline walking routes (A* on county street centerlines, no expressways) -> path + turn steps
 prompts_card.py   card prompt (model writes 2 sections), slot fill, validation, facts-only card, medical/EEAP lines
 prompts_ask.py    grounded single-call Ask prompt + IDK strings (agent fallback)
 storms.py         nearest Atlantic NHC system, cached to data/storms_cache.json (gitignored)
 gemma.py          original Gemini prototype (superseded by llm.py)
-data/             zones · shelters (FDEM) · special_needs_shelters · bus_pickups · guidance.md (cited)
-static/           index.html, styles.css, card.js, ask.js, chart.js, gmap.js, storm.js, hub.js, motion.js,
+data/             zones · shelters (FDEM) · special_needs_shelters · bus_pickups · roads (main roads) ·
+                  streets (all streets, Brickell–Wynwood–Little Haiti + Hialeah) · guidance.md (cited)
+static/           index.html, styles.css, card.js, ask.js, chart.js, gmap.js, storm.js, hub.js, motion.js, ar.js, sos.js,
                   onboard.js/.css, i18n*.js (kre/es/en), brand/, icons/ + manifest.webmanifest, fonts/, vendor/gsap.min.js
 ios/              native wrapper project (project.yml, StormCard/)
 evals/            per-language card eval set (36 cases) + runner
@@ -68,6 +71,7 @@ docs/             ARCHI, PLAN (1-plans/), MOBILE, architecture/ (Archify diagram
 | `OLLAMA_URL` / `OLLAMA_MODEL` | `localhost:11434` / `gemma4:e2b-it-qat` | local model |
 | `MAPS_API_KEY` | empty | Maps-only key sent to the browser (needs billing + Maps JS API); empty = chart only |
 | `HUB_OFFLINE` | unset | `1` = behave as if the internet is down (rehearsal) |
+| `--https` flag | off | `python app.py --https`: self-signed cert in `certs/` (gitignored), port 8443, for phone camera/compass |
 
 ## 6. Server API
 
@@ -76,7 +80,10 @@ docs/             ARCHI, PLAN (1-plans/), MOBILE, architecture/ (Archify diagram
 | `GET /` | `static/index.html` (static served at root) |
 | `POST /api/facts` `{lat,lng,lang,flags}` | instant `{facts:{zone,lang,flags,shelters,home,special_needs_shelters?,bus_pickups?},sources,sample_data}` |
 | `POST /api/card` (+`force_offline`) | `{zone,shelters,card_text:{what_this_means,where_to_go,what_to_bring,what_to_do_now},backend,facts,sources,sample_data,special_needs_shelters?,bus_pickups?}` |
-| `POST /api/ask` `{question,lang,card,force_offline}` | `{answer,backend,trace:[{tool,args,result_summary}]}` |
+| `POST /api/ask` `{question,lang,card,force_offline}` | `{answer,backend,trace:[{tool,args,result_summary}],message?}` |
+| `POST /api/ask/stream` | NDJSON: `{step}` lines as the agent works, then `{done,answer,backend,trace,message?}` |
+| `GET /api/route?from=lat,lng&to=lat,lng` | `{path:[[lat,lng]],miles,steps:[{street,turn,miles,at}]}`; 404 `no_route` outside the street data |
+| `GET /api/roads` · `GET /api/streets` | county main roads / all streets GeoJSON for the offline map |
 | `GET /api/status` | `{internet}` (drives UI mode) |
 | `GET /api/config` | `{maps_api_key (empty offline), internet}` |
 | `GET /api/storms?lat&lng` | `{available,stale,fetched_at,source,storm:{name,classification,intensity_kt,pressure_mb,movement_*,watches_warnings,distance_mi,bearing_deg,last_update,advisory_url,graphics_url}|null}` |
@@ -91,7 +98,9 @@ Outside the Miami-Dade box → `422 outside_miami_dade`. Server logs one `[card]
 | `zones.geojson` | Miami-Dade StormSurgePlanningZone_Multipart (property `zone` A–E) | Presets: Little Haiti 25.83,-80.189 → C · Hialeah → none · Brickell → B |
 | `shelters.geojson` | FDEM General Risk Shelter Inventory, Miami-Dade, as of 2021-08-31 (40) | county live layers are empty off-season; candidates only |
 | `special_needs_shelters.geojson` | FDEM Special Needs inventory (6) | shown when `medical` |
-| `bus_pickups.geojson` | Miami-Dade Emergency Evacuation Bus Pick-Up sites (129) | `active` = activated now; buses run only on evacuation orders; shown when `no_car` |
+| `bus_pickups.geojson` | Miami-Dade Emergency Evacuation Bus Pick-Up sites (129) | buses run only on evacuation orders; always returned, panel open when `no_car`, folded otherwise |
+| `roads.geojson` | Miami-Dade Highway + MajorRoads layers (CLASS 0–3, ramps dropped) | offline map context |
+| `streets.geojson` | Miami-Dade StreetNetwork (all centerlines) for two boxes | walking routes + side streets; no sidewalk data |
 | `guidance.md` | Miami-Dade EM + ready.gov, cited per section | Ask grounding; pet rules conflict noted (confirm with Animal Services) |
 | `storms_cache.json` | NHC `CurrentStorms.json` | refetched ≤ every 10 min; stale when offline |
 
@@ -103,7 +112,7 @@ Outside the Miami-Dade box → `422 outside_miami_dade`. Server logs one `[card]
 
 ## 9. UI Flow (`.impeccable/surfaces/static-index-html.md` is the binding design contract)
 
-First-run GSAP welcome (3 beats, skippable, `?welcome=1` to replay) → storm card + **Language** → **Place** (presets; GPS needs HTTPS) → **Household** toggles (pet, no car, medical, kids) → **Card**: compact storm strip, navy zone plate, backend badge, map (Google + zone overlay + home/shelters/bus markers, or SVG chart offline) with legend, shelter arrow plates (bearing, reason word, Directions link), single red 311 line, household sections (medical/EEAP checklist, pets, no-car + bus pickups, kids), card text, "How StormCard decided", **Ask** (chips, hub-status line, per-answer badge + trace). Fast GSAP motion (≤0.28 s, reduced-motion aware). Phone install via Safari Add to Home Screen (`docs/MOBILE.md`).
+Card adds: "Need a ride?" panel (nearest pickup, walking route + turn list, Point my way, 311), recommended shelter as green "GO HERE" pin, SOS sheet in the dock (911 / text my location / 311, never auto-sends), Point my way overlay (camera + smoothed compass, follows route to next turn, mini route map; HTTPS only: `python app.py --https` or a tunnel). First-run GSAP welcome (3 beats, skippable, `?welcome=1` to replay) → storm card + **Language** → **Place** (presets; GPS needs HTTPS) → **Household** toggles (pet, no car, medical, kids) → **Card**: compact storm strip, navy zone plate, backend badge, map (Google + zone overlay + home/shelters/bus markers, or SVG chart offline) with legend, shelter arrow plates (bearing, reason word, Directions link), single red 311 line, household sections (medical/EEAP checklist, pets, no-car + bus pickups, kids), card text, "How StormCard decided", **Ask** (chips, hub-status line, per-answer badge + trace). Fast GSAP motion (≤0.28 s, reduced-motion aware). Phone install via Safari Add to Home Screen (`docs/MOBILE.md`).
 
 ## 10. Data Flow
 
