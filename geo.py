@@ -43,11 +43,11 @@ def get_zone(lat, lng):
     return None
 
 
-def _haversine_km(lat1, lng1, lat2, lng2):
+def _haversine_mi(lat1, lng1, lat2, lng2):
     p1, p2 = math.radians(lat1), math.radians(lat2)
     dp, dl = p2 - p1, math.radians(lng2 - lng1)
     a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
-    return 2 * 6371.0088 * math.asin(math.sqrt(a))
+    return 2 * 3958.7613 * math.asin(math.sqrt(a))
 
 
 def find_shelters(lat, lng, pet=False, limit=3):
@@ -58,7 +58,7 @@ def find_shelters(lat, lng, pet=False, limit=3):
         if pet and p.get("pet_friendly") is not True:
             continue
         s_lng, s_lat = feat["geometry"]["coordinates"]
-        rows.append((_haversine_km(lat, lng, s_lat, s_lng), p, s_lat, s_lng))
+        rows.append((_haversine_mi(lat, lng, s_lat, s_lng), p, s_lat, s_lng))
     rows.sort(key=lambda r: r[0])
     return [
         {
@@ -67,7 +67,7 @@ def find_shelters(lat, lng, pet=False, limit=3):
             "city": p["city"],
             "lat": s_lat,
             "lng": s_lng,
-            "distance_km": round(d, 1),
+            "distance_mi": round(d, 1),
             "pet_friendly": p.get("pet_friendly"),
         }
         for d, p, s_lat, s_lng in rows[:limit]

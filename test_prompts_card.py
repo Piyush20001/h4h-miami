@@ -3,17 +3,17 @@ import prompts_card as pc
 
 SHELTERS = [
     {"name": "Miami Edison Senior High", "address": "6161 NW 5th Ct", "city": "Miami",
-     "lat": 25.83, "lng": -80.2, "distance_km": 1.2, "pet_friendly": True},
+     "lat": 25.83, "lng": -80.2, "distance_mi": 1.2, "pet_friendly": True},
     {"name": "Toussaint L'Ouverture Elementary", "address": "120 NE 59th St", "city": "Miami",
-     "lat": 25.82, "lng": -80.19, "distance_km": 2.4, "pet_friendly": None},
+     "lat": 25.82, "lng": -80.19, "distance_mi": 2.4, "pet_friendly": None},
     {"name": "Arcola Lake Park", "address": "1301 NW 83rd St", "city": "Miami",
-     "lat": 25.85, "lng": -80.21, "distance_km": 3.9, "pet_friendly": False},
+     "lat": 25.85, "lng": -80.21, "distance_mi": 3.9, "pet_friendly": False},
 ]
 FLAGS = {"pet": True, "no_car": True, "medical": False, "kids": False}
 FOOTERS = {k: v["footer"] for k, v in pc.T.items()}
 
 
-def facts(zone="B", shelters=SHELTERS, lang="ht"):
+def facts(zone="B", shelters=SHELTERS, lang="kre"):
     return {"zone": zone, "lang": lang, "flags": FLAGS, "shelters": shelters}
 
 
@@ -48,9 +48,9 @@ def test_stub_path():
 
 def test_good_output_filled():
     fake(GOOD)
-    card, backend = pc.build_card(facts(), "ht")
+    card, backend = pc.build_card(facts(), "kre")
     assert backend == "gemini"
-    check_card(card, "ht")
+    check_card(card, "kre")
     assert "zòn B" in card["what_this_means"]
     assert "Miami Edison Senior High" in card["where_to_go"]
     assert "Toussaint L'Ouverture Elementary" in card["where_to_go"]
@@ -76,9 +76,9 @@ def test_bad_outputs_fall_back():
     }
     for name, text in bad.items():
         fake(text)
-        card, backend = pc.build_card(facts(), "ht")
+        card, backend = pc.build_card(facts(), "kre")
         assert backend == "facts_only", name
-        check_card(card, "ht")
+        check_card(card, "kre")
 
 
 def test_exception_falls_back():
@@ -95,17 +95,17 @@ def test_zone_none():
     prompt = pc.build_prompt(f, "en")
     assert "\"in_evacuation_zone\": false" in prompt and "{{ZONE}}" not in prompt
     fake(GOOD.replace("Ou nan zòn {{ZONE}}.", "Ou pa nan yon zòn evakyasyon."))
-    card, backend = pc.build_card(f, "ht")
+    card, backend = pc.build_card(f, "kre")
     assert backend == "gemini"
-    check_card(card, "ht")
+    check_card(card, "kre")
     fake(GOOD)  # model used {{ZONE}} though there is no zone
-    card, backend = pc.build_card(f, "ht")
+    card, backend = pc.build_card(f, "kre")
     assert backend == "facts_only"
-    assert card["what_this_means"] == pc.T["ht"]["nozone"]
+    assert card["what_this_means"] == pc.T["kre"]["nozone"]
 
 
 def test_facts_only_all_langs():
-    for lang in ("ht", "es", "en"):
+    for lang in ("kre", "es", "en"):
         card = pc.facts_only_card(facts(lang=lang), lang)
         check_card(card, lang)
         for s in SHELTERS:
@@ -113,7 +113,7 @@ def test_facts_only_all_langs():
         assert card["where_to_go"].count("311") >= 3
         assert pc.T[lang]["petbring"] in card["what_to_bring"]
         assert pc.T[lang]["nocar"] in card["what_to_do_now"]
-    assert "Rele 311 pou konfime li ouvè." in pc.facts_only_card(facts(), "ht")["where_to_go"]
+    assert "Rele 311 pou konfime li ouvè." in pc.facts_only_card(facts(), "kre")["where_to_go"]
     empty = pc.facts_only_card(facts(shelters=[]), "en")
     assert empty["where_to_go"] == pc.T["en"]["noshelter"]
 
@@ -121,17 +121,17 @@ def test_facts_only_all_langs():
 def test_one_shelter():
     one = facts(shelters=SHELTERS[:1])
     fake(GOOD.replace(" oswa {{SHELTER_2}}", ""))
-    card, backend = pc.build_card(one, "ht")
+    card, backend = pc.build_card(one, "kre")
     assert backend == "gemini"
-    check_card(card, "ht")
+    check_card(card, "kre")
     fake(GOOD)  # refers to {{SHELTER_2}}, which doesn't exist
-    card, backend = pc.build_card(one, "ht")
+    card, backend = pc.build_card(one, "kre")
     assert backend == "facts_only"
-    check_card(card, "ht")
+    check_card(card, "kre")
 
 
 def test_prompt_hides_facts():
-    p = pc.build_prompt(facts(), "ht")
+    p = pc.build_prompt(facts(), "kre")
     for s in SHELTERS:
         assert s["name"] not in p and s["address"] not in p
     assert '"zone": "{{ZONE}}"' in p and "Kreyòl" in p and "WHAT_TO_DO_NOW" in p
@@ -143,8 +143,8 @@ if __name__ == "__main__":
         t()
         print("ok", t.__name__)
     print(f"{len(tests)} passed")
-    print("\n--- sample prompt ---\n" + pc.build_prompt(facts(), "ht"))
+    print("\n--- sample prompt ---\n" + pc.build_prompt(facts(), "kre"))
     pc.generate = STUB
     print("--- sample facts-only (ht) ---")
-    for k, v in pc.facts_only_card(facts(), "ht").items():
+    for k, v in pc.facts_only_card(facts(), "kre").items():
         print(f"[{k}]\n{v}")

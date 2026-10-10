@@ -11,7 +11,7 @@
   var ZONE_COLORS = { A: "#b00020", B: "#d84315", C: "#f9a825", D: "#2e7d32", E: "#1565c0" };
 
   var state = window.cardState = {
-    lang: "ht", preset: null, flags: { pet: false, no_car: false, medical: false, kids: false }, forceOffline: false
+    lang: "kre", preset: null, flags: { pet: false, no_car: false, medical: false, kids: false }, forceOffline: false
   };
   var view = { data: null, saved: false, error: false, loading: false };
 
@@ -38,7 +38,7 @@
     document.documentElement.lang = state.lang;
     document.title = t("app_title");
 
-    var langRow = el("div", { className: "row" }, ["ht", "es", "en"].map(function (l) {
+    var langRow = el("div", { className: "row" }, ["kre", "es", "en"].map(function (l) {
       return el("button", {
         type: "button", className: "btn" + (state.lang === l ? " on" : ""),
         onclick: function () { setLang(l); }
@@ -152,7 +152,7 @@
       return el("li", null, [
         el("strong", null, s.name),
         el("div", null, [s.address, s.city ? ", " + s.city : ""].join("")),
-        el("div", null, t("km_away", { d: Number(s.distance_km).toFixed(1) })),
+        el("div", null, t("mi_away", { d: Number(s.distance_mi).toFixed(1) })),
         el("div", null, s.pet_friendly === true ? t("pet_yes") : t("pet_unknown")),
         el("div", { className: "note" }, t("call_311"))
       ]);
@@ -173,7 +173,7 @@
       el("p", null, d.backend || "?"),
       el("h3", null, t("distances")),
       el("ul", null, (d.shelters || []).map(function (s) {
-        return el("li", null, s.name + ": " + Number(s.distance_km).toFixed(2) + " km");
+        return el("li", null, s.name + ": " + Number(s.distance_mi).toFixed(2) + " mi");
       })),
       el("h3", null, t("sources")),
       el("ul", null, Object.keys(d.sources || {}).map(function (k) {

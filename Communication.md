@@ -45,3 +45,7 @@ Do we have a shared `GEMINI_API_KEY`? I need it from ~12:15 to tune the Kreyòl/
 The original 25.83, -80.195 falls in **no zone** (Little Haiti is mostly inland). The new point is still Little Haiti, near NE 2nd Ave. Hialeah is also no zone; Brickell is Zone B. Use the same coordinates for any demo script.
 
 **9. CP1 status:** `POST /api/card` for Little Haiti returns Zone C + 3 shelters (stub card text until `llm.py` lands).
+
+## 2026-10-10 12:02 EDT: Stuti Agarwal (Card partner) → AI partner
+
+**10. Aligned with the PLAN.md contract.** Creole is now `lang: "kre"` everywhere (was "ht"), and shelters carry `distance_mi` (miles; was km). Shelters also include `city`, `lat`, `lng`. The item-1 example above is otherwise unchanged.

@@ -1,8 +1,8 @@
 // UI strings for StormCard. Kreyòl (ht), Español (es), English (en).
 window.I18N = {
-  ht: {
+  kre: {
     app_title: "StormCard: Kat Siklòn",
-    lang_ht: "Kreyòl", lang_es: "Español", lang_en: "English",
+    lang_kre: "Kreyòl", lang_es: "Español", lang_en: "English",
     pick_location: "Chwazi kote ou rete",
     preset_little_haiti: "Ti Ayiti", preset_hialeah: "Hialeah", preset_brickell: "Brickell",
     flag_pet: "Mwen gen yon bèt", flag_no_car: "Mwen pa gen machin",
@@ -13,7 +13,7 @@ window.I18N = {
     not_flood_zone: "Sa a se zòn lanm siklòn nan, se pa zòn asirans inondasyon an.",
     shelters_heading: "Abri ki pi pre",
     call_311: "Abri posib: rele 311 pou konfime li louvri",
-    km_away: "{d} km lwen",
+    mi_away: "{d} mil lwen",
     pet_yes: "Bèt aksepte", pet_unknown: "Nou pa konnen si bèt aksepte",
     sec_what_this_means: "Sa sa vle di",
     sec_where_to_go: "Ki kote pou ale",
@@ -32,7 +32,7 @@ window.I18N = {
   },
   es: {
     app_title: "StormCard: Tarjeta de Huracán",
-    lang_ht: "Kreyòl", lang_es: "Español", lang_en: "English",
+    lang_kre: "Kreyòl", lang_es: "Español", lang_en: "English",
     pick_location: "Elija su ubicación",
     preset_little_haiti: "Little Haiti", preset_hialeah: "Hialeah", preset_brickell: "Brickell",
     flag_pet: "Tengo una mascota", flag_no_car: "No tengo carro",
@@ -43,7 +43,7 @@ window.I18N = {
     not_flood_zone: "Esta es la zona de marejada ciclónica, no la zona del seguro de inundación.",
     shelters_heading: "Refugios más cercanos",
     call_311: "Refugio posible: llame al 311 para confirmar que está abierto",
-    km_away: "a {d} km",
+    mi_away: "a {d} millas",
     pet_yes: "Acepta mascotas", pet_unknown: "No sabemos si acepta mascotas",
     sec_what_this_means: "Qué significa",
     sec_where_to_go: "A dónde ir",
@@ -62,7 +62,7 @@ window.I18N = {
   },
   en: {
     app_title: "StormCard: Hurricane Card",
-    lang_ht: "Kreyòl", lang_es: "Español", lang_en: "English",
+    lang_kre: "Kreyòl", lang_es: "Español", lang_en: "English",
     pick_location: "Pick your location",
     preset_little_haiti: "Little Haiti", preset_hialeah: "Hialeah", preset_brickell: "Brickell",
     flag_pet: "I have a pet", flag_no_car: "I have no car",
@@ -73,7 +73,7 @@ window.I18N = {
     not_flood_zone: "This is the storm surge zone, not the flood-insurance zone.",
     shelters_heading: "Nearest shelters",
     call_311: "Planning candidate — call 311 to confirm it's open",
-    km_away: "{d} km away",
+    mi_away: "{d} mi away",
     pet_yes: "Pet friendly", pet_unknown: "Pet policy unknown",
     sec_what_this_means: "What this means",
     sec_where_to_go: "Where to go",
@@ -92,9 +92,9 @@ window.I18N = {
   }
 };
 
-// t("km_away", {d: 2.1}) -> "2.1 km away" in the current language (falls back to English).
+// t("mi_away", {d: 2.1}) -> "2.1 mi away" in the current language (falls back to English).
 window.t = function (key, vars) {
-  var lang = (window.cardState && window.cardState.lang) || "ht";
+  var lang = (window.cardState && window.cardState.lang) || "kre";
   var s = (window.I18N[lang] && window.I18N[lang][key]) || window.I18N.en[key] || key;
   if (vars) for (var k in vars) s = s.split("{" + k + "}").join(String(vars[k]));
   return s;

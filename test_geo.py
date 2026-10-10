@@ -9,7 +9,7 @@ PRESETS = {
 
 
 def is_sorted(rows):
-    d = [r["distance_km"] for r in rows]
+    d = [r["distance_mi"] for r in rows]
     return d == sorted(d)
 
 
@@ -18,7 +18,7 @@ lh = find_shelters(*PRESETS["Little Haiti"])
 assert len(lh) == 3, lh
 assert is_sorted(lh), lh
 for r in lh:
-    assert set(r) == {"name", "address", "city", "lat", "lng", "distance_km", "pet_friendly"}, r
+    assert set(r) == {"name", "address", "city", "lat", "lng", "distance_mi", "pet_friendly"}, r
 
 # pet=True returns only confirmed pet-friendly shelters (source has few, so no length check)
 pets = find_shelters(*PRESETS["Little Haiti"], pet=True)
@@ -37,8 +37,8 @@ print(f"zones: {ZONES_SOURCE}\nshelters: {SHELTERS_SOURCE}\nsample_data: {SAMPLE
 for name, (lat, lng) in PRESETS.items():
     print(f"{name} ({lat}, {lng}) zone={get_zone(lat, lng)}")
     for r in find_shelters(lat, lng):
-        print(f"  {r['distance_km']:5.1f} km  {r['name']}, {r['address']}, {r['city']}  pet={r['pet_friendly']}")
+        print(f"  {r['distance_mi']:5.1f} mi  {r['name']}, {r['address']}, {r['city']}  pet={r['pet_friendly']}")
 print("\nPet-friendly near Little Haiti:")
 for r in pets:
-    print(f"  {r['distance_km']:5.1f} km  {r['name']}, {r['address']}, {r['city']}")
+    print(f"  {r['distance_mi']:5.1f} mi  {r['name']}, {r['address']}, {r['city']}")
 print("\nOK")

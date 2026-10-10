@@ -16,7 +16,7 @@ def index():
 def card():
     body = request.get_json(force=True)
     lat, lng = float(body["lat"]), float(body["lng"])
-    lang = body.get("lang", "ht")
+    lang = body.get("lang", "kre")
     flags = body.get("flags", {})
     zone = geo.get_zone(lat, lng)
     shelters = geo.find_shelters(lat, lng, pet=bool(flags.get("pet")), limit=3)

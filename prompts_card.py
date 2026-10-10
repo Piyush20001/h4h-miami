@@ -16,9 +16,9 @@ except ImportError:
         return _STUB, "stub"
 
 KEYS = ["what_this_means", "where_to_go", "what_to_bring", "what_to_do_now"]
-LANG_NAMES = {"ht": "Haitian Creole (Kreyòl)", "es": "Spanish", "en": "English"}
+LANG_NAMES = {"kre": "Haitian Creole (Kreyòl)", "es": "Spanish", "en": "English"}
 STYLE = {
-    "ht": "Use standard Haitian Creole spelling (Kreyòl), not French.",
+    "kre": "Use standard Haitian Creole spelling (Kreyòl), not French.",
     "es": "Use simple Spanish. Address the reader as \"usted\".",
     "en": "Use plain, simple English.",
 }
@@ -41,7 +41,7 @@ T = {
         "zone": "You are in Storm Surge Zone {z}. This is not the flood insurance zone. If officials order your zone to leave, go.",
         "nozone": "You are not in a storm surge evacuation zone. If your home is safe, you can stay home. Still get ready.",
         "shelters": "Shelters near you (for planning only):",
-        "shelter": "- {name}: {d} km{pet}. Call 311 to confirm it's open.",
+        "shelter": "- {name}: {d} mi{pet}. Call 311 to confirm it's open.",
         "noshelter": "We did not find a shelter near you. Call 311 to ask where to go.",
         "pet": {True: "pets OK", None: "ask 311 about pets", False: "no pets"},
         "bring": ["Water", "Food for 3 days", "Medicines", "Documents (ID, papers)", "Phone charger"],
@@ -54,7 +54,7 @@ T = {
         "zone": "Usted está en la Zona de Marejada Ciclónica {z}. No es la zona del seguro de inundación. Si las autoridades ordenan evacuar su zona, váyase.",
         "nozone": "Usted no está en una zona de evacuación por marejada. Si su casa es segura, puede quedarse. Igual prepárese.",
         "shelters": "Refugios cerca de usted (solo para planear):",
-        "shelter": "- {name}: a {d} km{pet}. Llame al 311 para confirmar que está abierto.",
+        "shelter": "- {name}: a {d} millas{pet}. Llame al 311 para confirmar que está abierto.",
         "noshelter": "No encontramos un refugio cerca. Llame al 311 para saber adónde ir.",
         "pet": {True: "acepta mascotas", None: "pregunte al 311 por mascotas", False: "no acepta mascotas"},
         "bring": ["Agua", "Comida para 3 días", "Medicinas", "Documentos (identificación, papeles)", "Cargador de teléfono"],
@@ -63,11 +63,11 @@ T = {
         "now": "Prepare su bolso ahora. Cargue su teléfono. Escuche las noticias locales.",
         "footer": "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade.",
     },
-    "ht": {
+    "kre": {
         "zone": "Ou nan Zòn Evakyasyon {z} pou lanmè k ap monte. Sa a se pa zòn asirans inondasyon an. Si otorite yo bay lòd pou zòn ou an evakye, pati.",
         "nozone": "Ou pa nan yon zòn evakyasyon pou lanmè k ap monte. Si kay ou an an sekirite, ou ka rete lakay ou. Men, prepare w kanmenm.",
         "shelters": "Abri ki tou pre w (pou planifye sèlman):",
-        "shelter": "- {name}: {d} km{pet}. Rele 311 pou konfime li ouvè.",
+        "shelter": "- {name}: {d} mil{pet}. Rele 311 pou konfime li ouvè.",
         "noshelter": "Nou pa jwenn yon abri tou pre w. Rele 311 pou mande ki kote pou w ale.",
         "pet": {True: "yo aksepte bèt", None: "mande 311 pou bèt", False: "yo pa aksepte bèt"},
         "bring": ["Dlo", "Manje pou 3 jou", "Medikaman", "Papye enpòtan (ID, dokiman)", "Chajè telefòn"],
@@ -92,7 +92,7 @@ def build_prompt(facts, lang):
         "in_evacuation_zone": bool(facts.get("zone")),
         "flags": flags,
         "shelters": [
-            {"name": "{{SHELTER_%d}}" % (i + 1), "distance_km": s.get("distance_km"),
+            {"name": "{{SHELTER_%d}}" % (i + 1), "distance_mi": s.get("distance_mi"),
              "pet_friendly": s.get("pet_friendly")}
             for i, s in enumerate(shelters[:3])
         ],
@@ -178,7 +178,7 @@ def facts_only_card(facts, lang):
         lines.append(t["shelters"])
         for s in shelters:
             pet = " (" + t["pet"][s.get("pet_friendly")] + ")" if flags.get("pet") else ""
-            lines.append(t["shelter"].format(name=s.get("name", ""), d=s.get("distance_km", "?"), pet=pet))
+            lines.append(t["shelter"].format(name=s.get("name", ""), d=s.get("distance_mi", "?"), pet=pet))
     else:
         lines.append(t["noshelter"])
     bring = t["bring"] + ([t["petbring"]] if flags.get("pet") else [])
