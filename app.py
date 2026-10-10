@@ -1,4 +1,5 @@
 """StormCard Flask server: serves static/, POST /api/card, POST /api/ask."""
+import gzip
 import json
 import queue
 import threading
@@ -101,7 +102,26 @@ def card():
 @app.get("/api/zones")
 def zones():
     """Storm surge zone polygons for the map overlay (cached on the hub, works offline)."""
-    return app.response_class((geo._DATA / "zones.geojson").read_text(), mimetype="application/geo+json")
+    return _geojson("zones.geojson")
+
+
+_GZ = {}
+
+
+def _geojson(name):
+    """Static GeoJSON, gzipped once in memory (about 10x smaller over the tunnel), cached by the phone for a day."""
+    if name not in _GZ:
+        raw = (geo._DATA / name).read_bytes()
+        _GZ[name] = (raw, gzip.compress(raw, 6))
+    raw, gz = _GZ[name]
+    if "gzip" in (request.headers.get("Accept-Encoding") or ""):
+        resp = app.response_class(gz, mimetype="application/geo+json")
+        resp.headers["Content-Encoding"] = "gzip"
+    else:
+        resp = app.response_class(raw, mimetype="application/geo+json")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    resp.headers["Vary"] = "Accept-Encoding"
+    return resp
 
 
 @app.get("/api/route")
@@ -121,17 +141,13 @@ def walk_route():
 @app.get("/api/streets")
 def streets():
     """Every street around the demo places, so the offline map shows the walking streets too."""
-    resp = app.response_class((geo._DATA / "streets.geojson").read_text(), mimetype="application/geo+json")
-    resp.headers["Cache-Control"] = "public, max-age=86400"
-    return resp
+    return _geojson("streets.geojson")
 
 
 @app.get("/api/roads")
 def roads():
     """Major roads (Miami-Dade County layers) so the offline map has streets to read."""
-    resp = app.response_class((geo._DATA / "roads.geojson").read_text(), mimetype="application/geo+json")
-    resp.headers["Cache-Control"] = "public, max-age=86400"
-    return resp
+    return _geojson("roads.geojson")
 
 
 @app.get("/api/status")
