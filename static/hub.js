@@ -14,7 +14,8 @@
     window.dispatchEvent(new CustomEvent("hubchange", { detail: { internet: up } }));
   }
   check();
-  setInterval(check, 15000);
+  setInterval(check, 5000);
   window.addEventListener("online", check);
-  window.addEventListener("offline", check);
+  /* this device lost its network: go red at once (a phone may still reach the laptop, so re-ask right after) */
+  window.addEventListener("offline", function () { set(false); setTimeout(check, 1500); });
 })();

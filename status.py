@@ -5,7 +5,7 @@ import time
 import requests
 
 PROBE = "https://generativelanguage.googleapis.com/"  # same host the Gemini path needs
-TTL_S = 20
+TTL_S = 5
 _state = {"at": 0.0, "internet": True}
 
 
