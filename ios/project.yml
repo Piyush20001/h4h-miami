@@ -28,3 +28,4 @@ targets:
           NSAllowsLocalNetworking: true
           NSAllowsArbitraryLoadsInWebContent: true
         StormCardServer: "http://10.88.2.23:8000"
+        ITSAppUsesNonExemptEncryption: false
