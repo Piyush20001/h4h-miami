@@ -54,7 +54,7 @@ h4h-miami/
 ├── requirements.txt       # google-genai, python-dotenv (+ flask, requests)        [exists]
 ├── .env.example           # GEMINI_API_KEY, GEMMA_MODEL                            [exists]
 ├── LICENSE / README.md                                                              [exists]
-├── docs/                  # TRIP docs
+├── docs/                  # TRIP docs; 1-plans/PLAN.md = combined team plan; architecture/ = Archify diagram
 └── .claude/skills/        # TRIP skills
 ```
 

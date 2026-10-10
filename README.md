@@ -2,6 +2,8 @@
 
 Our project for [Hack for Humanity: Miami](https://github.com/AI-Collective-Hackathons/hack-for-humanity-miami) — October 10, 2026, The LAB Miami.
 
+**Team plan + architecture:** [docs/1-plans/PLAN.md](docs/1-plans/PLAN.md) · [docs/ARCHI.md](docs/ARCHI.md)
+
 ## Submission info
 
 - **Build for Miami track:** _TBD (01 Four Forces, One City · 02 Wild Miami · 03 Brain Gain · 04 Data to Action)_

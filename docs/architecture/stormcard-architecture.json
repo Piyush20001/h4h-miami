@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "StormCard: Community-Hub Hurricane Card (Combined Team Architecture)",
+    "output": ".archify/architecture-stormcard-20261010-1200/stormcard.html",
+    "quality_profile": "showcase",
+    "locale": "en"
+  },
+  "components": [
+    {
+      "id": "volunteer",
+      "type": "external",
+      "label": "Volunteer + Resident",
+      "sublabel": "Madame Joseph (composite)",
+      "pos": [
+        40,
+        330
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "icon": "person"
+    },
+    {
+      "id": "iphone",
+      "type": "external",
+      "label": "iPhone Safari",
+      "sublabel": "Home Screen, same Wi-Fi",
+      "pos": [
+        40,
+        180
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "index.html",
+      "sublabel": "card.js \u00b7 ask.js \u00b7 i18n.js",
+      "pos": [
+        240,
+        330
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "kre \u00b7 es \u00b7 en"
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "localStorage",
+      "sublabel": "last saved card",
+      "pos": [
+        240,
+        480
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "Flask app.py",
+      "sublabel": "/api/card \u00b7 /api/ask",
+      "pos": [
+        580,
+        330
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "prompts",
+      "type": "backend",
+      "label": "Prompts",
+      "sublabel": "prompts_card \u00b7 prompts_ask",
+      "pos": [
+        580,
+        180
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "facts filled by code"
+    },
+    {
+      "id": "guidance",
+      "type": "database",
+      "label": "guidance.md",
+      "sublabel": "cited county guidance",
+      "pos": [
+        580,
+        40
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "geo",
+      "type": "backend",
+      "label": "geo.py",
+      "sublabel": "zone + 3 shelters",
+      "pos": [
+        580,
+        480
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "geojson",
+      "type": "database",
+      "label": "County GeoJSON",
+      "sublabel": "surge zones \u00b7 shelters",
+      "pos": [
+        580,
+        630
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "backend",
+      "label": "llm.py",
+      "sublabel": "Gemma 4 engine",
+      "pos": [
+        860,
+        330
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "ollama",
+      "type": "backend",
+      "label": "Ollama gemma4:e4b",
+      "sublabel": "local, works offline",
+      "pos": [
+        860,
+        480
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "Open-Source prize"
+    },
+    {
+      "id": "gemini",
+      "type": "cloud",
+      "label": "Gemini API",
+      "sublabel": "gemma-4-26b-a4b-it",
+      "pos": [
+        1160,
+        330
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "Gemma 4 prize"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Community-hub laptop (runs with Wi-Fi off)",
+      "wraps": [
+        "ui",
+        "storage",
+        "app",
+        "prompts",
+        "guidance",
+        "geo",
+        "geojson",
+        "llm",
+        "ollama"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "use",
+      "from": "volunteer",
+      "to": "ui",
+      "label": "taps",
+      "variant": "emphasis"
+    },
+    {
+      "id": "phone",
+      "from": "iphone",
+      "to": "ui",
+      "label": "Wi-Fi",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "save",
+      "from": "ui",
+      "to": "storage",
+      "label": "save card",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api",
+      "from": "ui",
+      "to": "app",
+      "label": "POST /api/card \u00b7 /api/ask",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lookup",
+      "from": "app",
+      "to": "geo",
+      "label": "get_zone \u00b7 find_shelters",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "reads",
+      "from": "geo",
+      "to": "geojson",
+      "label": "point-in-polygon",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "build",
+      "from": "app",
+      "to": "prompts",
+      "label": "build prompt",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "ground",
+      "from": "prompts",
+      "to": "guidance",
+      "label": "grounds Ask",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "gen",
+      "from": "app",
+      "to": "llm",
+      "label": "generate(prompt)"
+    },
+    {
+      "id": "online",
+      "from": "llm",
+      "to": "gemini",
+      "label": "online \u00b7 6 s timeout"
+    },
+    {
+      "id": "offline",
+      "from": "llm",
+      "to": "ollama",
+      "label": "offline / Force offline",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Partner: Card slice",
+      "items": [
+        "County GeoJSON download + field mapping",
+        "geo.py and the /api/card route",
+        "AI: prompts_card.py (card prompt, slot filling, validation, kre/es/en tuning)",
+        "card.js + i18n.js: intake, zone badge, 3 shelters, How-we-decided panel, localStorage"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Partner: AI slice",
+      "items": [
+        "llm.py: Gemini API first, Ollama fallback, Force offline",
+        "AI: prompts_ask.py + guidance.md (answers only from card + guidance)",
+        "/api/ask route, Ollama setup and timing",
+        "ask.js: chat, backend badge, Force-offline switch"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Safety rules",
+      "items": [
+        "Zone, shelter names, addresses never come from the model",
+        "Shelters are candidates: call 311 to confirm open",
+        "Unknown answer: I don't know. Call 311.",
+        "Every card ends: follow official orders from Miami-Dade EM"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Checkpoints (Oct 10)",
+      "items": [
+        "12:15 llm.generate pushed",
+        "12:30 Little Haiti shows zone + 3 shelters",
+        "13:15 Creole card online",
+        "14:00 Wi-Fi-off rehearsal passes, scope freeze",
+        "15:00 submit"
+      ]
+    }
+  ]
+}
