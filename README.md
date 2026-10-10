@@ -1,5 +1,7 @@
 # StormCard
 
+![StormCard: a hurricane action card in Kreyòl, Español and English that keeps answering when the internet goes down](docs/demo/stormcard-title.jpg)
+
 **StormCard turns a Miami-Dade address into a hurricane action card in Kreyòl, Español and English, and keeps answering questions when the internet is down (Gemma 4 runs locally).**
 
 Built for [Hack for Humanity: Miami](https://github.com/AI-Collective-Hackathons/hack-for-humanity-miami), October 10, 2026, The LAB Miami.
@@ -133,6 +135,8 @@ Card quality evals (kre/es/en): `evals/run_evals.py`.
 - Piyush Mishra
 - Stuti Agarwal
 
+
+**Built with:** Claude Code and OpenAI Codex CLI.
 
 ## License and disclaimer
 
