@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ht"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StormCard - TV</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#031428;display:flex;justify-content:center;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{width:390px;height:844px;overflow:hidden;background:linear-gradient(180deg,#0a2e63 0,#06224a 40%);color:#fff;display:flex;flex-direction:column;position:relative}
+.top{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:3px solid #1b75bc;min-height:56px}
+.logo{font-weight:900;font-size:22px;letter-spacing:.06em;text-transform:uppercase}
+.logo b{background:#e4002b;padding:2px 8px;margin-right:6px}
+.lang{font-weight:800;font-size:16px;letter-spacing:.04em;color:#fff;opacity:.85}
+.lang em{font-style:normal;background:#fff;color:#06224a;padding:4px 7px}
+.alert{background:#ffcc00;color:#111;font-weight:900;font-size:30px;text-transform:uppercase;letter-spacing:.03em;padding:0 14px;min-height:64px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #111}
+.alert i{font-style:normal;background:#111;color:#ffcc00;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;font-size:24px}
+.main{padding:12px 12px 0;display:flex;flex-direction:column;gap:10px;flex:1}
+.zone{background:#fff;color:#06224a;border-left:12px solid #e4002b;padding:8px 12px 10px}
+.zone small{display:block;font-weight:900;font-size:20px;letter-spacing:.05em;color:#1b75bc}
+.zone strong{display:block;font-weight:900;font-size:76px;line-height:.95;text-transform:uppercase;letter-spacing:-.01em}
+.zone p{font-size:20px;font-weight:700;margin-top:6px;line-height:1.15}
+.label{font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;align-items:center}
+.label span{font-size:14px;font-weight:700;background:#1b75bc;padding:2px 8px;text-transform:none;letter-spacing:0}
+.plate{background:#fff;color:#06224a;min-height:62px;padding:6px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-left:8px solid #1b75bc;margin-top:-2px}
+.plate b{font-weight:800;font-size:20px;line-height:1.1}
+.plate u{text-decoration:none;font-weight:900;font-size:22px;white-space:nowrap;background:#06224a;color:#fff;padding:4px 8px}
+.call{font-size:20px;font-weight:700;line-height:1.2;margin-top:2px}
+.call strong{color:#ffcc00}
+.cta{margin:8px 12px 14px;min-height:72px;background:#e4002b;color:#fff;border:3px solid #fff;font:900 30px system-ui,-apple-system,Arial,sans-serif;text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;text-decoration:none}
+</style></head>
+<body>
+<main class="app">
+  <header class="top"><div class="logo"><b>Storm</b>Card</div><div class="lang"><em>KRE</em> · ES · EN</div></header>
+  <div class="alert"><i>!</i>PARE KOUNYE A</div>
+  <section class="main">
+    <div class="zone"><small>ZÒN TANPÈT OU ·</small><strong>ZÒN C</strong><p>Se pa zòn asirans inondasyon an.</p></div>
+    <div class="label">Abri toupre <span>egzanp done</span></div>
+    <div>
+      <div class="plate"><b>Miami Edison Senior High</b><u>0.8 mi · 🐾</u></div>
+      <div class="plate"><b>Toussaint L'Ouverture Elementary</b><u>1.1 mi</u></div>
+      <div class="plate"><b>North Miami Beach Senior High</b><u>4.6 mi · 🐾</u></div>
+    </div>
+    <p class="call"><strong>Rele 311</strong> pou konfime yon abri louvri anvan ou ale.</p>
+  </section>
+  <a class="cta" href="#">Kote pou m ale →</a>
+</main>
+</body></html>
