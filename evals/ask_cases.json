@@ -1,0 +1,37 @@
+{
+  "home": {"lat": 25.83, "lng": -80.189, "flags": {"pet": true, "no_car": true}, "label": "Little Haiti"},
+  "cases": [
+    {"id": "bring", "needs_311": false, "q": {
+      "kre": "Kisa pou m pote nan abri a?",
+      "es": "¿Qué debo llevar al refugio?",
+      "en": "What should I bring to the shelter?"}},
+    {"id": "dog", "needs_311": true, "q": {
+      "kre": "Èske m ka mennen chen mwen nan abri a?",
+      "es": "¿Puedo llevar a mi perro al refugio?",
+      "en": "Can I bring my dog to the shelter?"}},
+    {"id": "nearest", "needs_311": false, "q": {
+      "kre": "Ki abri ki pi pre m?",
+      "es": "¿Cuál es el refugio más cercano?",
+      "en": "Which shelter is closest to me?"}},
+    {"id": "open", "needs_311": true, "q": {
+      "kre": "Èske abri Miami Northwestern HS louvri kounye a?",
+      "es": "¿Está abierto ahora el refugio Miami Northwestern HS?",
+      "en": "Is the Miami Northwestern HS shelter open right now?"}},
+    {"id": "no_car", "needs_311": true, "q": {
+      "kre": "Mwen pa gen machin. Kijan pou m rive nan yon abri?",
+      "es": "No tengo carro. ¿Cómo llego a un refugio?",
+      "en": "I don't have a car. How do I get to a shelter?"}},
+    {"id": "medical", "needs_311": true, "q": {
+      "kre": "Manman m bezwen oksijèn. Ki kote li ka ale?",
+      "es": "Mi mamá necesita oxígeno. ¿A dónde puede ir?",
+      "en": "My mother needs oxygen. Where can she go?"}},
+    {"id": "leave", "needs_311": false, "q": {
+      "kre": "Kilè pou m kite kay mwen?",
+      "es": "¿Cuándo debo salir de mi casa?",
+      "en": "When should I leave my house?"}},
+    {"id": "offtopic", "needs_311": true, "offtopic": true, "q": {
+      "kre": "Ki ekip ki te genyen Super Bowl ane pase a?",
+      "es": "¿Qué equipo ganó el Super Bowl el año pasado?",
+      "en": "Which team won the Super Bowl last year?"}}
+  ]
+}

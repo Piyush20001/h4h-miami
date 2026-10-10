@@ -70,10 +70,16 @@ def _ollama_chat(model: str, messages: list, options: dict, timeout: float) -> s
 
 def _ollama(prompt: str, cap: float | None = None) -> str:
     model = os.getenv("OLLAMA_MODEL", "gemma4:e2b-it-qat")
+    # Small models follow the system role better: fixed rules go there, CARD/QUESTION stay in the user turn.
+    rules, sep, rest = prompt.partition("\nCARD:\n")
+    messages = ([{"role": "system", "content": rules.strip()}, {"role": "user", "content": "CARD:\n" + rest}]
+                if sep else [{"role": "user", "content": prompt}])
     text = _ollama_chat(
         model,
-        [{"role": "user", "content": prompt}],
-        {"num_predict": 400, "num_ctx": 4096},
+        messages,
+        # Small local models drift (invented words, tú, chat filler) at Ollama's default temperature 0.8-1.0.
+        {"num_predict": 400, "num_ctx": 4096, "temperature": _float_env("OLLAMA_TEMPERATURE", 0.2),
+         "top_p": 0.9, "top_k": 40, "repeat_penalty": 1.1},
         min(OLLAMA_TIMEOUT, cap or float("inf")),
     )
     if not text:
