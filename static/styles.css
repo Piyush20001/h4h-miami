@@ -189,6 +189,7 @@ body.on-card .topbar-in { max-width: 1040px; }
 .c-home rect { fill: var(--ink); stroke: var(--ink); }
 .c-home .c-roof { stroke: #fff; stroke-width: 2.4; }
 .c-homelabel { fill: var(--ink); font: 900 13px var(--font); letter-spacing: 0.04em; stroke: var(--sheet); stroke-width: 4; paint-order: stroke; stroke-linejoin: round; }
+.c-shelter path { fill: var(--blue); stroke: #fff; stroke-width: 2.5; }
 .c-shelter circle { fill: var(--ink); stroke: var(--sheet); stroke-width: 2; transition: fill 0.2s var(--ease); }
 .c-shelter text { fill: #fff; font: 900 15px var(--font); stroke: none; }
 .is-on .c-shelter circle { fill: var(--blue); }
@@ -555,7 +556,8 @@ body.ar-open { overflow: hidden; }
 /* recommended shelter: first pick, marked on the map and the list */
 .c-rec-ring { fill: none; stroke: var(--green); stroke-width: 4; }
 .c-rec-tag { fill: var(--green); font: 900 11px var(--font); letter-spacing: 0.08em; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
-.c-shelter.is-rec circle { fill: var(--green); }
+.c-shelter.is-rec path { fill: var(--green); }
+.is-on .c-shelter path { fill: var(--ink); }
 .rec-tag { margin: 0 0 4px; font: 900 13px var(--font); letter-spacing: 0.1em; color: var(--green); }
 .plate-btn.is-rec { box-shadow: inset 4px 0 0 var(--green); }
 
@@ -579,3 +581,6 @@ body.ar-open { overflow: hidden; }
 .ride-fold > summary { min-height: 56px; padding: 14px 16px; font-weight: 800; cursor: pointer; list-style-position: inside; }
 .ride-fold[open] > summary { border-bottom: 1px solid var(--grid); }
 .ride-fold > div { padding: 12px; }
+
+.c-bus .c-bustile { fill: #fff; stroke: var(--blue); stroke-width: 2.5; }
+.c-bus .c-busline { stroke: var(--blue); stroke-width: 2.2; fill: none; }

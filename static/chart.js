@@ -27,7 +27,7 @@
   /* small square bus marker (sign blue), half = half side length */
   function busGlyph(g, half) {
     var k = half / 11;
-    el("rect", { x: -half, y: -half, width: half * 2, height: half * 2, rx: 2 }, g);
+    el("rect", { x: -half, y: -half, width: half * 2, height: half * 2, rx: half * 0.45, "class": "c-bustile" }, g);
     el("path", { d: "M" + (-6 * k) + " " + (-4.500 * k) + "H" + (6 * k) + "V" + (3 * k) + "H" + (-6 * k) + "ZM" + (-6 * k) + " " + (-0.500 * k) + "H" + (6 * k), "class": "c-busline" }, g);
     el("path", { d: "M" + (-3.500 * k) + " " + (5.500 * k) + "V" + (3 * k) + "M" + (3.500 * k) + " " + (5.500 * k) + "V" + (3 * k), "class": "c-busline" }, g);
     return g;
@@ -201,6 +201,8 @@
       }
       if (!moved) break;
     }
+    /* pins stand up from their tip: keep the head (and the "go here" tag) inside the frame */
+    spots.forEach(function (q, i) { if (i < shelters.length) q.y = Math.max(q.y, i === 0 ? 72 : 40); });
     spots.forEach(function (q) { q.x = r1(q.x); q.y = r1(q.y); });
     /* markers keep their true spot: when nudged apart, a dot marks the real place and a thin line joins them */
     var orig = shelters.concat(special, bus).map(function (s) { return { x: px(s.lng), y: py(s.lat) }; });
@@ -249,17 +251,17 @@
       routes.push(leader(orig[idx], p));
       var g = el("g", { transform: "translate(" + p.x + " " + p.y + ")" }, markLayer);
       if (idx === 0) {
-        /* the card's top pick: a ring and a "go here" tag so it reads first */
-        el("circle", { r: 21, "class": "c-rec-ring" }, g);
-        var rt = el("text", { y: -27, "text-anchor": "middle", "class": "c-rec-tag" }, g);
+        /* the card's top pick: bigger green pin with a "go here" tag */
+        var rt = el("text", { y: -42, "text-anchor": "middle", "class": "c-rec-tag" }, g);
         rt.textContent = opts.labels.rec || "";
       }
       var inner = el("g", {
         "class": "c-shelter" + (idx === 0 ? " is-rec" : ""),
         style: "animation-delay:" + (delay + 330) + "ms"
       }, g);
-      el("circle", { r: 13 }, inner);
-      var tx = el("text", { y: 6, "text-anchor": "middle" }, inner);
+      var ps = idx === 0 ? 1.25 : 1;
+      el("path", { d: "M0 0C0 0-12-14-12-23A12 12 0 0 1 12-23C12-14 0 0 0 0Z", transform: "scale(" + ps + ")" }, inner);
+      var tx = el("text", { y: -18 * ps, "text-anchor": "middle" }, inner);
       tx.textContent = String(idx + 1);
       markers.push(g);
     });
@@ -279,12 +281,15 @@
       busGlyph(el("g", { "class": "c-bus" + (bi === 0 ? " is-near" : "") }, bg), bi === 0 ? 13 : 10);
     });
 
+    /* shelter pins sit above bus tiles */
+    markers.forEach(function (g) { markLayer.appendChild(g); });
+
     /* short names beside shelters and bus stops, so the map reads without the list */
     var named = shelters.length ? shelters.map(function (s, i) { return { s: s, p: spots[i] }; })
       : bus.map(function (s, i) { return { s: s, p: spots[special.length + i] }; });
     var boxes = [{ x: h.x - 16, y: h.y - 16, w: 32, h: 32 }];
     if (best) boxes.push({ x: h.x + best.ox - (best.a === "end" ? lw : best.a === "middle" ? lw / 2 : 0), y: h.y + best.oy - 13, w: lw, h: 16 });
-    spots.forEach(function (q) { boxes.push({ x: q.x - 14, y: q.y - 14, w: 28, h: 28 }); });
+    spots.forEach(function (q, i) { boxes.push(i < shelters.length ? { x: q.x - 14, y: q.y - 34, w: 28, h: 36 } : { x: q.x - 14, y: q.y - 14, w: 28, h: 28 }); });
     function hits(r) {
       return r.x < 2 || r.x + r.w > W - 2 || boxes.some(function (o) { return r.x < o.x + o.w && o.x < r.x + r.w && r.y < o.y + o.h && o.y < r.y + r.h; });
     }
@@ -293,9 +298,10 @@
       if (!nm) return;
       if (nm.length > 16) nm = nm.slice(0, 15) + "…";
       var w = nm.length * 6.9 + 4;
+      var cy = shelters.length ? o.p.y - 27 : o.p.y - 7; /* beside the pin head, not its tip */
       var cands = [
-        { x: o.p.x + 17, y: o.p.y - 7, a: "start", tx: o.p.x + 17 },
-        { x: o.p.x - 17 - w, y: o.p.y - 7, a: "end", tx: o.p.x - 17 },
+        { x: o.p.x + 17, y: cy, a: "start", tx: o.p.x + 17 },
+        { x: o.p.x - 17 - w, y: cy, a: "end", tx: o.p.x - 17 },
         { x: o.p.x - w / 2, y: o.p.y + 16, a: "middle", tx: o.p.x },
         { x: o.p.x - w / 2, y: o.p.y - 30, a: "middle", tx: o.p.x }
       ];

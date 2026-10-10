@@ -39,11 +39,22 @@
     return { url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
       scaledSize: new window.google.maps.Size(px, px), anchor: new window.google.maps.Point(px / 2, px / 2) };
   }
-  function homeIcon() {
-    return svgIcon('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><rect x="1.500" y="1.500" width="25" height="25" rx="3" fill="#15293d" stroke="#fff" stroke-width="2.500"/><path d="M7.500 15L14 8.500L20.500 15M9.500 14V20H18.500V14" fill="none" stroke="#fff" stroke-width="2.200"/></svg>', 28);
+  /* teardrop pin anchored at its tip: the shape everyone already reads as "a place" */
+  function pin(fill, inner, w) {
+    var h = Math.round(w * 1.3);
+    return { url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 40 52">' +
+      '<path d="M20 50C20 50 4 31 4 19A16 16 0 0 1 36 19C36 31 20 50 20 50Z" fill="' + fill + '" stroke="#fff" stroke-width="3"/>' +
+      inner + '</svg>'),
+      scaledSize: new window.google.maps.Size(w, h), anchor: new window.google.maps.Point(w / 2, h - 2),
+      labelOrigin: new window.google.maps.Point(w / 2, Math.round(w * 0.48)) };
   }
+  function homeIcon() {
+    return pin("#15293d", '<path d="M12 21L20 13L28 21M14.500 19.500V27H25.500V19.500" fill="none" stroke="#fff" stroke-width="2.600" stroke-linejoin="round"/>', 36);
+  }
+  function shelterIcon(rec) { return pin(rec ? "#3d7556" : "#2c5c8a", "", rec ? 44 : 34); }
   function busIcon() {
-    return svgIcon('<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><rect x="1.500" y="1.500" width="23" height="23" rx="3" fill="#2c5c8a" stroke="#fff" stroke-width="2.500"/><path d="M6 8.500H20V16H6ZM6 12H20M8.500 18.500V16M17.500 18.500V16" fill="none" stroke="#fff" stroke-width="1.800"/></svg>', 26);
+    return svgIcon('<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><rect x="1.500" y="1.500" width="27" height="27" rx="7" fill="#fff" stroke="#2c5c8a" stroke-width="3"/><rect x="8" y="7" width="14" height="13" rx="2.500" fill="#2c5c8a"/><rect x="10" y="9" width="10" height="5" rx="1" fill="#fff"/><circle cx="11" cy="17" r="1.300" fill="#fff"/><circle cx="19" cy="17" r="1.300" fill="#fff"/><path d="M10 20V23M20 20V23" stroke="#2c5c8a" stroke-width="2.400" stroke-linecap="round"/></svg>', 30);
   }
   var INK = "#15293d", BLUE = "#2c5c8a";
 
@@ -157,8 +168,8 @@
         if (!opts.focusBus) bounds.extend(p);
         var m = new gm.Marker({
           map: map, position: p, zIndex: i === 0 ? 8000 : 5000 + i, title: s.name || "",
-          icon: i === 0 ? circle(17, "#3d7556") : circle(13, BLUE),
-          label: { text: String(i + 1), color: "#ffffff", fontWeight: "800", fontSize: "14px" }
+          icon: shelterIcon(i === 0),
+          label: { text: String(i + 1), color: "#ffffff", fontWeight: "800", fontSize: i === 0 ? "17px" : "14px" }
         });
         m.sc = true;
         markers.push(m);
