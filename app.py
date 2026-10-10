@@ -2,6 +2,12 @@
 from flask import Flask, jsonify, request
 
 import agent
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import geo
 import llm
 import prompts_ask
@@ -67,6 +73,12 @@ def card():
         sample_data=geo.SAMPLE_DATA,
         **extra,
     )
+
+
+@app.get("/api/config")
+def config():
+    """Browser-safe config. MAPS_API_KEY is a Maps-only key (never the Gemini key's name); empty = offline chart only."""
+    return jsonify(maps_api_key=os.getenv("MAPS_API_KEY", ""))
 
 
 @app.get("/api/storms")

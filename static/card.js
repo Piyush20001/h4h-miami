@@ -79,10 +79,20 @@
     document.body.classList.toggle("on-lang", name === "lang");
     updateStep();
     window.scrollTo(0, 0);
+    enterScreen(name);
+    if (SC.storm && name === "card") SC.storm.refresh();
     if (focus !== false) {
       var hd = $("s-" + name).querySelector("h1");
       if (hd) hd.focus({ preventScroll: true });
     }
+  }
+  function enterScreen(name) {
+    var M = SC.motion;
+    if (!M) return;
+    var sec = $("s-" + name);
+    if (name === "card") { M.enter(sec); return; }
+    M.enter(sec.querySelector("h1"));
+    M.stagger(sec.querySelectorAll(".hint, .bigopt, .tile, .loc, #make, #retry, #openSaved"));
   }
   function updateStep() {
     var n = STEP[st.screen];
@@ -399,6 +409,7 @@
         });
       });
       li.appendChild(b);
+      if (window.SCMap) { var dl = SCMap.dirLink(home, s); if (dl) li.appendChild(dl); }
       ol.appendChild(li);
     });
     if (sn) {
@@ -435,6 +446,7 @@
         d4.appendChild(a4);
       }
       l4.appendChild(d4);
+      if (window.SCMap) { var dl4 = SCMap.dirLink(hm, sn); if (dl4) l4.appendChild(dl4); }
       ol.appendChild(l4);
     }
   }
@@ -624,12 +636,14 @@
     var home = r.home || st.home || (r.facts && r.facts.home);
     if (home && typeof home.lat === "number") {
       var prevSel = chartCtl && animate === false ? chartCtl.selected : -1;
-      chartCtl = StormChart.render($("chart"), {
+      var copts = {
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
         labels: { home: t("home"), special: t("sn_tag"), mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
-      });
+      };
+      chartCtl = StormChart.render($("chart"), copts);
+      if (window.SCMap) chartCtl = SCMap.wrap($("chart"), chartCtl, copts);
       renderShelters(r);
       if (prevSel >= 0) {
         chartCtl.select(prevSel);
@@ -642,6 +656,10 @@
     renderExtras(r);
     renderHow(r);
     paintAsk();
+    if (animate && SC.motion) {
+      SC.motion.stagger($("plates").querySelectorAll("li"));
+      SC.motion.stagger(document.querySelectorAll("#cardtext > .tab, .xpanel"));
+    }
 
     var again = $("again");
     if (r.card_text && r.lang !== st.lang) {

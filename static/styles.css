@@ -413,3 +413,43 @@ body.on-card .topbar-in { max-width: 1040px; }
 
 .xpanel .items { margin: 0; padding-left: 22px; }
 .xpanel .tab { margin: 28px 0 4px; }
+
+/* ---------- live storm card (NHC facts) ---------- */
+.storm { margin-top: 16px; background: var(--sheet); border: 1px solid var(--grid); border-left: 4px solid var(--blue); border-radius: var(--r); padding: 12px 16px; }
+.storm[hidden] { display: none; }
+.storm-head { font: 800 var(--meta)/1.2 var(--sign); letter-spacing: 0.03em; word-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2); }
+.storm-top { display: flex; align-items: flex-start; gap: 12px; margin-top: 6px; }
+.storm-arrow { flex: none; margin-top: 2px; fill: var(--blue); }
+.storm-name { font: 800 22px/1.2 var(--sign); }
+.storm-facts, .storm-ww, .storm-quiet { font-size: var(--meta); margin-top: 4px; }
+.storm-quiet { margin-top: 6px; }
+.storm-ww.warn { color: var(--red); font-weight: 800; }
+.storm-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; font-size: var(--meta); color: var(--ink-2); margin-top: 8px; }
+.storm-link { color: var(--blue); font-weight: 700; display: inline-block; padding: 8px 0; min-height: 24px; }
+.storm-strip { margin: 0 0 16px; padding: 8px 12px; order: -1; }
+.storm-strip .storm-name { font-size: var(--meta); }
+.storm-strip .storm-arrow { width: 22px; height: 22px; }
+@media (min-width: 900px) { .card-screen > .storm-strip { grid-column: 1 / -1; } }
+
+/* compact card-screen storm line */
+.storm-strip { padding: 0; }
+.storm-det > summary { list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; cursor: pointer; font-size: var(--meta); font-weight: 700; }
+.storm-det > summary::-webkit-details-marker { display: none; }
+.storm-line { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.storm-wws.warn { color: var(--red); font-weight: 800; }
+.storm-more { flex: none; color: var(--blue); font-weight: 800; }
+.storm-more::after { content: " \25BE"; }
+.storm-det[open] .storm-more::after { content: " \25B4"; }
+.storm-det > .storm-in { padding: 0 12px 10px; }
+.storm-strip:has(> .storm-in) { padding: 8px 12px; }
+.storm-strip { margin-bottom: 8px; }
+
+/* embedded Google Map (online only; chart stays underneath) */
+#chart { position: relative; }
+.gm-map { position: absolute; inset: 0; visibility: hidden; background: var(--sheet); }
+#chart.gm-on .gm-map { visibility: visible; }
+#chart.gm-on .chart-svg { visibility: hidden; }
+.gm-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--meta); color: var(--ink-2); padding: 4px 0; }
+.gm-bar button { color: var(--blue); font: inherit; font-weight: 700; text-decoration: underline; min-height: 44px; padding: 0 4px; background: none; border: 0; }
+.plates > li { display: block; }
+.plate-dirs { display: inline-block; margin: 4px 0 0 12px; padding: 10px 4px; min-height: 44px; font-size: var(--meta); font-weight: 700; color: var(--blue); text-decoration: underline; }

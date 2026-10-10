@@ -47,6 +47,7 @@
     a.appendChild(pol);
     li.appendChild(a);
     $("thread").appendChild(li);
+    if (window.SC && SC.motion) SC.motion.enter(li);
     if (!reduced && li.scrollIntoView) li.scrollIntoView({ block: "nearest", behavior: "smooth" });
     return { li: li, a: a, q: q };
   }
@@ -86,6 +87,7 @@
     turn.a.appendChild(SC.setText(h("p", "ans"), answer));
     turn.a.appendChild(h("p", "badge b-" + backend, badgeText(backend)));
     if (Array.isArray(trace)) turn.a.appendChild(traceBlock(trace, lang));
+    if (SC.motion) SC.motion.stagger(turn.a.children);
   }
   function fail(turn) {
     turn.a.textContent = "";

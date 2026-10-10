@@ -44,6 +44,7 @@
   <!-- 1. Language -->
   <section class="screen" id="s-lang" aria-labelledby="h-lang">
     <h1 id="h-lang" tabindex="-1" data-i18n="langTitle">Choose your language</h1>
+    <aside class="storm" id="storm-lang" hidden></aside>
     <div class="stack" id="langbtns">
       <button type="button" class="bigopt" data-pick="kre" lang="ht"><span class="lbl">Kreyòl</span></button>
       <button type="button" class="bigopt" data-pick="es" lang="es"><span class="lbl">Español</span></button>
@@ -110,6 +111,8 @@
   <!-- 5. Card -->
   <section class="screen card-screen" id="s-card" aria-labelledby="h-card" hidden>
     <h1 class="sr" id="h-card" tabindex="-1" data-i18n="cardTitle">Your card</h1>
+
+    <aside class="storm storm-strip" id="storm-card" hidden></aside>
 
     <div class="col-a">
       <div class="zone">
@@ -186,11 +189,15 @@
 </div>
 
 <script src="i18n.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="i18n-storm.js"></script>
+<script src="motion.js"></script>
+<script src="storm.js"></script>
 <script src="i18n-agent.js"></script>
 <script src="chart.js"></script>
+<script src="gmap.js"></script>
 <script src="card.js"></script>
 <script src="ask.js"></script>
-<script src="vendor/gsap.min.js"></script>
 <script src="i18n-onboard.js"></script>
 <script src="onboard.js"></script>
 </body>
