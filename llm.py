@@ -106,8 +106,10 @@ def generate(prompt: str, force_offline: bool = False, deadline: float | None = 
             raise LLMError("request deadline reached")
         return rem
 
+    import status  # local import keeps tests that stub backends independent of the network probe
+
     gemini_err = None
-    if not force_offline:
+    if not force_offline and status.internet():
         try:
             cap = left()
             return (_gemini(prompt) if cap is None else _gemini(prompt, cap)), "gemini"
@@ -115,6 +117,8 @@ def generate(prompt: str, force_offline: bool = False, deadline: float | None = 
             if isinstance(e, (KeyboardInterrupt, SystemExit)):
                 raise
             gemini_err = e
+            if not isinstance(e, LLMError):
+                status.mark_down()
     try:
         cap = left()
         return (_ollama(prompt) if cap is None else _ollama(prompt, cap)), "ollama"

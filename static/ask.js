@@ -32,8 +32,11 @@
   }
   SC.paintAsk = paintAsk;
   function paintSwitch() {
-    $("offline").setAttribute("aria-checked", st.forceOffline ? "true" : "false");
+    var el = $("hubStatus");
+    if (el) el.textContent = t(SC.hub && SC.hub.internet === false ? "hubOffline" : "hubOnline");
   }
+
+  SC.paintHub = paintSwitch;
 
   function addTurn(q) {
     var li = h("li", "turn");
@@ -110,7 +113,7 @@
     fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q, lang: lang, card: st.result.api || st.result.card_text, force_offline: !!st.forceOffline }),
+      body: JSON.stringify({ question: q, lang: lang, card: st.result.api || st.result.card_text, force_offline: false }),
       signal: ctrl ? ctrl.signal : undefined
     }).then(function (res) {
       if (!res.ok) throw new Error("http " + res.status);
@@ -144,10 +147,10 @@
     document.querySelectorAll("#chips .chip").forEach(function (c) {
       c.addEventListener("click", function () { send(c.textContent); });
     });
-    $("offline").addEventListener("click", function () {
-      st.forceOffline = !st.forceOffline;
-      paintSwitch();
-    });
+    window.addEventListener("hubchange", paintSwitch);
+    window.addEventListener("langchange", paintSwitch);
+    SC.onLang(paintSwitch);
+    paintSwitch();
     $("dockAsk").addEventListener("click", function () {
       var ask = $("ask");
       ask.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });

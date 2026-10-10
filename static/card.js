@@ -209,7 +209,7 @@
       show("card");
       renderCard(true);
       var cb = {}; Object.keys(body).forEach(function (k) { cb[k] = body[k]; });
-      cb.force_offline = !!st.forceOffline;
+      cb.force_offline = false;  /* the hub server decides online vs local Gemma */
       return postJSON("/api/card", cb, sig).then(function (c) {
         if (my !== runId) return;
         if (!c || !c.card_text) throw new Error("bad payload");
@@ -358,6 +358,26 @@
     return null;
   }
 
+  /* one bordered container: the plate (button) plus a sibling foot row holding the directions link */
+  function plateWrap(plate, home, s, walk) {
+    var w = h("div", "plate-wrap");
+    w.appendChild(plate);
+    var dl = window.SCMap ? SCMap.dirLink(home, s, walk) : null;
+    if (dl) { var f = h("div", "plate-foot"); f.appendChild(dl); w.appendChild(f); }
+    return w;
+  }
+
+  function busList(r) {
+    var f = (r && r.facts) || {};
+    if (!f.flags || !f.flags.no_car) return [];
+    var l = (r.api && r.api.bus_pickups) || f.bus_pickups || r.bus_pickups || [];
+    return l.filter(function (b) { return b && typeof b.lat === "number" && typeof b.lng === "number"; }).slice(0, 2);
+  }
+  function badgeKey(r) {
+    if (r.backend === "gemini" || r.backend === "ollama") return "b_" + r.backend;
+    return SC.hub && SC.hub.internet === false ? "b_offline" : "b_none";
+  }
+
   function renderShelters(r) {
     var ol = $("plates");
     ol.textContent = "";
@@ -408,8 +428,7 @@
           x.setAttribute("aria-pressed", j === sel ? "true" : "false");
         });
       });
-      li.appendChild(b);
-      if (window.SCMap) { var dl = SCMap.dirLink(home, s); if (dl) li.appendChild(dl); }
+      li.appendChild(plateWrap(b, home, s));
       ol.appendChild(li);
     });
     if (sn) {
@@ -445,8 +464,7 @@
         a4.appendChild(arrowSvg(bearing(hm, sn)));
         d4.appendChild(a4);
       }
-      l4.appendChild(d4);
-      if (window.SCMap) { var dl4 = SCMap.dirLink(hm, sn); if (dl4) l4.appendChild(dl4); }
+      l4.appendChild(plateWrap(d4, hm, sn));
       ol.appendChild(l4);
     }
   }
@@ -466,8 +484,8 @@
     stat.className = "status s-" + stage;
     if (stage === "done") {
       var bk = ["gemini", "ollama", "none"].indexOf(r.backend) >= 0 ? r.backend : "none";
-      ol.appendChild(SC.stepRow("done", t("stDone"), [h("span", "badge b-" + bk, t("b_" + bk))]));
-      stat.appendChild(h("span", "badge b-" + bk, t("b_" + bk)));
+      ol.appendChild(SC.stepRow("done", t("stDone"), [h("span", "badge b-" + bk, t(badgeKey(r)))]));
+      stat.appendChild(h("span", "badge b-" + bk, t(badgeKey(r))));
     } else if (stage === "fail") {
       ol.appendChild(SC.stepRow("fail", t("stFail")));
       stat.textContent = t("stFail");
@@ -482,7 +500,7 @@
   function renderHow(r) {
     var root = $("howBody");
     root.textContent = "";
-    var badge = h("p", "badge b-" + r.backend, t("b_" + (["gemini", "ollama", "none"].indexOf(r.backend) >= 0 ? r.backend : "none")));
+    var badge = h("p", "badge b-" + r.backend, t(badgeKey(r)));
     root.appendChild(badge);
 
     var dl = h("dl", "facts");
@@ -611,6 +629,29 @@
       c.appendChild(SC.setText(h("p", "p"), t("carText")));
       c.appendChild(telBtn(t("carCall")));
       host.appendChild(c);
+      var bl = busList(r);
+      if (bl.length) {
+        var bp = panel("x-bus", t("busH"));
+        var bhome = r.home || st.home || (r.facts && r.facts.home);
+        var bul = h("ul", "bus-list");
+        bl.forEach(function (b) {
+          var li = h("li", "bus-plate");
+          li.appendChild(h("span", "nm", b.name || ""));
+          li.appendChild(h("span", "ad", [b.address, b.city].filter(Boolean).join(", ")));
+          if (typeof b.distance_mi === "number") li.appendChild(h("span", "dist", b.distance_mi.toFixed(1) + " " + t("mi")));
+          li.appendChild(h("span", "bus-status" + (b.active ? " on" : ""), b.active ? t("busActive") : t("busIdle")));
+          var act = h("span", "bus-act");
+          var tel = h("a", "plate-dirs", t("busConfirm"));
+          tel.href = "tel:311";
+          act.appendChild(tel);
+          var dl = window.SCMap ? SCMap.dirLink(bhome, b, true) : null;
+          if (dl) act.appendChild(dl);
+          li.appendChild(act);
+          bul.appendChild(li);
+        });
+        bp.appendChild(bul);
+        host.appendChild(bp);
+      }
     }
     if (f.kids) {
       var k = panel("x-kids", t("kidsH"));
@@ -639,7 +680,8 @@
       var copts = {
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
-        labels: { home: t("home"), special: t("sn_tag"), mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
+        bus: busList(r), zone: r.zone,
+        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       };
       chartCtl = StormChart.render($("chart"), copts);
@@ -656,6 +698,7 @@
     renderExtras(r);
     renderHow(r);
     paintAsk();
+    if (SC.paintHub) SC.paintHub();
     if (animate && SC.motion) {
       SC.motion.stagger($("plates").querySelectorAll("li"));
       SC.motion.stagger(document.querySelectorAll("#cardtext > .tab, .xpanel"));
@@ -715,6 +758,9 @@
       if (to) show(to);
     });
 
+    window.addEventListener("hubchange", function () {
+      if (st.screen === "card" && st.result) { renderStages(); renderHow(st.result); }
+    });
     SC.onLang(function () {
       paintLangButtons();
       paintSaved();

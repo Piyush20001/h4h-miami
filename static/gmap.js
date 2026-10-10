@@ -4,9 +4,9 @@
   "use strict";
   var SC = window.SC;
   var TXT = {
-    kre: { cap: "Google Maps · anliy", toChart: "Montre kat san entènèt la", toMap: "Montre Google Maps", dirs: "Wè chemen an", dirsA: "Wè chemen an pou ale nan {n} (nouvo paj)" },
-    es: { cap: "Google Maps · en línea", toChart: "Ver mapa sin conexión", toMap: "Ver Google Maps", dirs: "Ver ruta", dirsA: "Ver ruta a {n} (nueva pestaña)" },
-    en: { cap: "Google Maps · online", toChart: "Show offline chart", toMap: "Show Google Map", dirs: "Directions", dirsA: "Open directions to {n} (new tab)" }
+    kre: { cap: "Google Maps · anliy", toChart: "Montre kat san entènèt la", toMap: "Montre Google Maps", dirs: "Wè chemen an", dirsA: "Wè chemen an pou ale nan {n} (nouvo paj)", busDirs: "Wè chemen a pye", busDirsA: "Wè chemen a pye pou ale nan {n} (nouvo paj)" },
+    es: { cap: "Google Maps · en línea", toChart: "Ver mapa sin conexión", toMap: "Ver Google Maps", dirs: "Ver ruta", dirsA: "Ver ruta a {n} (nueva pestaña)", busDirs: "Ruta a pie", busDirsA: "Ruta a pie a {n} (nueva pestaña)" },
+    en: { cap: "Google Maps · online", toChart: "Show offline chart", toMap: "Show Google Map", dirs: "Directions", dirsA: "Open directions to {n} (new tab)", busDirs: "Walking directions", busDirsA: "Walking directions to {n} (new tab)" }
   };
   function tx(k) { var l = (SC && SC.state && SC.state.lang) || "en"; return (TXT[l] || TXT.en)[k]; }
 
@@ -14,14 +14,37 @@
   var STYLE = [
     { elementType: "geometry", stylers: [{ saturation: -60 }, { lightness: 8 }] },
     { featureType: "poi", stylers: [{ visibility: "off" }] },
+    { featureType: "poi.business", stylers: [{ visibility: "off" }] },
     { featureType: "transit", stylers: [{ visibility: "off" }] },
     { featureType: "road", elementType: "geometry", stylers: [{ color: "#e4e9ec" }] },
-    { featureType: "road", elementType: "labels", stylers: [{ saturation: -80 }, { lightness: 30 }] },
+    { featureType: "road", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+    { featureType: "road", elementType: "labels.text", stylers: [{ saturation: -80 }, { lightness: 45 }] },
     { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#d6dde2" }] },
     { featureType: "water", stylers: [{ color: "#dbe6ee" }] },
     { featureType: "landscape", stylers: [{ color: "#f4f6f5" }] },
-    { elementType: "labels.text.fill", stylers: [{ color: "#435a6e" }] }
+    { elementType: "labels.text.fill", stylers: [{ color: "#435a6e" }] },
+    { featureType: "administrative.locality", elementType: "labels.text", stylers: [{ saturation: -70 }, { lightness: 45 }] },
+    { featureType: "administrative.neighborhood", elementType: "labels.text", stylers: [{ saturation: -70 }, { lightness: 50 }] },
+    { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] }
   ];
+  var zonesP = null;
+  function getZones() {
+    if (!zonesP) {
+      zonesP = fetch("/api/zones").then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { zonesP = null; return null; });
+    }
+    return zonesP;
+  }
+  function svgIcon(svg, px) {
+    return { url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
+      scaledSize: new window.google.maps.Size(px, px), anchor: new window.google.maps.Point(px / 2, px / 2) };
+  }
+  function homeIcon() {
+    return svgIcon('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><rect x="1.500" y="1.500" width="25" height="25" rx="3" fill="#15293d" stroke="#fff" stroke-width="2.500"/><path d="M7.500 15L14 8.500L20.500 15M9.500 14V20H18.500V14" fill="none" stroke="#fff" stroke-width="2.200"/></svg>', 28);
+  }
+  function busIcon() {
+    return svgIcon('<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><rect x="1.500" y="1.500" width="23" height="23" rx="3" fill="#2c5c8a" stroke="#fff" stroke-width="2.500"/><path d="M6 8.500H20V16H6ZM6 12H20M8.500 18.500V16M17.500 18.500V16" fill="none" stroke="#fff" stroke-width="1.800"/></svg>', 26);
+  }
   var INK = "#15293d", BLUE = "#2c5c8a";
 
   var failed = false;      /* auth failure or script error: stop trying this session */
@@ -72,13 +95,14 @@
   function wrap(host, ctl, opts) {
     if (cur) cur.destroy();
     var done = false, ready = false, shown = false, sel = -1;
-    var map = null, mapDiv = null, bar = null, toggle = null, timer = null, markers = [], offHandler = null;
+    var legend = null, map = null, mapDiv = null, bar = null, toggle = null, timer = null, markers = [], offHandler = null;
     var self = { destroy: destroy, fallback: fallback };
 
     function paintBar() {
       if (!bar) return;
       toggle.textContent = shown ? tx("toChart") : tx("toMap");
       bar.firstChild.textContent = shown ? tx("cap") : "";
+      if (legend) legend.hidden = !shown;
     }
     function setShown(on) {
       shown = on;
@@ -91,6 +115,8 @@
       markers = [];
       if (mapDiv && mapDiv.parentNode) mapDiv.parentNode.removeChild(mapDiv);
       if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
+      if (legend && legend.parentNode) legend.parentNode.removeChild(legend);
+      legend = null;
       host.classList.remove("gm-on");
       map = mapDiv = bar = null;
       ready = false; shown = false;
@@ -122,16 +148,15 @@
       bounds.extend({ lat: hp.lat + 0.008, lng: hp.lng + 0.008 });
       bounds.extend({ lat: hp.lat - 0.008, lng: hp.lng - 0.008 });
       var hm = new gm.Marker({
-        map: map, position: hp, zIndex: 500, title: opts.labels.home,
-        icon: circle(10, INK),
-        label: { text: String(opts.labels.home || ""), color: INK, fontWeight: "800", fontSize: "13px" }
+        map: map, position: hp, zIndex: 9000, title: opts.labels.home,
+        icon: homeIcon()
       });
       hm.sc = false; markers.push(hm);
       (opts.shelters || []).forEach(function (s, i) {
         var p = { lat: s.lat, lng: s.lng };
         bounds.extend(p);
         var m = new gm.Marker({
-          map: map, position: p, zIndex: i + 1, title: s.name || "",
+          map: map, position: p, zIndex: 5000 + i, title: s.name || "",
           icon: circle(13, BLUE),
           label: { text: String(i + 1), color: "#ffffff", fontWeight: "800", fontSize: "14px" }
         });
@@ -143,13 +168,32 @@
         var p = { lat: s.lat, lng: s.lng };
         bounds.extend(p);
         var m = new gm.Marker({
-          map: map, position: p, title: s.name || "",
+          map: map, position: p, title: s.name || "", zIndex: 4500,
           icon: { path: DIAMOND, scale: 1, fillColor: BLUE, fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 2 },
           label: { text: "+", color: "#ffffff", fontWeight: "800", fontSize: "16px" }
         });
         m.sc = false;
         markers.push(m);
       });
+      (opts.bus || []).slice(0, 2).forEach(function (b) {
+        var p = { lat: b.lat, lng: b.lng };
+        bounds.extend(p);
+        var m = new gm.Marker({ map: map, position: p, title: b.name || "", zIndex: 4000, icon: busIcon() });
+        m.sc = false;
+        markers.push(m);
+      });
+      var zl = String(opts.zone || "").toUpperCase();
+      if (zl) {
+        getZones().then(function (fc) {
+          if (done || !map || !fc || !Array.isArray(fc.features)) return;
+          var own = fc.features.filter(function (f) {
+            return f && f.properties && String(f.properties.zone || "").toUpperCase() === zl;
+          });
+          if (!own.length) return;
+          map.data.addGeoJson({ type: "FeatureCollection", features: own });
+          map.data.setStyle({ fillColor: INK, fillOpacity: 0.1, strokeColor: INK, strokeWeight: 1.5, strokeOpacity: 0.7, clickable: false });
+        });
+      }
       map.fitBounds(bounds, 36);
       gm.event.addListenerOnce(map, "tilesloaded", function () {
         if (done) return;
@@ -166,13 +210,35 @@
         });
         bar.appendChild(toggle);
         host.parentNode.appendChild(bar);
+        legend = buildLegend();
+        host.parentNode.appendChild(legend);
         setShown(!userChart);
         if (sel >= 0) select(sel);
       });
     }
 
+    function buildLegend() {
+      var L = (opts.labels && opts.labels.legend) || {};
+      var items = [["lg-home", "\u25A0", L.home]];
+      if ((opts.shelters || []).length) items.push(["lg-shel", "\u2460", L.shelter]);
+      if ((opts.special || []).length) items.push(["lg-sn", "\u25C6", L.special]);
+      if ((opts.bus || []).length) items.push(["lg-bus", "\u25A3", L.bus]);
+      if (opts.zone) items.push(["lg-zone", "\u25A8", L.zone]);
+      var ul = document.createElement("ul");
+      ul.className = "gm-legend";
+      items.forEach(function (it) {
+        var li = document.createElement("li");
+        var g = document.createElement("span");
+        g.className = "lg " + it[0]; g.setAttribute("aria-hidden", "true"); g.textContent = it[1];
+        li.appendChild(g);
+        li.appendChild(document.createTextNode(it[2] || ""));
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+
     function start() {
-      if (done || failed || !navigator.onLine) return;
+      if (done || failed || !navigator.onLine || (SC.hub && SC.hub.internet === false)) return;
       clearTimeout(timer);
       timer = setTimeout(function () { if (!ready) fallback(); }, TIMEOUT);
       getKey().then(function (key) {
@@ -203,22 +269,26 @@
     cur = self;
     window.addEventListener("offline", fallback);
     window.addEventListener("online", onOnline);
+    window.addEventListener("hubchange", function (e) {
+      if (!e.detail.internet) fallback();
+      else { keyP = null; onOnline(); }
+    });
     start();
     return { select: function (i) { return select(i); }, get selected() { return sel; } };
   }
 
   /* Google Maps directions link: no key needed. */
-  function dirLink(home, s) {
+  function dirLink(home, s, walk) {
     if (!home || !s || typeof home.lat !== "number" || typeof home.lng !== "number" ||
         typeof s.lat !== "number" || typeof s.lng !== "number") return null;
     var a = document.createElement("a");
     a.className = "plate-dirs";
     a.href = "https://www.google.com/maps/dir/?api=1&origin=" + home.lat + "," + home.lng +
-      "&destination=" + s.lat + "," + s.lng + "&travelmode=driving";
+      "&destination=" + s.lat + "," + s.lng + "&travelmode=" + (walk ? "walking" : "driving");
     a.target = "_blank";
     a.rel = "noopener";
-    a.textContent = tx("dirs");
-    a.setAttribute("aria-label", tx("dirsA").replace("{n}", s.name || ""));
+    a.textContent = tx(walk ? "busDirs" : "dirs");
+    a.setAttribute("aria-label", tx(walk ? "busDirsA" : "dirsA").replace("{n}", s.name || ""));
     return a;
   }
 

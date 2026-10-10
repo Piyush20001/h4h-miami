@@ -105,3 +105,20 @@ def find_special_needs(lat, lng, limit=1):
         }
         for d, p, s_lat, s_lng in rows[:limit]
     ]
+
+
+_BUS_PATH = _DATA / "bus_pickups.geojson"
+_BUS = json.loads(_BUS_PATH.read_text()) if _BUS_PATH.exists() else {"features": []}
+BUS_SOURCE = _BUS.get("source", "")
+
+
+def find_bus_pickups(lat, lng, limit=2):
+    """Nearest Miami-Dade evacuation bus pick-up sites (buses run only when an evacuation is ordered)."""
+    rows = []
+    for feat in _BUS["features"]:
+        p = feat["properties"]
+        s_lng, s_lat = feat["geometry"]["coordinates"]
+        rows.append((_haversine_mi(lat, lng, s_lat, s_lng), p, s_lat, s_lng))
+    rows.sort(key=lambda r: r[0])
+    return [{"name": p["name"], "address": p["address"], "city": p["city"], "lat": s_lat, "lng": s_lng,
+             "distance_mi": round(d, 1), "active": p.get("active")} for d, p, s_lat, s_lng in rows[:limit]]

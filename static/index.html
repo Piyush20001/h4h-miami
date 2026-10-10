@@ -142,10 +142,7 @@
           <button type="submit" class="btn btn-primary" id="askSend"><span data-i18n="send">Send</span></button>
         </form>
         <div class="askfoot">
-          <button type="button" class="switch" id="offline" role="switch" aria-checked="false" data-i18n-attr="title:offlineHint">
-            <span class="knob" aria-hidden="true"></span>
-            <span class="swtext" data-i18n="offlineSwitch">Force offline</span>
-          </button>
+          <p class="hubline" id="hubStatus" aria-live="polite"></p>
         </div>
         <ol class="thread" id="thread" aria-live="polite" aria-relevant="additions text"></ol>
       </section>
@@ -189,6 +186,7 @@
 </div>
 
 <script src="i18n.js"></script>
+<script src="hub.js"></script>
 <script src="vendor/gsap.min.js"></script>
 <script src="i18n-storm.js"></script>
 <script src="motion.js"></script>

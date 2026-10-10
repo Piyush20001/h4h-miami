@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 
 import agent
 import os
+import time
 
 from dotenv import load_dotenv
 
@@ -12,6 +13,7 @@ import geo
 import llm
 import prompts_ask
 import prompts_card
+import status
 import storms
 
 app = Flask(__name__, static_folder="static", static_url_path="")
@@ -39,6 +41,8 @@ def _facts(body):
              "home": {"lat": lat, "lng": lng}}
     if flags.get("medical"):
         facts["special_needs_shelters"] = geo.find_special_needs(lat, lng)
+    if flags.get("no_car"):
+        facts["bus_pickups"] = geo.find_bus_pickups(lat, lng)
     return facts
 
 
@@ -61,8 +65,10 @@ def card():
     body = request.get_json(force=True)
     facts = _facts(body)
     lang, zone, shelters = facts["lang"], facts["zone"], facts["shelters"]
-    extra = {k: facts[k] for k in ("special_needs_shelters",) if k in facts}
+    extra = {k: facts[k] for k in ("special_needs_shelters", "bus_pickups") if k in facts}
+    t0 = time.monotonic()
     card_text, backend = prompts_card.build_card(facts, lang, bool(body.get("force_offline")))
+    print(f"[card] lang={lang} zone={zone} backend={backend} {time.monotonic() - t0:.1f}s", flush=True)
     return jsonify(
         zone=zone,
         shelters=shelters,
@@ -75,10 +81,23 @@ def card():
     )
 
 
+@app.get("/api/zones")
+def zones():
+    """Storm surge zone polygons for the map overlay (cached on the hub, works offline)."""
+    return app.response_class((geo._DATA / "zones.geojson").read_text(), mimetype="application/geo+json")
+
+
+@app.get("/api/status")
+def hub_status():
+    """Hub mode for the UI: online (Gemini + Google map) or offline (local Gemma + chart). No user switch."""
+    return jsonify(internet=status.internet())
+
+
 @app.get("/api/config")
 def config():
     """Browser-safe config. MAPS_API_KEY is a Maps-only key (never the Gemini key's name); empty = offline chart only."""
-    return jsonify(maps_api_key=os.getenv("MAPS_API_KEY", ""))
+    online = status.internet()
+    return jsonify(maps_api_key=os.getenv("MAPS_API_KEY", "") if online else "", internet=online)
 
 
 @app.get("/api/storms")
@@ -112,6 +131,8 @@ def ask():
         answer, backend, trace = out["answer"], out["backend"], out["trace"]
     except Exception:  # any failure still answers safely
         answer, backend, trace = prompts_ask.IDK[lang], "facts_only", []
+    print(f"[ask] lang={lang} backend={backend} steps={[s['tool'] for s in trace]} q={question[:60]!r} "
+          f"a={answer.strip()[:120]!r}", flush=True)
     return jsonify(answer=answer.strip(), backend=backend, trace=trace)
 
 

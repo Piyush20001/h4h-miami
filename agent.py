@@ -27,7 +27,7 @@ TOOLS_DOC = """TOOLS (call at most one per turn):
 - get_zone {}: the storm surge zone letter for this home.
 - packing_list {"pet": bool, "no_car": bool, "medical": bool, "kids": bool}: what to pack.
 - lookup_guidance {"query": "keywords"}: official guidance sections with source URL.
-- evacuation_help {}: EEAP, 311 and free transport facts."""
+- evacuation_help {}: EEAP, 311 and free transport facts, plus the nearest county evacuation bus pick-up sites."""
 
 
 # ---------- guidance helpers ----------
@@ -131,8 +131,13 @@ def lookup_guidance(card, query="", **_):
 
 def evacuation_help(card, **_):
     secs = [s for s in (_section_by_prefix(6), _section_by_prefix(7)) if s]
-    return ({"sections": [{"title": s["title"], "text": s["body"], "source": s["source"]} for s in secs]},
-            "311, bus pickup and EEAP (305-513-7700) facts")
+    lat, lng = _latlng(card)
+    pickups = geo.find_bus_pickups(lat, lng, limit=2)
+    result = {"sections": [{"title": s["title"], "text": s["body"], "source": s["source"]} for s in secs],
+              "bus_pickups": pickups,
+              "bus_note": "County evacuation buses run from these pick-up sites only when an evacuation is ordered. Call 311 to confirm."}
+    near = f"; nearest bus pickup: {pickups[0]['name']} ({pickups[0]['distance_mi']} mi)" if pickups else ""
+    return result, "311, EEAP and bus pickup facts" + near
 
 
 TOOLS = {f.__name__: f for f in (find_shelters, get_zone, packing_list, lookup_guidance, evacuation_help)}

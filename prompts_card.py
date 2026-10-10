@@ -261,7 +261,8 @@ def _normalise(raw):
 def build_card(facts, lang, force_offline=False):
     """Return (card_text, backend). Falls back to the facts-only card on any problem."""
     lang = _lang(lang)
-    if force_offline:  # offline cards are written by code; local Gemma is kept for Ask
+    import status
+    if force_offline or not status.internet():  # offline cards are written by code; local Gemma is kept for Ask
         return facts_only_card(facts, lang), "facts_only"
     try:
         raw, backend = generate(build_prompt(facts, lang), force_offline)

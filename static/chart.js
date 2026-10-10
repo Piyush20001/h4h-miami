@@ -39,6 +39,15 @@
     return "M" + h.x + " " + h.y + "L" + mid.x + " " + mid.y + "L" + s.x + " " + s.y;
   }
 
+  /* small square bus marker (sign blue), half = half side length */
+  function busGlyph(g, half) {
+    var k = half / 11;
+    el("rect", { x: -half, y: -half, width: half * 2, height: half * 2, rx: 2 }, g);
+    el("path", { d: "M" + (-6 * k) + " " + (-4.500 * k) + "H" + (6 * k) + "V" + (3 * k) + "H" + (-6 * k) + "ZM" + (-6 * k) + " " + (-0.500 * k) + "H" + (6 * k), "class": "c-busline" }, g);
+    el("path", { d: "M" + (-3.500 * k) + " " + (5.500 * k) + "V" + (3 * k) + "M" + (3.500 * k) + " " + (5.500 * k) + "V" + (3 * k), "class": "c-busline" }, g);
+    return g;
+  }
+
   function r1(n) { return Math.round(n * 10) / 10; }
 
   /* opts: {home:{lat,lng}, shelters:[{lat,lng}], labels:{home, aria}, animate:bool, onSelect(i|-1)} */
@@ -51,7 +60,10 @@
     var special = (opts.special || []).filter(function (s) {
       return typeof s.lat === "number" && typeof s.lng === "number";
     });
-    var pts = [home].concat(shelters, special);
+    var bus = (opts.bus || []).filter(function (s) {
+      return typeof s.lat === "number" && typeof s.lng === "number";
+    }).slice(0, 2);
+    var pts = [home].concat(shelters, special, bus);
 
     var minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
     pts.forEach(function (p) {
@@ -102,7 +114,7 @@
     var markLayer = el("g", null, svg);
 
     /* marker positions, nudged apart so no two are closer than 28px (home is fixed) */
-    var spots = shelters.concat(special).map(function (s) { return { x: px(s.lng), y: py(s.lat) }; });
+    var spots = shelters.concat(special, bus).map(function (s) { return { x: px(s.lng), y: py(s.lat) }; });
     var MIN = 32;
     for (var pass = 0; pass < 12; pass++) {
       var moved = false;
@@ -184,6 +196,12 @@
       el("path", { d: "M-5 0H5M0-5V5" }, si);
     });
 
+    bus.forEach(function (s, bi) {
+      var bp = spots[shelters.length + special.length + bi];
+      var bg = el("g", { transform: "translate(" + bp.x + " " + bp.y + ")" }, markLayer);
+      busGlyph(el("g", { "class": "c-bus" }, bg), 11);
+    });
+
     /* distance scale bar */
     var pxPerMi = scale / 69.05, miles = 1, opts2 = [0.25, 0.5, 1, 2, 5, 10];
     for (var m = 0; m < opts2.length; m++) { miles = opts2[m]; if (opts2[m] * pxPerMi >= 44) break; }
@@ -193,14 +211,24 @@
     var st2 = el("text", { x: PAD.l + bw + 8, y: by + 1 }, sb);
     st2.textContent = String(miles) + " " + (opts.labels.mi || "mi");
 
-    if (special.length) {
+    if (special.length || bus.length) {
       var lg = el("g", { "class": "c-legend" }, svg);
-      var lt = el("text", { x: W - 10, y: by + 1, "text-anchor": "end" }, lg);
-      lt.textContent = opts.labels.special || "";
-      var lx = W - 10 - String(opts.labels.special || "").length * 7.6 - 16;
-      var ld = el("g", { "class": "c-special", transform: "translate(" + r1(lx) + " " + (by - 4) + ")" }, lg);
-      el("rect", { x: -7, y: -7, width: 14, height: 14, transform: "rotate(45)" }, ld);
-      el("path", { d: "M-3.5 0H3.5M0-3.5V3.5" }, ld);
+      var rx = W - 10;
+      if (bus.length) {
+        var bl = String(opts.labels.bus || "");
+        el("text", { x: rx, y: by + 1, "text-anchor": "end" }, lg).textContent = bl;
+        var bx = rx - bl.length * 7.6 - 14;
+        busGlyph(el("g", { "class": "c-bus", transform: "translate(" + r1(bx) + " " + (by - 4) + ")" }, lg), 7);
+        rx = bx - 20;
+      }
+      if (special.length) {
+        var lt = el("text", { x: rx, y: by + 1, "text-anchor": "end" }, lg);
+        lt.textContent = opts.labels.special || "";
+        var lx = rx - String(opts.labels.special || "").length * 7.6 - 16;
+        var ld = el("g", { "class": "c-special", transform: "translate(" + r1(lx) + " " + (by - 4) + ")" }, lg);
+        el("rect", { x: -7, y: -7, width: 14, height: 14, transform: "rotate(45)" }, ld);
+        el("path", { d: "M-3.5 0H3.5M0-3.5V3.5" }, ld);
+      }
     }
 
     host.appendChild(svg);

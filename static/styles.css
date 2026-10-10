@@ -452,4 +452,25 @@ body.on-card .topbar-in { max-width: 1040px; }
 .gm-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--meta); color: var(--ink-2); padding: 4px 0; }
 .gm-bar button { color: var(--blue); font: inherit; font-weight: 700; text-decoration: underline; min-height: 44px; padding: 0 4px; background: none; border: 0; }
 .plates > li { display: block; }
-.plate-dirs { display: inline-block; margin: 4px 0 0 12px; padding: 10px 4px; min-height: 44px; font-size: var(--meta); font-weight: 700; color: var(--blue); text-decoration: underline; }
+.plate-dirs { display: inline-block; padding: 10px 0; min-height: 44px; font-size: var(--meta); font-weight: 700; color: var(--blue); text-decoration: underline; }
+.plate-wrap { background: var(--sheet); border: 2px solid var(--ink); border-radius: var(--r); overflow: hidden; }
+.plate-wrap:has(> .plate-btn[aria-pressed="true"]) { border-color: var(--blue); background: var(--blue-wash); box-shadow: inset 0 0 0 1px var(--blue); }
+.plate-wrap > .plate-btn { min-height: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+@media (hover: hover) { .plate-wrap:hover { background: var(--blue-wash); } }
+.plate-wrap > .plate-foot { padding: 0 12px 0 76px; margin-top: -4px; }
+.gm-legend { list-style: none; margin: 0; padding: 0 0 6px; display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: var(--meta); color: var(--ink); }
+.gm-legend[hidden] { display: none; }
+.gm-legend li { display: inline-flex; align-items: center; gap: 5px; }
+.gm-legend .lg { font-size: 18px; line-height: 1; color: var(--blue); }
+.gm-legend .lg-home { color: var(--ink); }
+.c-bus rect { fill: var(--blue); stroke: var(--sheet); stroke-width: 2; }
+.c-busline { fill: none; stroke: #fff; stroke-width: 1.8; }
+.bus-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.bus-plate { display: grid; gap: 3px; padding: 12px 0; border-bottom: 1px solid var(--grid); }
+.bus-plate .nm { font-weight: 800; line-height: 1.2; }
+.bus-plate .ad, .bus-plate .dist, .bus-plate .bus-status { font-size: var(--meta); color: var(--ink-2); line-height: 1.3; }
+.bus-plate .bus-status.on { color: var(--ink); font-weight: 800; }
+.bus-act { display: flex; flex-wrap: wrap; gap: 0 18px; }
+
+/* hub status */
+.hubline{margin:0;font-size:var(--fs-meta,16px);color:var(--ink,#15293d)}

@@ -26,7 +26,10 @@ def _bearing(lat1, lng1, lat2, lng2):
 
 def _load():
     """Fresh NHC data when online; otherwise the last cached copy (marked stale)."""
+    import status
     cached = json.loads(CACHE.read_text()) if CACHE.exists() else None
+    if not status.internet():
+        return cached, True
     if cached and time.time() - cached["fetched_at"] < MAX_AGE_S:
         return cached, False
     try:

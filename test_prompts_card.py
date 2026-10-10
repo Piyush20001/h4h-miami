@@ -1,5 +1,8 @@
 """Plain-assert tests for prompts_card. Run: python3 test_prompts_card.py"""
 import prompts_card as pc
+import status
+
+status.internet = lambda: True  # card tests stub the model; never probe the real network
 
 SHELTERS = [
     {"name": "Miami Edison Senior High", "address": "6161 NW 5th Ct", "city": "Miami",
