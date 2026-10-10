@@ -382,6 +382,7 @@ def _plan_now(question, card, lang, force_offline, on_step, trace, steps):
     if not answer or not _grounded(answer, card, steps):
         _emit(trace, on_step, {"tool": "check", "args": {}, "result_summary": "model plan had an unverified fact; plan built from county data"})
         return {"answer": _code_plan(card, lang, second, res, pres), "backend": "facts_only", "trace": trace}
+    answer = re.sub(r"\s+([23])\.\s", r"\n\1. ", answer)  # one step per line
     return {"answer": _with_pickup(answer, card, lang, trace), "backend": backend, "trace": trace}
 
 

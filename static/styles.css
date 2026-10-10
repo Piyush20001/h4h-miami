@@ -632,3 +632,28 @@ img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
 }
 .storm, .ride > div > .ride-when { border-left-width: 1px; }
 .ride > div > .ride-when { border: 0; padding-left: 0; color: var(--red); }
+
+/* ---------- thinking orb (CSS take on the "searching" orb; replaces the square while Gemma works) ---------- */
+.step.is-run .mk, .status .dot {
+  position: relative; overflow: hidden; border: 0; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #ffffff 0, #a9c6df 16%, var(--blue) 52%, var(--ink) 100%);
+  box-shadow: 0 0 0 0 rgba(44, 92, 138, 0.35);
+  animation: orbBreathe 1.8s ease-in-out infinite;
+}
+.status .dot { width: 18px; height: 18px; flex: none; }
+.step.is-run .mk::before, .status .dot::before {
+  content: ""; position: absolute; inset: -35%; width: auto; height: auto; border-radius: 50%; background:
+    conic-gradient(from 0deg, transparent 0 55%, rgba(255, 255, 255, 0.65) 70%, transparent 85%);
+  animation: orbSpin 1.3s linear infinite;
+}
+.step.is-run .mk::after, .status .dot::after {
+  content: ""; position: absolute; inset: 22%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 70%);
+  animation: orbCore 1.8s ease-in-out infinite;
+}
+@keyframes orbSpin { to { transform: rotate(360deg); } }
+@keyframes orbBreathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(44, 92, 138, 0.35); transform: scale(1); } 50% { box-shadow: 0 0 0 6px rgba(44, 92, 138, 0); transform: scale(1.06); } }
+@keyframes orbCore { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.9; } }
+@media (prefers-reduced-motion: reduce) {
+  .step.is-run .mk, .status .dot, .step.is-run .mk::before, .status .dot::before, .step.is-run .mk::after, .status .dot::after { animation: none; }
+}
