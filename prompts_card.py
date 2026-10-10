@@ -19,9 +19,16 @@ KEYS = ["what_this_means", "where_to_go", "what_to_bring", "what_to_do_now"]
 MODEL_KEYS = ["what_this_means", "what_to_do_now"]  # the other two are always written by code
 LANG_NAMES = {"kre": "Haitian Creole (Kreyòl)", "es": "Spanish", "en": "English"}
 STYLE = {
-    "kre": "Use standard Haitian Creole spelling (Kreyòl), not French.",
+    "kre": "Use standard Haitian Creole spelling (Kreyòl), not French. Words: shelter = abri, ready = pare (not prè).",
     "es": "Use simple Spanish. Address the reader as \"usted\".",
     "en": "Use plain, simple English.",
+}
+
+# Exact "leave if ordered" sentence: avoids the word evacuate, which _ORDER strips.
+LEAVE = {
+    "kre": "Si otorite yo bay lòd pou moun nan zòn ou an kite kay yo, ale.",
+    "es": "Si las autoridades ordenan salir de su zona, váyase.",
+    "en": "If officials order your zone to leave, go.",
 }
 
 # ---- validation patterns (run on RAW model output, before slot filling) ----
@@ -56,6 +63,7 @@ T = {
             "sn": "Nearest special-needs shelter: {name}. Register first. Call 311.",
         },
         "footer": "Follow official orders from Miami-Dade Emergency Management.",
+        "zone_name": "Storm Surge Zone {z}",
     },
     "es": {
         "zone": "Usted está en la Zona de Marejada Ciclónica {z}. No es la zona del seguro de inundación. Si las autoridades ordenan evacuar su zona, váyase.",
@@ -75,9 +83,10 @@ T = {
             "sn": "Refugio para necesidades especiales más cercano: {name}. Inscríbase primero. Llame al 311.",
         },
         "footer": "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade.",
+        "zone_name": "Zona de Marejada Ciclónica {z}",
     },
     "kre": {
-        "zone": "Ou nan Zòn Evakyasyon {z} pou lanmè k ap monte. Sa a se pa zòn asirans inondasyon an. Si otorite yo bay lòd pou zòn ou an evakye, pati.",
+        "zone": "Ou nan Zòn Lanm Siklòn {z}. Sa a se pa zòn asirans inondasyon an. Si otorite yo bay lòd pou zòn ou an evakye, pati.",
         "nozone": "Ou pa nan yon zòn evakyasyon pou lanmè k ap monte. Si kay ou an an sekirite, ou ka rete lakay ou. Men, prepare w kanmenm.",
         "shelters": "Abri ki tou pre w (pou planifye sèlman):",
         "shelter": "- {name}: {d} mil{pet}. Rele 311 pou konfime li ouvè.",
@@ -94,6 +103,7 @@ T = {
             "sn": "Abri ki pi pre pou moun ki gen bezwen espesyal: {name}. Enskri anvan. Rele 311.",
         },
         "footer": "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo.",
+        "zone_name": "Zòn Lanm Siklòn {z}",
     },
 }
 
@@ -108,35 +118,39 @@ def build_prompt(facts, lang):
     shelters = facts.get("shelters") or []
     model_facts = {
         "zone": "{{ZONE}}" if facts.get("zone") else None,
-        "in_evacuation_zone": bool(facts.get("zone")),
+        "in_surge_zone": bool(facts.get("zone")),
         "flags": flags,
         "shelters": [
             {"name": "{{SHELTER_%d}}" % (i + 1), "distance_mi": s.get("distance_mi"),
-             "pet_friendly": s.get("pet_friendly")}
+             "pet_friendly": {True: "yes", False: "no"}.get(s.get("pet_friendly"), "unknown")}
             for i, s in enumerate(shelters[:3])
         ],
     }
     notes = []
     if not facts.get("zone"):
-        notes.append("Not in a surge zone: say they can stay home if it is safe, still prepare, and follow official orders.")
+        notes.append("Not in a surge zone: say they can stay home if it is safe, still prepare, and follow official orders. Do not mention zones or leaving.")
     if flags.get("no_car"):
-        notes.append("No car: tell them to ask a neighbor or call 311 for a ride to a shelter.")
+        notes.append("They have no car: tell them to ask a neighbor or call 311 for a ride to a shelter.")
     if flags.get("medical"):
         notes.append("Medical needs: bring medicines; call 311 to ask about special-needs shelters.")
     if flags.get("kids"):
         notes.append("Kids: bring things for the children.")
     if flags.get("pet"):
-        notes.append("Pet: bring pet food, leash, carrier, vaccine records. Shelters with pet_friendly true take pets; for pet_friendly null say pets are not confirmed and to call 311 first.")
+        notes.append("They have a pet" + (" (leash = kòd, carrier = kaj)" if lang == "kre" else "") + ". Only say a shelter takes pets if its pet_friendly is \"yes\"; if \"unknown\", say pets are not confirmed and to call 311 first.")
     return (
-        f"Write a hurricane action card in {LANG_NAMES[lang]}. {STYLE[lang]}\n"
+        f"Write the text of a printed hurricane action card in {LANG_NAMES[lang]}. {STYLE[lang]}\n"
+        "This is not a chat. Output ONLY the two sections: no greeting, no intro, no closing line, "
+        "no questions to the reader, no offers of more help, no notes about these instructions.\n"
         "Facts (JSON):\n" + json.dumps(model_facts, ensure_ascii=False) + "\n"
         "Rules:\n"
         "- 6th-grade reading level. Short sentences. 40-70 words total.\n"
-        + ("- Refer to the zone ONLY as {{ZONE}}.\n" if facts.get("zone") else "")
+        + ("- Refer to the zone ONLY as {{ZONE}} (code replaces it with the full zone name; do not write the word zone before it).\n" if facts.get("zone") else "")
         + "- Refer to shelters ONLY as {{SHELTER_1}}, {{SHELTER_2}}, {{SHELTER_3}} (only those listed).\n"
         "- Never write addresses, zone letters, shelter names, or phone numbers. The only number allowed is 311.\n"
         "- Shelters are planning candidates: say to call 311 to confirm it is open.\n"
         "- Do not talk about hurricane categories.\n"
+        + ("- Being in a zone is NOT an order to leave. Never say they must leave now, that there is an order, or 'yet'. "
+           f"Never use the word evacuate. Use exactly this sentence: \"{LEAVE[lang]}\"\n" if facts.get("zone") else "")
         + "".join(f"- {n}\n" for n in notes)
         + "Output exactly these two headers in English, each followed by 2-3 short sentences in "
         f"{LANG_NAMES[lang]}:\n"
@@ -174,7 +188,9 @@ def _valid(raw, facts):
 
 
 def _fill(text, facts):
-    text = text.replace("{{ZONE}}", str(facts.get("zone")))
+    text = re.sub(r"(?i)\b(?:zone|zona|zòn|zon)\s+(\{\{ZONE\}\})", r"\1", text)  # avoid "zòn Zòn ..."
+    zone_name = T[_lang(facts.get("lang"))]["zone_name"].format(z=facts.get("zone"))
+    text = text.replace("{{ZONE}}", zone_name)
     for i, s in enumerate((facts.get("shelters") or [])[:3]):
         text = text.replace("{{SHELTER_%d}}" % (i + 1), s.get("name", ""))
     return text
