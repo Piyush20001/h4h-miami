@@ -671,3 +671,7 @@ img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
 .badge.b-ollama, .badge.b-offline { color: var(--red); }
 .hubline.is-off { color: var(--red); font-weight: 700; }
 @media (max-width: 420px) { .net-tx { display: none; } }
+
+.sos-sum { border: 2px solid var(--red); border-radius: var(--r); padding: 12px 14px; background: #fbf3f2; }
+.sos-sum-h { margin: 0 0 4px; font: 800 var(--meta) var(--font); color: var(--red); }
+.sos-sum-tx { margin: 0; font-size: 19px; font-weight: 700; line-height: 1.4; color: var(--ink); }
