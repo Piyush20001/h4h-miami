@@ -675,3 +675,8 @@ img.ico { display: block; width: 56px; height: 56px; object-fit: contain; }
 .sos-sum { border: 2px solid var(--red); border-radius: var(--r); padding: 12px 14px; background: #fbf3f2; }
 .sos-sum-h { margin: 0 0 4px; font: 800 var(--meta) var(--font); color: var(--red); }
 .sos-sum-tx { margin: 0; font-size: 19px; font-weight: 700; line-height: 1.4; color: var(--ink); }
+
+/* pre-demo polish: the "right now" plan arrives as 3 numbered lines; keep them on 3 lines */
+.ans { white-space: pre-line; }
+/* SOS sheet: on short phones the panel scrolls instead of pushing Call 911 below the fold */
+.sos-panel { max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; }
