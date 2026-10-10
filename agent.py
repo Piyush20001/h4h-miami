@@ -276,7 +276,9 @@ def _prompt(question, card, lang, steps, force_final, plan=False):
                      for i, s in enumerate(steps)) or "(none yet)"
     if plan:
         reply = ('You MUST now reply with {"answer": "..."} only. The answer is exactly 3 numbered actions for the next hour '
-                 f'("1. ... 2. ... 3. ..."), each taken from a TOOL RESULT, then the line: {_PLAN_END[lang]}')
+                 f'("1. ... 2. ... 3. ..."), each taken from a TOOL RESULT, then the line: {_PLAN_END[lang]} '
+                 'A bus pickup is a pickup point, not a shelter, and buses run only if an evacuation is ordered: '
+                 'say "if an evacuation is ordered" before any bus step. Never tell her to leave now.')
     elif force_final:
         reply = 'You MUST now reply with {"answer": "..."} only.'
     else:
