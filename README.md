@@ -133,7 +133,6 @@ Card quality evals (kre/es/en): `evals/run_evals.py`.
 - Piyush Mishra
 - Stuti Agarwal
 
-**AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable as advisor), OpenAI Codex CLI (code review; image generation for the logo and icons), and Gemma 4 (the product's model).
 
 ## License and disclaimer
 
