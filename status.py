@@ -1,4 +1,4 @@
-"""Is the hub online? Probed on the server, because phones on the hub's local Wi-Fi can't tell."""
+"""Is this device online? Probed on the server, because phones on its local Wi-Fi can't tell."""
 import os
 import time
 
@@ -10,7 +10,7 @@ _state = {"at": 0.0, "internet": True}
 
 
 def internet() -> bool:
-    if os.getenv("HUB_OFFLINE") == "1":  # rehearsal: behave exactly like a hub whose internet is down
+    if os.getenv("HUB_OFFLINE") == "1":  # rehearsal: behave as if the internet were down (offline rehearsal)
         return False
     if time.monotonic() - _state["at"] < TTL_S:
         return _state["internet"]

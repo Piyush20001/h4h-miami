@@ -26,9 +26,13 @@ Madame Joseph is a **composite persona**, not a real person: 74, Little Haiti, s
 - **Ask agent:** follow-up questions with live-streamed tool steps (`find_shelters`, `get_zone`, `packing_list`, `lookup_guidance`, `evacuation_help`, `draft_message`).
 - **"Text my family":** a code-built SMS draft that she sends herself.
 - **NHC storm card:** current storms from the National Hurricane Center.
-- **Automatic online/offline:** no switch; the app probes connectivity and picks the model.
-- **"Point my way" (new):** camera compass arrow toward the bus stop or shelter. Straight-line direction only; needs HTTPS (see [Phone (HTTPS)](#phone-https)).
-- **PWA:** installs to the home screen. First-run welcome screen.
+- **Your next 3 steps** and **"What should I do right now?"**: code chains `get_zone` -> `evacuation_help`/`find_shelters` -> `packing_list` (streamed); the model writes 3 numbered steps, with a code-built fallback.
+- **Need a ride?** nearest county evacuation bus pickup, a walking route on county streets (`route.py`, `/api/route`) and a turn list.
+- **Point my way:** camera + compass that follows the route; needs HTTPS (`python app.py --https` or a tunnel).
+- **SOS sheet:** 911 / text my location / 311. It never sends anything on its own.
+- **Online/Offline light:** plain green/red light, no model names in the resident UI; automatic, no switch.
+- **Recommended shelter** shown as "GO HERE"; trilingual (Kreyòl, Español, English); PWA with a new logo.
+- **Offline map:** county roads and streets (gzipped) plus surge zones; Google map when online.
 
 ## How the AI is used
 
@@ -54,10 +58,11 @@ Gemma is used under the [Gemma Terms of Use](https://ai.google.dev/gemma/terms).
 | Special-needs shelters | FDEM special-needs shelter inventory | Medical-need matching |
 | Evacuation bus pickups | Miami-Dade Emergency Evacuation Bus Pick-Up sites (129) | Cached for offline |
 | Roads | Miami-Dade Highway + MajorRoads layers | `data/roads.geojson`, offline map |
+| Streets | Miami-Dade StreetNetwork (Brickell-Wynwood-Little Haiti + Hialeah) | Walking routes |
 | Storms | NHC `CurrentStorms.json` | Cached; hidden if unavailable |
 | Guidance | Miami-Dade Emergency Management, ready.gov | `data/guidance.md` |
 
-**Limitations:** the shelter list is old and no live capacity feed exists, so every shelter is a candidate to confirm with 311. Addresses are located within Miami-Dade bounds only, with no street geocoding. The offline map shows main roads and zones, not turn-by-turn routes. Compass direction is straight-line, not a walking route. Regular Metrobus service is suspended in storms and is not shown.
+**Limitations:** the shelter list is old and no live capacity feed exists, so every shelter is a candidate to confirm with 311. Addresses are located within Miami-Dade bounds only, with no street geocoding. Walking routes cover only the two street-data areas and have no sidewalk data. Regular Metrobus service is suspended in storms and is not shown.
 
 ## Architecture
 
@@ -75,7 +80,7 @@ flowchart LR
     UI --> LS[(localStorage)]
 ```
 
-Everything runs on one laptop (Flask + Ollama) and phones connect over the same Wi-Fi; static assets, fonts and map data are all served locally, so it works with the internet off. Details: [docs/ARCHI.md](docs/ARCHI.md). **Future:** on-phone Gemma 4 E2B, a county "open once to save offline" notice, community hubs, and a coordinator-run ride board.
+StormCard runs on one device (Flask + Ollama). Offline answers come from Gemma 4 running locally on that device (the laptop in today's demo; phones on its Wi-Fi); static assets, fonts and map data are all served locally, so it works with the internet off. Details: [docs/ARCHI.md](docs/ARCHI.md). **Future:** on-phone Gemma 4 E2B, a county "open once to save offline" notice, Gemma 4 E2B on the phone itself.
 
 ## Run it
 
@@ -88,13 +93,33 @@ ollama pull gemma4:e2b-it-qat
 python app.py            # http://localhost:8000
 ```
 
-- **Offline rehearsal:** `HUB_OFFLINE=1 python app.py` (or turn Wi-Fi off); Ask then uses Ollama.
+- **Offline rehearsal:** `HUB_OFFLINE=1 python app.py` (env var name only; or turn Wi-Fi off); Ask then uses Ollama.
 - **Phone camera/compass:** needs HTTPS, see [Phone (HTTPS)](#phone-https).
 - Without `MAPS_API_KEY` the map falls back to the offline chart.
 
 ### Phone (HTTPS)
 
 iPhone Safari only allows camera and compass on HTTPS. Run `python app.py --https` to serve HTTPS on port 8443 with a self-signed certificate (generated into `certs/`, gitignored). On the iPhone open `https://<laptop-ip>:8443`, tap **Show Details**, then **visit this website**. Phone and laptop must be on the same Wi-Fi. Phone steps: [docs/MOBILE.md](docs/MOBILE.md).
+
+## User flow and data flow
+
+```mermaid
+flowchart TD
+    R[Resident] --> L[Pick language and place] --> H[Household: pet, no car, medical, kids]
+    H --> C[Action card: zone, shelters, GO HERE]
+    C --> N[Next 3 steps] & B[Need a ride? bus pickup + walking route] & P[Point my way] & S[SOS sheet] & T[Text my family] & Q[Ask agent]
+    C --> F[/api/facts/] --> G[geo.py + county data]
+    B --> RT[/api/route/] --> RS[route.py A* on streets]
+    Q --> AS[/api/ask/stream/] --> AG[agent.py tools] --> M[llm.py]
+    C --> CD[/api/card/] --> M
+    ST[status.py probe] -.-> M
+    M -->|online| GM[Gemma 4 26B, Gemini API]
+    M -->|offline| OL[Gemma 4 E2B, Ollama]
+```
+
+## Evaluation
+
+Online Gemma 4 26B: 35/36 cards pass (en 12/12, es 11/12, kre 12/12), 0 rule violations. Offline E2B: kre 11/12. 50 tests pass.
 
 ## Tests
 
@@ -111,7 +136,7 @@ Card quality evals (kre/es/en): `evals/run_evals.py`.
 
 Split per [docs/ARCHI.md](docs/ARCHI.md) section 12.
 
-**AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable for design advice), OpenAI Codex CLI (code review, Astra advisor), the impeccable design skill, and Gemma 4 (the product model).
+**AI tools used:** Claude Code (Claude Opus 5.5, Sonnet 5.5 subagents, Fable for design advice), OpenAI Codex CLI (code review, image generation for logo, icons and slides), the impeccable design skill, the frontend-slides skill, and Gemma 4 (the product model).
 
 ## License and disclaimer
 

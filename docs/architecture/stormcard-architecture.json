@@ -2,8 +2,8 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "StormCard: Community-Hub Hurricane Card (Combined Team Architecture)",
-    "output": ".archify/architecture-stormcard-20261010-1200/stormcard.html",
+    "title": "StormCard: Hurricane Card (Combined Team Architecture)",
+    "output": ".archify/a/stormcard-architecture.html",
     "quality_profile": "showcase",
     "locale": "en"
   },
@@ -11,7 +11,7 @@
     {
       "id": "volunteer",
       "type": "external",
-      "label": "Volunteer + Resident",
+      "label": "Resident",
       "sublabel": "Madame Joseph (composite)",
       "pos": [
         40,
@@ -185,7 +185,7 @@
   "boundaries": [
     {
       "kind": "region",
-      "label": "Community-hub laptop (runs with Wi-Fi off)",
+      "label": "Device running StormCard (works with Wi-Fi off)",
       "wraps": [
         "ui",
         "storage",

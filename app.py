@@ -101,7 +101,7 @@ def card():
 
 @app.get("/api/zones")
 def zones():
-    """Storm surge zone polygons for the map overlay (cached on the hub, works offline)."""
+    """Storm surge zone polygons for the map overlay (cached on the server, works offline)."""
     return _geojson("zones.geojson")
 
 
@@ -152,7 +152,7 @@ def roads():
 
 @app.get("/api/status")
 def hub_status():
-    """Hub mode for the UI: online (Gemini + Google map) or offline (local Gemma + chart). No user switch."""
+    """Connectivity mode for the UI: online (Gemini + Google map) or offline (local Gemma + chart). No user switch."""
     return jsonify(internet=status.internet())
 
 

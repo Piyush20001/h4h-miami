@@ -210,7 +210,7 @@
       show("card");
       renderCard(true);
       var cb = {}; Object.keys(body).forEach(function (k) { cb[k] = body[k]; });
-      cb.force_offline = false;  /* the hub server decides online vs local Gemma */
+      cb.force_offline = false;  /* the server decides online vs local Gemma */
       return postJSON("/api/card", cb, sig).then(function (c) {
         if (my !== runId) return;
         if (!c || !c.card_text) throw new Error("bad payload");

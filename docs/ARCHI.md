@@ -1,6 +1,6 @@
 # StormCard (h4h-miami) Architecture
 
-Long-term memory for agents and both partners; read before every task. Keep it true: update after each change per `ARCHI-rules.md`.
+Architecture reference. Keep it true when behavior changes.
 
 ## 1. Overview
 
@@ -9,7 +9,7 @@ StormCard turns a Miami-Dade location into a one-page hurricane action card in *
 - **Event:** Hack for Humanity: Miami, Oct 10 2026 · build ends 15:30, submit by 15:45 (target 15:00).
 - **Track:** 01 Four Forces, One City (Air + Water). **Prizes stacked:** MLH Best Open-Source AI (open-weight Gemma 4 running locally) + Best Use of Gemma 4 (Gemini API).
 - **Persona:** Madame Joseph (**composite**): 74, Little Haiti, Creole only, small dog, no car, using it alone on her phone.
-- **Deployment model today:** one machine runs Flask + Ollama (the laptop for the demo); a phone on the same Wi-Fi opens it as a home-screen app. **Future:** Gemma 4 E2B on the phone itself; optional shared community hubs. A "hub" is not a distinct architecture: it is the same app on a volunteer's laptop.
+- **Deployment model today:** one machine runs Flask + Ollama (the laptop for the demo); a phone on the same Wi-Fi opens it as a home-screen app. **Future:** Gemma 4 E2B on the phone itself and a county "open it once, works offline" notice. Offline answers come from Gemma 4 running locally on the device running StormCard (the laptop today; phones use it over its Wi-Fi).
 
 ## 2. Core Principles
 
@@ -32,7 +32,7 @@ StormCard turns a Miami-Dade location into a one-page hurricane action card in *
 | Offline model | Gemma 4 `gemma4:e2b-it-qat` via Ollama, `think: false` (8 GB laptop can't load e4b; e4b if RAM allows) |
 | Persistence | Browser `localStorage` (saved card, checklists, onboarding flag) |
 | Native shell | `ios/` SwiftUI WKWebView wrapper (XcodeGen); demo uses Safari Add to Home Screen instead |
-| Dev | Claude Code + TRIP, Codex CLI (reviews), impeccable (design), pytest |
+| Dev | Claude Code (Opus 5.5 + Sonnet 5.5 subagents, Fable advisor), Codex CLI (reviews, image generation), impeccable, frontend-slides, pytest (50 tests) |
 
 License MIT. Gemma: link the official Gemma terms in the README.
 
@@ -42,14 +42,13 @@ License MIT. Gemma: link the official Gemma terms in the README.
 app.py            Flask routes (§6); Miami-Dade bounds check (422 outside)
 geo.py            get_zone, find_shelters (pets: confirmed first, unknown kept), find_special_needs, find_bus_pickups
 llm.py            generate(prompt, force_offline, deadline) -> (text, "gemini"|"ollama"); warm()
-status.py         internet() probe (20 s cache, HUB_OFFLINE=1 rehearsal), mark_down()
+status.py         internet() probe (20 s cache, HUB_OFFLINE=1 offline rehearsal), mark_down()
 agent.py          Ask agent: JSON tool loop, ≤3 steps, 60 s budget, grounding check, Kreyòl/Spanish keyword map,
                   on_step streaming, draft_message (code-built SMS), nearest pickup always named by code
 route.py          offline walking routes (A* on county street centerlines, no expressways) -> path + turn steps
 prompts_card.py   card prompt (model writes 2 sections), slot fill, validation, facts-only card, medical/EEAP lines
 prompts_ask.py    grounded single-call Ask prompt + IDK strings (agent fallback)
 storms.py         nearest Atlantic NHC system, cached to data/storms_cache.json (gitignored)
-gemma.py          original Gemini prototype (superseded by llm.py)
 data/             zones · shelters (FDEM) · special_needs_shelters · bus_pickups · roads (main roads) ·
                   streets (all streets, Brickell–Wynwood–Little Haiti + Hialeah) · guidance.md (cited)
 static/           index.html, styles.css, card.js, ask.js, chart.js, gmap.js, storm.js, hub.js, motion.js, ar.js, sos.js,
@@ -57,8 +56,7 @@ static/           index.html, styles.css, card.js, ask.js, chart.js, gmap.js, st
 ios/              native wrapper project (project.yml, StormCard/)
 evals/            per-language card eval set (36 cases) + runner
 tests/, test_*.py pytest (geo, card, ask, agent, llm, storms)
-docs/             ARCHI, PLAN (1-plans/), MOBILE, architecture/ (Archify diagram), TRIP folders
-.impeccable/      design direction contract (surfaces/), review screenshots
+docs/             ARCHI, MOBILE, architecture/ (diagram), demo/ (slide deck)
 ```
 
 ## 5. Configuration (`.env`, gitignored; template `.env.example`)
@@ -70,7 +68,7 @@ docs/             ARCHI, PLAN (1-plans/), MOBILE, architecture/ (Archify diagram
 | `GEMINI_TIMEOUT` | `30` | per-call cap (also bounded by request deadline) |
 | `OLLAMA_URL` / `OLLAMA_MODEL` | `localhost:11434` / `gemma4:e2b-it-qat` | local model |
 | `MAPS_API_KEY` | empty | Maps-only key sent to the browser (needs billing + Maps JS API); empty = chart only |
-| `HUB_OFFLINE` | unset | `1` = behave as if the internet is down (rehearsal) |
+| `HUB_OFFLINE` | unset | `1` = offline rehearsal (behave as if the internet is down; env name only) |
 | `--https` flag | off | `python app.py --https`: self-signed cert in `certs/` (gitignored), port 8443, for phone camera/compass |
 
 ## 6. Server API
@@ -106,13 +104,16 @@ Outside the Miami-Dade box → `422 outside_miami_dade`. Server logs one `[card]
 
 ## 8. Gemma 4 Integration
 
+Online `gemma-4-26b-a4b-it` (Gemini API); offline `gemma4:e2b-it-qat` (Ollama: `keep_alive`, warmed at startup, `format=json` for agent steps). Terms: https://ai.google.dev/gemma/terms. Evals: online 35/36 cards (en 12/12, es 11/12, kre 12/12), 0 rule violations; offline E2B kre 11/12.
+
 - **`llm.generate`**: Gemini unless offline/forced (cap = min(timeout, deadline)); on failure marks the internet down and uses Ollama; raises only `LLMError`.
 - **Card**: model writes only `what_this_means` + `what_to_do_now`, and only from Gemini; `where_to_go`/`what_to_bring` always from the code template; offline or Ollama → facts-only card. Guards: placeholder normalisation (`**ZONE**`→`{{ZONE}}`), address/phone/zone/place-word (incl. HS/MS/ES) rejection, no "evacuate" wording (Stuti's fixed LEAVE sentence instead).
+- **Right-now plan: code chains get_zone -> evacuation_help/find_shelters -> packing_list (streamed via `/api/ask/stream`), model writes 3 steps, code-built fallback.
 - **Ask agent** (`agent.py`): tools `find_shelters`, `get_zone`, `packing_list`, `lookup_guidance`, `evacuation_help` (incl. nearest bus pickups); every answer grounded on ≥1 tool; `_grounded` rejects any unknown place/address/phone/zone → localized "I don't know. Call 311."
 
-## 9. UI Flow (`.impeccable/surfaces/static-index-html.md` is the binding design contract)
+## 9. UI Flow (PRODUCT.md holds the design intent)
 
-Card adds: "Need a ride?" panel (nearest pickup, walking route + turn list, Point my way, 311), recommended shelter as green "GO HERE" pin, SOS sheet in the dock (911 / text my location / 311, never auto-sends), Point my way overlay (camera + smoothed compass, follows route to next turn, mini route map; HTTPS only: `python app.py --https` or a tunnel). First-run GSAP welcome (3 beats, skippable, `?welcome=1` to replay) → storm card + **Language** → **Place** (presets; GPS needs HTTPS) → **Household** toggles (pet, no car, medical, kids) → **Card**: compact storm strip, navy zone plate, backend badge, map (Google + zone overlay + home/shelters/bus markers, or SVG chart offline) with legend, shelter arrow plates (bearing, reason word, Directions link), single red 311 line, household sections (medical/EEAP checklist, pets, no-car + bus pickups, kids), card text, "How StormCard decided", **Ask** (chips, hub-status line, per-answer badge + trace). Fast GSAP motion (≤0.28 s, reduced-motion aware). Phone install via Safari Add to Home Screen (`docs/MOBILE.md`).
+Card adds: "Need a ride?" panel (nearest pickup, walking route + turn list, Point my way, 311), recommended shelter as green "GO HERE" pin, SOS sheet in the dock (911 / text my location / 311, never auto-sends), Point my way overlay (camera + smoothed compass, follows route to next turn, mini route map; HTTPS only: `python app.py --https` or a tunnel). First-run GSAP welcome (3 beats, skippable, `?welcome=1` to replay) → storm card + **Language** → **Place** (presets; GPS needs HTTPS) → **Household** toggles (pet, no car, medical, kids) → **Card**: compact storm strip, navy zone plate, backend badge, map (Google + zone overlay + home/shelters/bus markers, or SVG chart offline) with legend, shelter arrow plates (bearing, reason word, Directions link), single red 311 line, household sections (medical/EEAP checklist, pets, no-car + bus pickups, kids), card text, "How StormCard decided", **Ask** (chips, online/offline light, per-answer badge + trace). Fast GSAP motion (≤0.28 s, reduced-motion aware). Phone install via Safari Add to Home Screen (`docs/MOBILE.md`).
 
 ## 10. Data Flow
 
@@ -133,10 +134,10 @@ flowchart LR
 ## 11. Errors, Testing, Security
 
 - **Errors:** Gemini fail → Ollama → facts-only/IDK; card text failure keeps facts with retry; map failure/offline/no key → chart; storm fetch failure → cache or hidden.
-- **Tests:** `.venv/bin/python -m pytest -q test_geo.py test_prompts_card.py tests/` (39); `node --check static/*.js`; `evals/run_evals.py` for card quality; manual: offline rehearsal with `HUB_OFFLINE=1` or Wi-Fi off.
+- **Tests:** `.venv/bin/python -m pytest -q test_geo.py test_prompts_card.py tests/` (50); `node --check static/*.js`; `evals/run_evals.py` for card quality; manual: offline rehearsal with `HUB_OFFLINE=1` or Wi-Fi off.
 - **Security:** keys only in `.env` (gitignored, scan before commit); Maps key is browser-exposed by design (restrict by referrer); model text rendered as text; Ask ignores instructions inside questions; agent has a hard deadline.
 
 ## 12. Team & Out of Scope
 
 - **Ownership:** Stuti — card slice (geo, prompts_card, data, evals, mobile/iOS notes); Piyush — AI slice (llm, agent, Ask, storms, status, UI integration). Branches merge into `main`; notes in `Communication.md`.
-- **Out of scope today:** on-phone model (future), shared hubs (future), live shelter capacity (no feed → 311), address geocoding, SMS/accounts, other counties, Creole TTS, NHC cone drawn on our map (link only), regular Metrobus timetables (suspended in storms).
+- **Out of scope today:** on-phone model (future), shared community deployments (future), live shelter capacity (no feed → 311), address geocoding, SMS/accounts, other counties, Creole TTS, NHC cone drawn on our map (link only), regular Metrobus timetables (suspended in storms).

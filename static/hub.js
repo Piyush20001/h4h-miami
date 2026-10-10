@@ -1,4 +1,4 @@
-/* Hub mode: the laptop server knows whether the internet is up; phones on the hub's Wi-Fi can't. */
+/* Connectivity: the server knows whether the internet is up; phones on its Wi-Fi cannot. */
 (function () {
   var SC = window.SC = window.SC || {};
   SC.hub = { internet: true };
@@ -6,7 +6,7 @@
     fetch("/api/status", { cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(function (j) { set(!!j.internet); })
-      .catch(function () { set(false); });  /* hub unreachable: treat as offline */
+      .catch(function () { set(false); });  /* server unreachable: treat as offline */
   }
   function set(up) {
     if (SC.hub.internet === up) return;
