@@ -25,6 +25,8 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>StormCardServer</key>
 	<string>http://10.88.2.23:8000</string>
 </dict>
