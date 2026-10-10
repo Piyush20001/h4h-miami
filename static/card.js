@@ -187,6 +187,7 @@
 
   function generate() {
     if (!st.home) { show("place"); return; }
+    st.mapAll = false; /* every new card opens on its own bus/route view */
     var my = ++runId;
     if (ctrl) ctrl.abort();
     var lang = st.lang;

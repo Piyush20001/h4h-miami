@@ -7,7 +7,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var NS = "http://www.w3.org/2000/svg";
   var ov = null, video = null, stream = null, watchId = null, target = null;
-  var wake = null, here = null, heading = null, gpsAcc = null, session = 0, shown = null;
+  var opener = null, wake = null, here = null, heading = null, gpsAcc = null, session = 0, shown = null;
 
   function h(tag, cls, text) {
     var n = document.createElement(tag);
@@ -116,8 +116,8 @@
   /* little north-up map of the route with a dot for her */
   function mini(g, from) {
     var box = ov.querySelector(".ar-mini");
-    if (!g) { box.hidden = true; return; }
-    box.hidden = false;
+    if (!g) { box.setAttribute("hidden", ""); return; }
+    box.removeAttribute("hidden");
     var P = g.P.concat([from]);
     var la0 = Infinity, la1 = -Infinity, ln0 = Infinity, ln1 = -Infinity;
     P.forEach(function (q) { la0 = Math.min(la0, q.lat); la1 = Math.max(la1, q.lat); ln0 = Math.min(ln0, q.lng); ln1 = Math.max(ln1, q.lng); });
@@ -191,7 +191,7 @@
           if (stale()) { s.getTracks().forEach(function (k) { k.stop(); }); return; }
           stream = s; video.srcObject = s; return video.play().then(function () { ov.classList.add("has-cam"); });
         })
-        .catch(function () { if (!stale()) ov.querySelector(".ar-sensor").dataset.cam = t("arNoCam"); });
+        .catch(function () { if (!stale()) ov.querySelector(".ar-note").textContent += " " + t("arNoCam"); });
     }
     if (secure && navigator.geolocation) {
       watchId = navigator.geolocation.watchPosition(function (pos) {
@@ -215,6 +215,7 @@
 
   function openAr(tg) {
     if (!tg || typeof tg.lat !== "number" || !tg.home) return;
+    opener = document.activeElement;
     target = tg; here = null; heading = null; gpsAcc = null; shown = null; smooth = null;
     if (!ov) build();
     ov.querySelector(".ar-k").textContent = tg.kind === "bus" ? t("arToBus") : t("arToShelter");
@@ -241,6 +242,7 @@
     watchId = null;
     window.removeEventListener("deviceorientation", onOrient, true);
     window.removeEventListener("deviceorientationabsolute", onOrient, true);
+    if (opener && opener.focus) { try { opener.focus(); } catch (e) { /* gone */ } }
   }
 
   /* button used by the card for bus stops and shelters */

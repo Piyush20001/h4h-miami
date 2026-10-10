@@ -322,6 +322,11 @@ def _with_pickup(answer, card, lang, trace):
     """Facts by code: if the agent used evacuation_help but did not name the stop, add it from county data."""
     if not any(t.get("tool") == "evacuation_help" for t in trace):
         return answer
+    if answer.strip() == IDK[lang]:
+        # the model gave up but the county data has the answer: give just the fact
+        lat, lng = _latlng(card)
+        p = (geo.find_bus_pickups(lat, lng, limit=1) or [None])[0]
+        return _PICKUP_LINE[lang].format(name=p["name"], address=p.get("address", ""), d=p["distance_mi"]) if p else answer
     lat, lng = _latlng(card)
     pickups = geo.find_bus_pickups(lat, lng, limit=1) if lat is not None else []
     if not pickups or pickups[0]["name"].lower() in answer.lower():

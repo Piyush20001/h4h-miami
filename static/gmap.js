@@ -10,7 +10,7 @@
   };
   function tx(k) { var l = (SC && SC.state && SC.state.lang) || "en"; return (TXT[l] || TXT.en)[k]; }
 
-  var TIMEOUT = 6000;
+  var TIMEOUT = 15000;
   var STYLE = [
     { elementType: "geometry", stylers: [{ saturation: -60 }, { lightness: 8 }] },
     { featureType: "poi", stylers: [{ visibility: "off" }] },
@@ -107,7 +107,7 @@
     if (cur) cur.destroy();
     var done = false, ready = false, shown = false, sel = -1;
     var legend = null, map = null, mapDiv = null, bar = null, toggle = null, timer = null, markers = [], offHandler = null;
-    var self = { destroy: destroy, fallback: fallback };
+    var self = { destroy: destroy, fallback: fallback }, hubHandler = null;
 
     function paintBar() {
       if (!bar) return;
@@ -136,6 +136,7 @@
       done = true;
       window.removeEventListener("offline", fallback);
       window.removeEventListener("online", onOnline);
+      if (hubHandler) window.removeEventListener("hubchange", hubHandler);
       teardown();
       if (cur === self) cur = null;
     }
@@ -256,6 +257,11 @@
 
     function start() {
       if (done || failed || !navigator.onLine || (SC.hub && SC.hub.internet === false)) return;
+      if (document.visibilityState === "hidden") {
+        /* tiles never load in a hidden tab: wait until she comes back instead of giving up */
+        document.addEventListener("visibilitychange", function once() { document.removeEventListener("visibilitychange", once); onOnline(); });
+        return;
+      }
       clearTimeout(timer);
       timer = setTimeout(function () { if (!ready) fallback(); }, TIMEOUT);
       getKey().then(function (key) {
@@ -276,20 +282,23 @@
         markers.forEach(function (m, j) {
           if (!m.sc) return;
           var on = j - 1 === sel;
-          m.setIcon(circle(on ? 17 : 13, on ? INK : BLUE));
+          m.setIcon(on ? pin(INK, "", 48) : shelterIcon(j === 1));
           m.setZIndex(on ? 1000 : j);
         });
-        if (sel >= 0 && markers[sel + 1]) map.panTo(markers[sel + 1].getPosition());
+        var sm = markers.filter(function (m) { return m.sc; });
+        if (sel >= 0 && sm[sel]) map.panTo(sm[sel].getPosition());
       }
       return r;
     }
     cur = self;
     window.addEventListener("offline", fallback);
     window.addEventListener("online", onOnline);
-    window.addEventListener("hubchange", function (e) {
+    hubHandler = function (e) {
+      if (done) return;
       if (!e.detail.internet) fallback();
       else { keyP = null; onOnline(); }
-    });
+    };
+    window.addEventListener("hubchange", hubHandler);
     start();
     return { select: function (i) { return select(i); }, get selected() { return sel; } };
   }

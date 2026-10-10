@@ -37,11 +37,23 @@ class OutsideArea(ValueError):
     pass
 
 
+class BadInput(ValueError):
+    pass
+
+
+@app.errorhandler(BadInput)
+def _bad_input(_e):
+    return jsonify(error="lat and lng are required numbers"), 400
+
+
 def _facts(body):
-    lat, lng = float(body["lat"]), float(body["lng"])
+    try:
+        lat, lng = float(body["lat"]), float(body["lng"])
+    except (KeyError, TypeError, ValueError):
+        raise BadInput()
     if not (MIAMI_DADE[0] <= lat <= MIAMI_DADE[1] and MIAMI_DADE[2] <= lng <= MIAMI_DADE[3]):
         raise OutsideArea()
-    flags = body.get("flags", {})
+    flags = body.get("flags") or {}
     facts = {"zone": geo.get_zone(lat, lng), "lang": body.get("lang", "kre"), "flags": flags,
              "shelters": geo.find_shelters(lat, lng, pet=bool(flags.get("pet")), limit=3),
              "home": {"lat": lat, "lng": lng}}
@@ -100,6 +112,8 @@ def walk_route():
         b = [float(x) for x in request.args["to"].split(",")]
     except (KeyError, ValueError):
         return jsonify(error="from and to are lat,lng"), 400
+    if len(a) != 2 or len(b) != 2:
+        return jsonify(error="from and to are lat,lng"), 400
     r = route.walk(a[0], a[1], b[0], b[1])
     return (jsonify(r), 200) if r else (jsonify(error="no_route"), 404)
 
@@ -107,13 +121,17 @@ def walk_route():
 @app.get("/api/streets")
 def streets():
     """Every street around the demo places, so the offline map shows the walking streets too."""
-    return app.response_class((geo._DATA / "streets.geojson").read_text(), mimetype="application/geo+json")
+    resp = app.response_class((geo._DATA / "streets.geojson").read_text(), mimetype="application/geo+json")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
 
 
 @app.get("/api/roads")
 def roads():
     """Major roads (Miami-Dade County layers) so the offline map has streets to read."""
-    return app.response_class((geo._DATA / "roads.geojson").read_text(), mimetype="application/geo+json")
+    resp = app.response_class((geo._DATA / "roads.geojson").read_text(), mimetype="application/geo+json")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
 
 
 @app.get("/api/status")

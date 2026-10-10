@@ -153,3 +153,9 @@ def test_on_step_called_and_errors_ignored(monkeypatch):
         raise RuntimeError("x")
     script(monkeypatch, ['{"tool": "get_zone", "args": {}}', '{"answer": "ok"}'])
     assert agent.run("zone?", {}, "en", True, on_step=boom)["answer"] == "ok"
+
+
+def test_idk_with_pickup_becomes_just_the_fact():
+    card = {"facts": {"home": {"lat": 25.83, "lng": -80.189}}}
+    out = agent._with_pickup(agent.IDK["en"], card, "en", [{"tool": "evacuation_help"}])
+    assert out.startswith("Nearest evacuation bus pickup") and agent.IDK["en"] not in out
