@@ -246,7 +246,7 @@ def facts_only_card(facts, lang):
 
 # The model may never imply an evacuation order; only officials give one.
 _ORDER = re.compile(r"evacu|evakye|evakiye|evakwe", re.I)
-_PLACE_WORD = re.compile(r"(?i)\b(high|elementary|middle|school|academy|center|centre|church|library|park|pavilion|pavillion|escuela|lek[oò]l|legliz|iglesia|biblioteca)\b|\b(?:HS|MS|ES|K-8|SHS|MSHS)\b")
+_PLACE_WORD = re.compile(r"(?i:\b(high|elementary|middle|school|academy|center|centre|church|library|park|pavilion|pavillion|escuela|lek[oò]l|legliz|iglesia|biblioteca)\b)|\b(?:HS|MS|ES|K-8|SHS|MSHS)\b")
 
 
 # Small models mangle placeholders (**ZONE**, {SHELTER_1}, [ZONE]); normalise them to {{X}}.
