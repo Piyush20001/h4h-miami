@@ -1,0 +1,4682 @@
+[
+ {
+  "id": "en-little_haiti-none",
+  "lang": "en",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {},
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone C"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-little_haiti-persona",
+  "lang": "en",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {
+   "pet": true,
+   "no_car": true
+  },
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone C"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "neighbo",
+     "\\bride\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "leash"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-little_haiti-all",
+  "lang": "en",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {
+   "pet": true,
+   "no_car": true,
+   "medical": true
+  },
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone C"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "neighbo",
+     "\\bride\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "leash"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-brickell-none",
+  "lang": "en",
+  "lat": 25.7617,
+  "lng": -80.1918,
+  "flags": {},
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone B"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-brickell-kids",
+  "lang": "en",
+  "lat": 25.7617,
+  "lng": -80.1918,
+  "flags": {
+   "kids": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone B"
+    ]
+   },
+   {
+    "name": "kids_mentioned",
+    "any": [
+     "\\bchild",
+     "\\bkids?\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-hialeah-none",
+  "lang": "en",
+  "lat": 25.8576,
+  "lng": -80.2781,
+  "flags": {},
+  "expect_zone": null,
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "no_zone_said",
+    "any": [
+     "\\bstay (at )?home\\b",
+     "\\bnot in\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-hialeah-medical",
+  "lang": "en",
+  "lat": 25.8576,
+  "lng": -80.2781,
+  "flags": {
+   "medical": true
+  },
+  "expect_zone": null,
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "no_zone_said",
+    "any": [
+     "\\bstay (at )?home\\b",
+     "\\bnot in\\b"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-key_biscayne-pet",
+  "lang": "en",
+  "lat": 25.69,
+  "lng": -80.162,
+  "flags": {
+   "pet": true
+  },
+  "expect_zone": "A",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone A"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "leash"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-key_biscayne-no_car",
+  "lang": "en",
+  "lat": 25.69,
+  "lng": -80.162,
+  "flags": {
+   "no_car": true
+  },
+  "expect_zone": "A",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone A"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "neighbo",
+     "\\bride\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-miami_beach-medical",
+  "lang": "en",
+  "lat": 25.79,
+  "lng": -80.13,
+  "flags": {
+   "medical": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone B"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-miami_beach-pet_kids",
+  "lang": "en",
+  "lat": 25.79,
+  "lng": -80.13,
+  "flags": {
+   "pet": true,
+   "kids": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone B"
+    ]
+   },
+   {
+    "name": "kids_mentioned",
+    "any": [
+     "\\bchild",
+     "\\bkids?\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "leash"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-homestead-far_pet",
+  "lang": "en",
+  "lat": 25.4687,
+  "lng": -80.4776,
+  "flags": {
+   "pet": true,
+   "no_car": true
+  },
+  "expect_zone": "D",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Follow official orders from Miami-Dade Emergency Management\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Storm Surge Zone D"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "neighbo",
+     "\\bride\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bwater\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicine"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "document"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "charger"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "leash"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bmust (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\b(have|need) to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuation order (is|has been|was) (issued|in effect)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bordered to (evacuate|leave)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "mandatory evacuation"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bleave now\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevacuate now\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hello|hi|dear)\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bI hope\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "let me know"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bstay safe\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bhere is\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfeel free\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-little_haiti-none",
+  "lang": "es",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {},
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica C"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-little_haiti-persona",
+  "lang": "es",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {
+   "pet": true,
+   "no_car": true
+  },
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica C"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vecino",
+     "\\blleven\\b|\\btransporte\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "correa"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-little_haiti-all",
+  "lang": "es",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {
+   "pet": true,
+   "no_car": true,
+   "medical": true
+  },
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica C"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vecino",
+     "\\blleven\\b|\\btransporte\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "correa"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-brickell-none",
+  "lang": "es",
+  "lat": 25.7617,
+  "lng": -80.1918,
+  "flags": {},
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica B"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-brickell-kids",
+  "lang": "es",
+  "lat": 25.7617,
+  "lng": -80.1918,
+  "flags": {
+   "kids": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica B"
+    ]
+   },
+   {
+    "name": "kids_mentioned",
+    "any": [
+     "\\bniñ",
+     "\\bhij"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-hialeah-none",
+  "lang": "es",
+  "lat": 25.8576,
+  "lng": -80.2781,
+  "flags": {},
+  "expect_zone": null,
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "no_zone_said",
+    "any": [
+     "\\bquedarse\\b",
+     "\\bno est[aá]\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-hialeah-medical",
+  "lang": "es",
+  "lat": 25.8576,
+  "lng": -80.2781,
+  "flags": {
+   "medical": true
+  },
+  "expect_zone": null,
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "no_zone_said",
+    "any": [
+     "\\bquedarse\\b",
+     "\\bno est[aá]\\b"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-key_biscayne-pet",
+  "lang": "es",
+  "lat": 25.69,
+  "lng": -80.162,
+  "flags": {
+   "pet": true
+  },
+  "expect_zone": "A",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica A"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "correa"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-key_biscayne-no_car",
+  "lang": "es",
+  "lat": 25.69,
+  "lng": -80.162,
+  "flags": {
+   "no_car": true
+  },
+  "expect_zone": "A",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica A"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vecino",
+     "\\blleven\\b|\\btransporte\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-miami_beach-medical",
+  "lang": "es",
+  "lat": 25.79,
+  "lng": -80.13,
+  "flags": {
+   "medical": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica B"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-miami_beach-pet_kids",
+  "lang": "es",
+  "lat": 25.79,
+  "lng": -80.13,
+  "flags": {
+   "pet": true,
+   "kids": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica B"
+    ]
+   },
+   {
+    "name": "kids_mentioned",
+    "any": [
+     "\\bniñ",
+     "\\bhij"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "correa"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "es-homestead-far_pet",
+  "lang": "es",
+  "lat": 25.4687,
+  "lng": -80.4776,
+  "flags": {
+   "pet": true,
+   "no_car": true
+  },
+  "expect_zone": "D",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Siga las órdenes oficiales de Manejo de Emergencias de Miami-Dade\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zona de Marejada Ciclónica D"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vecino",
+     "\\blleven\\b|\\btransporte\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bagua\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medicin"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "documento"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "cargador"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "correa"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bdebe (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\btiene que (evacuar|salir|irse)\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "orden de evacuaci[oó]n (est[aá]|fue|ya|vigente)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evacuaci[oó]n obligatoria"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bv[aá]yase ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevac[uú]e ahora\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bsalga ahora\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(hola|estimad)"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bespero que\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bcu[ií]dese\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bav[ií]seme\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\baqu[ií] (est[aá]|tiene)\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-little_haiti-none",
+  "lang": "kre",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {},
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn C"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-little_haiti-persona",
+  "lang": "kre",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {
+   "pet": true,
+   "no_car": true
+  },
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn C"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vwazen",
+     "\\bmachin\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "k[oò]d"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-little_haiti-all",
+  "lang": "kre",
+  "lat": 25.83,
+  "lng": -80.189,
+  "flags": {
+   "pet": true,
+   "no_car": true,
+   "medical": true
+  },
+  "expect_zone": "C",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn C"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vwazen",
+     "\\bmachin\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "k[oò]d"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-brickell-none",
+  "lang": "kre",
+  "lat": 25.7617,
+  "lng": -80.1918,
+  "flags": {},
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn B"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-brickell-kids",
+  "lang": "kre",
+  "lat": 25.7617,
+  "lng": -80.1918,
+  "flags": {
+   "kids": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn B"
+    ]
+   },
+   {
+    "name": "kids_mentioned",
+    "any": [
+     "\\btimoun\\b",
+     "\\bpitit\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-hialeah-none",
+  "lang": "kre",
+  "lat": 25.8576,
+  "lng": -80.2781,
+  "flags": {},
+  "expect_zone": null,
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "no_zone_said",
+    "any": [
+     "\\brete lakay\\b",
+     "\\bpa nan\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-hialeah-medical",
+  "lang": "kre",
+  "lat": 25.8576,
+  "lng": -80.2781,
+  "flags": {
+   "medical": true
+  },
+  "expect_zone": null,
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "no_zone_said",
+    "any": [
+     "\\brete lakay\\b",
+     "\\bpa nan\\b"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-key_biscayne-pet",
+  "lang": "kre",
+  "lat": 25.69,
+  "lng": -80.162,
+  "flags": {
+   "pet": true
+  },
+  "expect_zone": "A",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn A"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "k[oò]d"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-key_biscayne-no_car",
+  "lang": "kre",
+  "lat": 25.69,
+  "lng": -80.162,
+  "flags": {
+   "no_car": true
+  },
+  "expect_zone": "A",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn A"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vwazen",
+     "\\bmachin\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-miami_beach-medical",
+  "lang": "kre",
+  "lat": 25.79,
+  "lng": -80.13,
+  "flags": {
+   "medical": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn B"
+    ]
+   },
+   {
+    "name": "medical_eeap",
+    "any": [
+     "EEAP"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-miami_beach-pet_kids",
+  "lang": "kre",
+  "lat": 25.79,
+  "lng": -80.13,
+  "flags": {
+   "pet": true,
+   "kids": true
+  },
+  "expect_zone": "B",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn B"
+    ]
+   },
+   {
+    "name": "kids_mentioned",
+    "any": [
+     "\\btimoun\\b",
+     "\\bpitit\\b"
+    ]
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "k[oò]d"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ },
+ {
+  "id": "kre-homestead-far_pet",
+  "lang": "kre",
+  "lat": 25.4687,
+  "lng": -80.4776,
+  "flags": {
+   "pet": true,
+   "no_car": true
+  },
+  "expect_zone": "D",
+  "must_include_any": [
+   {
+    "name": "311",
+    "any": [
+     "\\b311\\b"
+    ]
+   },
+   {
+    "name": "footer",
+    "any": [
+     "Swiv lòd ofisyèl Jesyon Ijans Miami-Dade yo\\."
+    ]
+   },
+   {
+    "name": "zone_named",
+    "any": [
+     "Zòn Lanm Siklòn D"
+    ]
+   },
+   {
+    "name": "no_car_help",
+    "any": [
+     "vwazen",
+     "\\bmachin\\b"
+    ],
+    "section": "what_to_do_now"
+   },
+   {
+    "name": "bring_water",
+    "any": [
+     "\\bdlo\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_food3",
+    "any": [
+     "\\b3\\b"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_meds",
+    "any": [
+     "medikaman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_docs",
+    "any": [
+     "papye|dokiman"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_charger",
+    "any": [
+     "chaj[eè]"
+    ],
+    "section": "what_to_bring"
+   },
+   {
+    "name": "bring_pet_items",
+    "any": [
+     "k[oò]d"
+    ],
+    "section": "what_to_bring"
+   }
+  ],
+  "must_not_include": [
+   {
+    "name": "evac_order_claim",
+    "re": "\\bf[oò]k ou (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "(?<!vle di )\\bou dwe (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bou blije (evak|pati|kite)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "l[oò]d evakyasyon (an |la )?(deja|bay|vini)"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "evakyasyon obligatwa"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bpati kounye a\\b"
+   },
+   {
+    "name": "evac_order_claim",
+    "re": "\\bevakye kounye a\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "^\\s*(bonjou|bonswa|al[oò])\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmwen espere\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bpran swen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bfè m konnen\\b"
+   },
+   {
+    "name": "chat_phrase",
+    "re": "\\bmen sa\\b"
+   },
+   {
+    "name": "hurricane_category",
+    "re": "\\b(category|categor[ií]a|kategori)\\s*[1-5]\\b"
+   },
+   {
+    "name": "french_word",
+    "re": "\\b(vous|votre|avec|pour|est|les|des|maison|eau|être|nourriture|médicaments|téléphone)\\b"
+   }
+  ]
+ }
+]

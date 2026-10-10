@@ -20,7 +20,7 @@ MODEL_KEYS = ["what_this_means", "what_to_do_now"]  # the other two are always w
 LANG_NAMES = {"kre": "Haitian Creole (Kreyòl)", "es": "Spanish", "en": "English"}
 STYLE = {
     "kre": "Use standard Haitian Creole spelling (Kreyòl), not French. Words: shelter = abri, ready = pare (not prè).",
-    "es": "Use simple Spanish. Address the reader as \"usted\".",
+    "es": "Use simple Spanish. Address the reader as \"usted\". Write \"Llame al 311\" (never \"Llamé\").",
     "en": "Use plain, simple English.",
 }
 
