@@ -624,41 +624,78 @@
       } else p.appendChild(SC.setText(h("p", "p strong"), t("petNone")));
       host.appendChild(p);
     }
-    if (f.no_car) {
-      var c = panel("x-car", t("carH"));
-      c.appendChild(SC.setText(h("p", "p"), t("carText")));
-      c.appendChild(telBtn(t("carCall")));
-      host.appendChild(c);
-      var bl = busList(r);
-      if (bl.length) {
-        var bp = panel("x-bus", t("busH"));
-        var bhome = r.home || st.home || (r.facts && r.facts.home);
-        var bul = h("ul", "bus-list");
-        bl.forEach(function (b) {
-          var li = h("li", "bus-plate");
-          li.appendChild(h("span", "nm", b.name || ""));
-          li.appendChild(h("span", "ad", [b.address, b.city].filter(Boolean).join(", ")));
-          if (typeof b.distance_mi === "number") li.appendChild(h("span", "dist", b.distance_mi.toFixed(1) + " " + t("mi")));
-          li.appendChild(h("span", "bus-status" + (b.active ? " on" : ""), b.active ? t("busActive") : t("busIdle")));
-          var act = h("span", "bus-act");
-          var tel = h("a", "plate-dirs", t("busConfirm"));
-          tel.href = "tel:311";
-          act.appendChild(tel);
-          var dl = window.SCMap ? SCMap.dirLink(bhome, b, true) : null;
-          if (dl) act.appendChild(dl);
-          li.appendChild(act);
-          bul.appendChild(li);
-        });
-        bp.appendChild(bul);
-        host.appendChild(bp);
-      }
-    }
     if (f.kids) {
       var k = panel("x-kids", t("kidsH"));
       k.appendChild(checklist(["1", "2", "3", "4"].map(function (n) {
         return { key: n, label: "kids" + n };
       }), ticks, "kids."));
       host.appendChild(k);
+    }
+  }
+
+  /* no car: the map opens on the bus pickups; one button widens it to the shelters */
+  function renderMapToggle(r) {
+    var b = $("mapAll");
+    if (!busList(r).length) { if (b) b.hidden = true; return; }
+    if (!b) {
+      b = h("button", "btn btn-ghost small map-all");
+      b.type = "button"; b.id = "mapAll";
+      b.addEventListener("click", function () { st.mapAll = !st.mapAll; renderCard(false); });
+      $("chart").parentNode.appendChild(b);
+    }
+    b.hidden = false;
+    b.textContent = st.mapAll ? t("mapBus") : t("mapShel");
+  }
+
+  /* no car: the ride out goes right under the zone plate, nearest bus pickup first */
+  function renderRide(r) {
+    var sec = $("ride"), body = $("rideBody");
+    var f = (r.facts && r.facts.flags) || {};
+    body.textContent = "";
+    sec.hidden = !f.no_car;
+    if (!f.no_car) return;
+    $("h-ride").textContent = t("rideH");
+    var home = r.home || st.home || (r.facts && r.facts.home);
+    var bl = busList(r);
+    if (!bl.length) {
+      body.appendChild(SC.setText(h("p", "p"), t("carText")));
+      body.appendChild(telBtn(t("carCall")));
+      return;
+    }
+    var b = bl[0];
+    body.appendChild(h("p", "ride-when", t("busIdle")));
+    var card = h("div", "ride-card");
+    var top = h("div", "ride-top");
+    var ico = h("span", "ride-ico");
+    ico.appendChild(svgIcon("M6 5H18V16H6ZM6 11H18M8.500 19V16M15.500 19V16", 26));
+    top.appendChild(ico);
+    var nm = h("div", "ride-nm");
+    nm.appendChild(h("span", "ride-k", t("rideNear")));
+    nm.appendChild(h("span", "nm", b.name || ""));
+    nm.appendChild(h("span", "ad", [b.address, b.city].filter(Boolean).join(", ")));
+    top.appendChild(nm);
+    if (home && typeof home.lat === "number") {
+      var ar = h("span", "dir");
+      ar.setAttribute("role", "img");
+      ar.setAttribute("aria-label", bearing(home, b) + "°");
+      ar.appendChild(arrowSvg(bearing(home, b)));
+      top.appendChild(ar);
+    }
+    card.appendChild(top);
+    if (typeof b.distance_mi === "number") card.appendChild(h("p", "ride-walk", t("rideDist", { d: b.distance_mi.toFixed(1) })));
+    var steps = h("ol", "ride-steps");
+    ["rideS1", "rideS2", "rideS3"].forEach(function (k) { steps.appendChild(h("li", null, t(k))); });
+    card.appendChild(steps);
+    if (f.pet) card.appendChild(h("p", "ride-pet", t("ridePet")));
+    var act = h("div", "ride-act");
+    act.appendChild(telBtn(t("busConfirm")));
+    var dl = window.SCMap ? SCMap.dirLink(home, b, true) : null;
+    if (dl) act.appendChild(dl);
+    card.appendChild(act);
+    body.appendChild(card);
+    if (bl[1]) {
+      var o = bl[1];
+      body.appendChild(h("p", "ride-alt", t("rideAlt", { n: o.name || "", d: typeof o.distance_mi === "number" ? o.distance_mi.toFixed(1) : "?" })));
     }
   }
 
@@ -680,11 +717,12 @@
       var copts = {
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
-        bus: busList(r), zone: r.zone,
-        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
+        bus: busList(r), zone: r.zone, focusBus: busList(r).length > 0 && !st.mapAll,
+        labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), cap: t("chartCap"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       };
       chartCtl = StormChart.render($("chart"), copts);
+      renderMapToggle(r);
       if (window.SCMap) chartCtl = SCMap.wrap($("chart"), chartCtl, copts);
       renderShelters(r);
       if (prevSel >= 0) {
@@ -693,6 +731,7 @@
         if (bs[prevSel]) bs[prevSel].setAttribute("aria-pressed", "true");
       }
     } else renderShelters(r);
+    renderRide(r);
     renderStages();
     renderCardText(r);
     renderExtras(r);

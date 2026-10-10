@@ -44,12 +44,12 @@
   <!-- 1. Language -->
   <section class="screen" id="s-lang" aria-labelledby="h-lang">
     <h1 id="h-lang" tabindex="-1" data-i18n="langTitle">Choose your language</h1>
-    <aside class="storm" id="storm-lang" hidden></aside>
     <div class="stack" id="langbtns">
       <button type="button" class="bigopt" data-pick="kre" lang="ht"><span class="lbl">Kreyòl</span></button>
       <button type="button" class="bigopt" data-pick="es" lang="es"><span class="lbl">Español</span></button>
       <button type="button" class="bigopt" data-pick="en" lang="en"><span class="lbl">English</span></button>
     </div>
+    <aside class="storm" id="storm-lang" hidden></aside>
     <div class="saved" id="saved" hidden>
       <button type="button" class="btn btn-ghost" id="openSaved"><span data-i18n="openSaved">Open my saved card</span></button>
       <p class="meta" id="savedMeta"></p>
@@ -121,6 +121,11 @@
         <p class="status" id="status" role="status" aria-live="polite"></p>
         <button type="button" class="btn btn-ghost small" id="stageRetry" hidden><span data-i18n="retry">Try again</span></button>
       </div>
+
+      <section class="ride" id="ride" aria-labelledby="h-ride" hidden>
+        <h2 class="tab" id="h-ride"></h2>
+        <div id="rideBody"></div>
+      </section>
 
       <section class="chart-panel" aria-labelledby="h-chart">
         <h2 class="tab" id="h-chart" data-i18n="chartTitle">Your map</h2>

@@ -149,7 +149,7 @@ body.on-card .topbar-in { max-width: 1040px; }
   outline: 2px solid var(--ink); outline-offset: -8px; /* inset rule, like a highway plate */
   box-shadow: inset 0 0 0 7px var(--ink), inset 0 0 0 8px rgba(255,255,255,.85);
 }
-.plate-word { font-family: var(--sign); font-weight: 800; font-size: clamp(56px, 19vw, 80px); line-height: 1; font-weight: 900; letter-spacing: 0.02em; }
+.plate-word { font-family: var(--sign); font-weight: 800; font-size: clamp(56px, 19vw, 80px); line-height: 1.18; font-weight: 900; letter-spacing: 0.02em; }
 .plate-out .plate-word { font-family: var(--sign); font-weight: 800; font-size: var(--head); line-height: 1.15; letter-spacing: 0; text-wrap: balance; }
 .plate-note { margin-top: 8px; font-weight: 600; }
 
@@ -163,6 +163,15 @@ body.on-card .topbar-in { max-width: 1040px; }
 #chart { background: var(--sheet); border: 1px solid var(--ink); border-top: 0; }
 .chart-svg { width: 100%; height: auto; display: block; }
 .c-grid line { stroke: var(--grid); stroke-width: 1; }
+#chart .chart-svg { background: var(--ground); }
+.c-z { fill: var(--ink); stroke: var(--ink); stroke-opacity: 0.25; stroke-width: 0.6; }
+.c-zA { fill-opacity: 0.26; } .c-zB { fill-opacity: 0.2; } .c-zC { fill-opacity: 0.15; } .c-zD { fill-opacity: 0.1; } .c-zE { fill-opacity: 0.06; }
+.c-z.is-home { fill: var(--blue); fill-opacity: 0.3; stroke: var(--blue); stroke-opacity: 1; stroke-width: 1.6; }
+.c-walk { fill: none; stroke: var(--blue); stroke-width: 3; stroke-dasharray: 2 6; stroke-linecap: round; }
+.c-lead path { stroke: var(--ink); stroke-width: 1.5; } .c-lead circle { fill: var(--ink); }
+.c-cap { margin: 0; padding: 8px 12px; font-size: var(--meta); color: var(--ink-2); border-top: 1px solid var(--grid); }
+.map-all { margin-top: 10px; }
+.c-north path { fill: var(--ink); } .c-north text { fill: var(--ink); font: 800 12px var(--font); }
 .c-grid .c-frame { stroke: var(--grid); stroke-width: 1; fill: none; }
 .c-grid text { fill: var(--ink); font: 600 13px var(--font); font-variant-numeric: tabular-nums; stroke: none; }
 .c-scale path { stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: butt; }
@@ -315,7 +324,8 @@ body.on-card .topbar-in { max-width: 1040px; }
 .card-screen { display: flex; flex-direction: column; }
 .card-screen > .col-a, .card-screen > .col-b { display: contents; }
 .zone { order: 1; }
-.chart-panel { order: 2; }
+.ride { order: 2; }
+.chart-panel { order: 3; }
 .shelters { order: 4; }
 .cardtext { order: 5; }
 .extras { order: 6; }
@@ -474,3 +484,25 @@ body.on-card .topbar-in { max-width: 1040px; }
 
 /* hub status */
 .hubline{margin:0;font-size:var(--fs-meta,16px);color:var(--ink,#15293d)}
+
+/* ---------- no car: ride out ---------- */
+.ride .tab { margin-top: 20px; }
+.ride-card { border: 2px solid var(--ink); border-radius: var(--r); background: var(--sheet); padding: 16px; display: grid; gap: 12px; }
+.ride-top { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; }
+.ride-ico { width: 44px; height: 44px; border-radius: 6px; background: var(--blue); display: grid; place-items: center; }
+.ride-ico svg, .ride-ico svg path { stroke: #fff; fill: none; stroke-width: 2; stroke-linejoin: round; }
+.ride-nm { display: grid; gap: 2px; min-width: 0; }
+.ride-k { font-size: var(--meta); font-weight: 700; color: var(--ink-2); }
+.ride-nm .nm { font-weight: 900; font-size: 22px; line-height: 1.15; }
+.ride-nm .ad { font-size: var(--meta); color: var(--ink-2); }
+.ride-top .dir .bearing path { fill: var(--ink); }
+.ride-walk { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ride-steps { margin: 0; padding: 0; list-style: none; counter-reset: rs; display: grid; gap: 6px; }
+.ride-steps li { counter-increment: rs; display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: baseline; line-height: 1.35; }
+.ride-steps li::before { content: counter(rs); width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font: 800 14px var(--font); display: grid; place-items: center; }
+.ride-when { margin: 0; font-size: var(--meta); color: var(--ink-2); border-left: 3px solid var(--grid); padding-left: 10px; }
+.ride-when.on { color: var(--ink); font-weight: 800; border-color: var(--green); }
+.ride-act { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.ride-pet { margin: 0; font-weight: 800; }
+.ride > div > .ride-when { margin: 0 0 10px; color: var(--ink); font-weight: 700; border-color: var(--red); }
+.ride-alt { margin: 8px 0 0; font-size: var(--meta); color: var(--ink-2); }

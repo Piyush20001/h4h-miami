@@ -154,7 +154,7 @@
       hm.sc = false; markers.push(hm);
       (opts.shelters || []).forEach(function (s, i) {
         var p = { lat: s.lat, lng: s.lng };
-        bounds.extend(p);
+        if (!opts.focusBus) bounds.extend(p);
         var m = new gm.Marker({
           map: map, position: p, zIndex: 5000 + i, title: s.name || "",
           icon: circle(13, BLUE),
@@ -166,7 +166,7 @@
       /* markers[0] is home; shelter j is markers[j + 1] */
       (opts.special || []).forEach(function (s) {
         var p = { lat: s.lat, lng: s.lng };
-        bounds.extend(p);
+        if (!opts.focusBus) bounds.extend(p);
         var m = new gm.Marker({
           map: map, position: p, title: s.name || "", zIndex: 4500,
           icon: { path: DIAMOND, scale: 1, fillColor: BLUE, fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 2 },
@@ -281,6 +281,8 @@
   function dirLink(home, s, walk) {
     if (!home || !s || typeof home.lat !== "number" || typeof home.lng !== "number" ||
         typeof s.lat !== "number" || typeof s.lng !== "number") return null;
+    /* Google directions are a dead end with no internet */
+    if (window.SC && SC.hub && SC.hub.internet === false) return null;
     var a = document.createElement("a");
     a.className = "plate-dirs";
     a.href = "https://www.google.com/maps/dir/?api=1&origin=" + home.lat + "," + home.lng +

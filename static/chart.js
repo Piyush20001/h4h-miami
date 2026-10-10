@@ -1,10 +1,10 @@
 /* StormCard chart: inline SVG, equirectangular projection fitted to the points.
-   Routes use only 0/45/90 degree segments. No external requests. */
+   Draws the local surge-zone polygons; no streets or routes (we have no road data). */
 (function () {
   "use strict";
   var NS = "http://www.w3.org/2000/svg";
-  var W = 360, H = 256;
-  var PAD = { l: 62, r: 40, t: 20, b: 46 };
+  var W = 360, H = 290;
+  var PAD = { l: 26, r: 40, t: 26, b: 44 };
 
   function el(tag, attrs, parent) {
     var n = document.createElementNS(NS, tag);
@@ -24,21 +24,6 @@
     return Math.abs(v).toFixed(d);
   }
 
-  function routePath(h, s, straightFirst) {
-    var dx = s.x - h.x, dy = s.y - h.y;
-    var ax = Math.abs(dx), ay = Math.abs(dy);
-    var d = Math.min(ax, ay);
-    var sx = dx < 0 ? -1 : 1, sy = dy < 0 ? -1 : 1;
-    var diag = { x: h.x + sx * d, y: h.y + sy * d };
-    if (d < 1) return "M" + h.x + " " + h.y + "L" + s.x + " " + s.y;
-    if (!straightFirst || ax === ay) {
-      return "M" + h.x + " " + h.y + "L" + diag.x + " " + diag.y + "L" + s.x + " " + s.y;
-    }
-    /* straight run first, then the 45 degree leg into the shelter */
-    var mid = ax > ay ? { x: s.x - sx * d, y: h.y } : { x: h.x, y: s.y - sy * d };
-    return "M" + h.x + " " + h.y + "L" + mid.x + " " + mid.y + "L" + s.x + " " + s.y;
-  }
-
   /* small square bus marker (sign blue), half = half side length */
   function busGlyph(g, half) {
     var k = half / 11;
@@ -49,6 +34,16 @@
   }
 
   function r1(n) { return Math.round(n * 10) / 10; }
+
+  /* surge zones come from our own server, so they draw with the internet down */
+  var zonesP = null;
+  function zones() {
+    if (!zonesP) {
+      zonesP = fetch("/api/zones").then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { zonesP = null; return null; });
+    }
+    return zonesP;
+  }
 
   /* opts: {home:{lat,lng}, shelters:[{lat,lng}], labels:{home, aria}, animate:bool, onSelect(i|-1)} */
   function render(host, opts) {
@@ -63,6 +58,7 @@
     var bus = (opts.bus || []).filter(function (s) {
       return typeof s.lat === "number" && typeof s.lng === "number";
     }).slice(0, 2);
+    if (opts.focusBus && bus.length) { shelters = []; special = []; }
     var pts = [home].concat(shelters, special, bus);
 
     var minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
@@ -88,25 +84,39 @@
       "class": "chart-svg" + (opts.animate ? " is-anim" : "")
     });
 
-    /* grid, with degree labels */
+    var clipId = "cclip" + Math.random().toString(36).slice(2, 8);
+    var cp = el("clipPath", { id: clipId }, el("defs", null, svg));
+    el("rect", { x: 0, y: 0, width: W, height: H }, cp);
     var grid = el("g", { "class": "c-grid" }, svg);
-    var latHi = cLat + (oy - PAD.t) / scale, latLo = cLat - (H - PAD.b - oy) / scale;
-    var lngLo = cLng - (ox - PAD.l) / (k * scale), lngHi = cLng + (W - PAD.r - ox) / (k * scale);
-    var latStep = niceStep(latHi - latLo), lngStep = niceStep(lngHi - lngLo);
-    var i, v, x, y;
-    for (v = Math.ceil(latLo / latStep) * latStep; v <= latHi + 1e-9; v += latStep) {
-      y = py(v);
-      el("line", { x1: PAD.l, x2: W - PAD.r, y1: y, y2: y }, grid);
-      var tl = el("text", { x: PAD.l - 6, y: y + 4, "text-anchor": "end" }, grid);
-      tl.textContent = fmt(v, latStep) + "°N";
-    }
-    for (v = Math.ceil(lngLo / lngStep) * lngStep; v <= lngHi + 1e-9; v += lngStep) {
-      x = px(v);
-      el("line", { x1: x, x2: x, y1: PAD.t, y2: H - PAD.b }, grid);
-      var tg = el("text", { x: x, y: H - PAD.b + 17, "text-anchor": "middle" }, grid);
-      tg.textContent = fmt(v, lngStep) + "°W";
-    }
-    el("rect", { x: PAD.l, y: PAD.t, width: innerW, height: innerH, "class": "c-frame" }, grid);
+    var zoneLayer = el("g", { "class": "c-zones", "clip-path": "url(#" + clipId + ")" }, grid);
+    var lngLo = cLng - ox / (k * scale), lngHi = cLng + (W - ox) / (k * scale);
+    var latHi = cLat + oy / scale, latLo = cLat - (H - oy) / scale;
+    var homeZone = opts.zone ? String(opts.zone).toUpperCase() : "";
+    zones().then(function (gj) {
+      if (!gj || !gj.features) return;
+      gj.features.forEach(function (f) {
+        var z = String((f.properties || {}).zone || "").toUpperCase();
+        var g = f.geometry || {};
+        var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+        var d = "";
+        polys.forEach(function (poly) {
+          poly.forEach(function (ring) {
+            var inView = false, seg = "", lx = null, ly = null;
+            ring.forEach(function (c) {
+              if (c[0] >= lngLo && c[0] <= lngHi && c[1] >= latLo && c[1] <= latHi) inView = true;
+              var X = px(c[0]), Y = py(c[1]);
+              if (lx !== null && Math.abs(X - lx) < 1.2 && Math.abs(Y - ly) < 1.2) return;
+              seg += (seg ? "L" : "M") + X + " " + Y; lx = X; ly = Y;
+            });
+            if (inView) d += seg + "Z";
+          });
+        });
+        if (d) el("path", { d: d, "fill-rule": "evenodd", "class": "c-z c-z" + z + (z === homeZone ? " is-home" : "") }, zoneLayer);
+      });
+    });
+    var na = el("g", { "class": "c-north", transform: "translate(" + (W - 22) + " 26)" }, svg);
+    el("path", { d: "M0 -12L6 6L0 2L-6 6Z" }, na);
+    el("text", { y: 20, "text-anchor": "middle" }, na).textContent = "N";
 
     var h = { x: px(home.lng), y: py(home.lat) };
     var routes = [], markers = [];
@@ -136,6 +146,16 @@
       if (!moved) break;
     }
     spots.forEach(function (q) { q.x = r1(q.x); q.y = r1(q.y); });
+    /* markers keep their true spot: when nudged apart, a dot marks the real place and a thin line joins them */
+    var orig = shelters.concat(special, bus).map(function (s) { return { x: px(s.lng), y: py(s.lat) }; });
+    function leader(o, q) {
+      var g = el("g", { "class": "c-lead" }, routeLayer);
+      if (Math.abs(o.x - q.x) + Math.abs(o.y - q.y) > 3) {
+        el("path", { d: "M" + o.x + " " + o.y + "L" + q.x + " " + q.y }, g);
+        el("circle", { cx: o.x, cy: o.y, r: 3 }, g);
+      }
+      return g;
+    }
 
     /* home first, so shelter numbers always sit on top */
     var hg = el("g", { transform: "translate(" + h.x + " " + h.y + ")" }, markLayer);
@@ -170,13 +190,7 @@
     shelters.forEach(function (s, idx) {
       var p = spots[idx];
       var delay = 250 + idx * 130;
-      var path = el("path", {
-        d: routePath(h, p, idx % 2 === 1),
-        pathLength: 1,
-        "class": "c-route",
-        style: "animation-delay:" + delay + "ms"
-      }, routeLayer);
-      routes.push(path);
+      routes.push(leader(orig[idx], p));
       var g = el("g", { transform: "translate(" + p.x + " " + p.y + ")" }, markLayer);
       var inner = el("g", {
         "class": "c-shelter",
@@ -199,7 +213,8 @@
     bus.forEach(function (s, bi) {
       var bp = spots[shelters.length + special.length + bi];
       var bg = el("g", { transform: "translate(" + bp.x + " " + bp.y + ")" }, markLayer);
-      busGlyph(el("g", { "class": "c-bus" }, bg), 11);
+      leader(orig[shelters.length + special.length + bi], bp);
+      busGlyph(el("g", { "class": "c-bus" + (bi === 0 ? " is-near" : "") }, bg), bi === 0 ? 13 : 10);
     });
 
     /* distance scale bar */
@@ -207,8 +222,8 @@
     for (var m = 0; m < opts2.length; m++) { miles = opts2[m]; if (opts2[m] * pxPerMi >= 44) break; }
     var bw = r1(miles * pxPerMi), by = H - 12;
     var sb = el("g", { "class": "c-scale" }, svg);
-    el("path", { d: "M" + PAD.l + " " + (by - 5) + "V" + by + "H" + (PAD.l + bw) + "V" + (by - 5) }, sb);
-    var st2 = el("text", { x: PAD.l + bw + 8, y: by + 1 }, sb);
+    el("path", { d: "M14 " + (by - 5) + "V" + by + "H" + (14 + bw) + "V" + (by - 5) }, sb);
+    var st2 = el("text", { x: 14 + bw + 8, y: by + 1 }, sb);
     st2.textContent = String(miles) + " " + (opts.labels.mi || "mi");
 
     if (special.length || bus.length) {
@@ -232,6 +247,12 @@
     }
 
     host.appendChild(svg);
+    if (opts.labels.cap) {
+      var cap = document.createElement("p");
+      cap.className = "c-cap";
+      cap.textContent = opts.labels.cap;
+      host.appendChild(cap);
+    }
 
     var sel = -1;
     function select(i) {

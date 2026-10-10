@@ -225,7 +225,7 @@ def _fallback(question, card, lang, force_offline, trace, reason, deadline=None)
         answer = text.strip()
         if not answer or not _grounded(answer, card, []):
             return {"answer": IDK[lang], "backend": backend, "trace": trace}
-        return {"answer": answer, "backend": backend, "trace": trace}
+        return {"answer": _with_pickup(answer, card, lang, trace), "backend": backend, "trace": trace}
     except Exception:
         return {"answer": IDK[lang], "backend": "facts_only", "trace": trace}
 
@@ -248,6 +248,25 @@ def _grounded(answer, card, steps):
     if _PLACE.search(rest):
         return False
     return True
+
+
+_PICKUP_LINE = {
+    "kre": "Pwen bis evakyasyon ki pi pre a: {name}, {address} ({d} mi). Bis yo kouri sèlman lè gen lòd evakyasyon. Rele 311 pou konfime.",
+    "es": "La parada de autobús de evacuación más cercana: {name}, {address} ({d} mi). Los autobuses salen solo cuando se ordena una evacuación. Llame al 311 para confirmar.",
+    "en": "Nearest evacuation bus pickup: {name}, {address} ({d} mi). Buses run only when an evacuation is ordered. Call 311 to confirm.",
+}
+
+
+def _with_pickup(answer, card, lang, trace):
+    """Facts by code: if the agent used evacuation_help but did not name the stop, add it from county data."""
+    if not any(t.get("tool") == "evacuation_help" for t in trace):
+        return answer
+    lat, lng = _latlng(card)
+    pickups = geo.find_bus_pickups(lat, lng, limit=1) if lat is not None else []
+    if not pickups or pickups[0]["name"].lower() in answer.lower():
+        return answer
+    p = pickups[0]
+    return answer + "\n\n" + _PICKUP_LINE[lang].format(name=p["name"], address=p.get("address", ""), d=p["distance_mi"])
 
 
 def run(question, card, lang, force_offline=False):
@@ -278,7 +297,7 @@ def run(question, card, lang, force_offline=False):
             if not _grounded(answer, card, steps):
                 trace.append({"tool": "check", "args": {}, "result_summary": "answer had an unverified fact; replaced"})
                 return {"answer": IDK[lang], "backend": backend, "trace": trace}
-            return {"answer": answer, "backend": backend, "trace": trace}
+            return {"answer": _with_pickup(answer, card, lang, trace), "backend": backend, "trace": trace}
         name = obj.get("tool")
         if final or name not in TOOLS:
             return _fallback(question, card, lang, force_offline, trace,

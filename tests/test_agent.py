@@ -104,3 +104,11 @@ def test_deadline_stops_calls(monkeypatch):
         assert False, "should raise"
     except llm.LLMError:
         pass
+
+
+def test_pickup_named_by_code_when_model_omits_it():
+    card = {"facts": {"home": {"lat": 25.83, "lng": -80.189}}}
+    trace = [{"tool": "evacuation_help"}]
+    out = agent._with_pickup("Rele 311.", card, "kre", trace)
+    assert "Magic City Trailer Park" in out and out.startswith("Rele 311.")
+    assert agent._with_pickup("Rele 311.", card, "kre", []) == "Rele 311."
