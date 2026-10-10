@@ -21,6 +21,16 @@
       c.textContent = t(c.dataset.chip);
     });
   }
+  function ready() { return !!(st.result && st.result.card_text); }
+  function paintAsk() {
+    var ok = ready();
+    $("askSend").disabled = !ok || busy;
+    $("askInput").disabled = !ok;
+    document.querySelectorAll("#chips .chip").forEach(function (c) { c.disabled = !ok; });
+    $("askInput").placeholder = ok ? t("askPlaceholder") : t("askWait");
+    $("ask").classList.toggle("is-wait", !ok);
+  }
+  SC.paintAsk = paintAsk;
   function paintSwitch() {
     $("offline").setAttribute("aria-checked", st.forceOffline ? "true" : "false");
   }
@@ -32,7 +42,9 @@
     qn.appendChild(h("span", null, q));
     li.appendChild(qn);
     var a = h("div", "a");
-    a.appendChild(h("p", "pending", t("thinking")));
+    var pol = h("ol", "trace-steps live");
+    pol.appendChild(SC.stepRow("run", t("thinking")));
+    a.appendChild(pol);
     li.appendChild(a);
     $("thread").appendChild(li);
     if (!reduced && li.scrollIntoView) li.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -57,22 +69,21 @@
     }
     var ol = h("ol", "trace-steps");
     trace.forEach(function (s) {
-      var li = h("li");
       var name = String(s.tool || "");
       var key = "tool_" + name;
       var label = SC.tl(lang, key);
-      li.appendChild(h("span", "trace-tool", label === key ? name : label));
       var a = argText(s.args);
-      if (a) li.appendChild(h("code", "trace-args", a));
-      li.appendChild(h("span", "trace-res", String(s.result_summary || "")));
-      ol.appendChild(li);
+      ol.appendChild(SC.stepRow("done", label === key ? name : label, [
+        a ? h("code", "trace-args", a) : null,
+        h("span", "trace-res", String(s.result_summary || ""))
+      ]));
     });
     det.appendChild(ol);
     return det;
   }
   function fill(turn, answer, backend, trace, lang) {
     turn.a.textContent = "";
-    turn.a.appendChild(h("p", "ans", answer));
+    turn.a.appendChild(SC.setText(h("p", "ans"), answer));
     turn.a.appendChild(h("p", "badge b-" + backend, badgeText(backend)));
     if (Array.isArray(trace)) turn.a.appendChild(traceBlock(trace, lang));
   }
@@ -87,7 +98,7 @@
 
   function send(q) {
     q = (q || "").trim();
-    if (!q || busy || !st.result) return;
+    if (!q || busy || !ready()) return;
     busy = true;
     $("askSend").disabled = true;
     var turn = addTurn(q);
@@ -110,19 +121,21 @@
     }).then(function () {
       clearTimeout(guard);
       busy = false;
-      $("askSend").disabled = false;
+      paintAsk();
     });
   }
 
   function init() {
     paintChips();
     paintSwitch();
+    paintAsk();
     SC.onLang(paintChips);
+    SC.onLang(paintAsk);
 
     $("askForm").addEventListener("submit", function (e) {
       e.preventDefault();
       var v = $("askInput").value;
-      if (!v.trim()) { $("askInput").focus(); return; }
+      if (!ready() || !v.trim()) { $("askInput").focus(); return; }
       $("askInput").value = "";
       send(v);
     });

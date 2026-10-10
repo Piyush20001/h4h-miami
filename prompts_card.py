@@ -16,6 +16,7 @@ except ImportError:
         return _STUB, "stub"
 
 KEYS = ["what_this_means", "where_to_go", "what_to_bring", "what_to_do_now"]
+MODEL_KEYS = ["what_this_means", "what_to_do_now"]  # the other two are always written by code
 LANG_NAMES = {"kre": "Haitian Creole (Kreyòl)", "es": "Spanish", "en": "English"}
 STYLE = {
     "kre": "Use standard Haitian Creole spelling (Kreyòl), not French.",
@@ -130,27 +131,27 @@ def build_prompt(facts, lang):
         f"Write a hurricane action card in {LANG_NAMES[lang]}. {STYLE[lang]}\n"
         "Facts (JSON):\n" + json.dumps(model_facts, ensure_ascii=False) + "\n"
         "Rules:\n"
-        "- 6th-grade reading level. Short sentences. 80-120 words total.\n"
+        "- 6th-grade reading level. Short sentences. 40-70 words total.\n"
         + ("- Refer to the zone ONLY as {{ZONE}}.\n" if facts.get("zone") else "")
         + "- Refer to shelters ONLY as {{SHELTER_1}}, {{SHELTER_2}}, {{SHELTER_3}} (only those listed).\n"
         "- Never write addresses, zone letters, shelter names, or phone numbers. The only number allowed is 311.\n"
         "- Shelters are planning candidates: say to call 311 to confirm it is open.\n"
         "- Do not talk about hurricane categories.\n"
         + "".join(f"- {n}\n" for n in notes)
-        + "Output exactly these four headers in English, each followed by the text in "
+        + "Output exactly these two headers in English, each followed by 2-3 short sentences in "
         f"{LANG_NAMES[lang]}:\n"
-        "## WHAT_THIS_MEANS\n## WHERE_TO_GO\n## WHAT_TO_BRING\n## WHAT_TO_DO_NOW\n"
+        "## WHAT_THIS_MEANS\n## WHAT_TO_DO_NOW\n"
     )
 
 
 def _parse(raw):
-    """Split raw output into the 4 sections; None if any is missing or empty."""
+    """Split raw output into sections; None if a model-written section is missing or empty."""
     parts = re.split(r"^\s*#{1,3}\s*(WHAT_THIS_MEANS|WHERE_TO_GO|WHAT_TO_BRING|WHAT_TO_DO_NOW)\s*:?\s*$",
                      raw or "", flags=re.M)
     sections = {}
     for header, body in zip(parts[1::2], parts[2::2]):
         sections.setdefault(header.lower(), body.strip())
-    if any(not sections.get(k) for k in KEYS):
+    if any(not sections.get(k) for k in MODEL_KEYS):
         return None
     return sections
 
@@ -253,11 +254,12 @@ def build_card(facts, lang, force_offline=False):
         sections = _parse(raw)
         if sections is None or not _valid(raw, facts):
             return facts_only_card(facts, lang), "facts_only"
-        card = {k: _fill(sections[k], facts) for k in KEYS}
+        card = {k: _fill(sections[k], facts) for k in MODEL_KEYS}
         if any("{{" in v or "SHELTER_" in v for v in card.values()):
             return facts_only_card(facts, lang), "facts_only"
         base = _fact_sections(facts, lang)
-        card["where_to_go"], card["what_to_bring"] = base["where_to_go"], base["what_to_bring"]
+        card = {"what_this_means": card["what_this_means"], "where_to_go": base["where_to_go"],
+                "what_to_bring": base["what_to_bring"], "what_to_do_now": card["what_to_do_now"]}
         for k in ("what_this_means", "what_to_do_now"):
             if _ORDER.search(card[k]):
                 card[k] = base[k]

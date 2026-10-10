@@ -3,8 +3,8 @@
 (function () {
   "use strict";
   var NS = "http://www.w3.org/2000/svg";
-  var W = 360, H = 300;
-  var PAD = { l: 60, r: 30, t: 26, b: 34 };
+  var W = 360, H = 320;
+  var PAD = { l: 50, r: 62, t: 24, b: 50 };
 
   function el(tag, attrs, parent) {
     var n = document.createElementNS(NS, tag);
@@ -101,8 +101,62 @@
     var routeLayer = el("g", null, svg);
     var markLayer = el("g", null, svg);
 
+    /* marker positions, nudged apart so no two are closer than 28px (home is fixed) */
+    var spots = shelters.concat(special).map(function (s) { return { x: px(s.lng), y: py(s.lat) }; });
+    var MIN = 28;
+    for (var pass = 0; pass < 12; pass++) {
+      var moved = false;
+      for (var a = 0; a < spots.length; a++) {
+        var others = [h].concat(spots.filter(function (_, j) { return j !== a; }));
+        for (var b = 0; b < others.length; b++) {
+          var dx = spots[a].x - others[b].x, dy = spots[a].y - others[b].y;
+          var dd = Math.sqrt(dx * dx + dy * dy);
+          if (dd < MIN) {
+            if (dd < 0.5) { dx = 1; dy = 0.6; dd = Math.sqrt(dx * dx + dy * dy); }
+            var push = (MIN - dd) * (b === 0 ? 1 : 0.5) + 0.5;
+            spots[a].x += (dx / dd) * push; spots[a].y += (dy / dd) * push;
+            moved = true;
+          }
+        }
+        spots[a].x = Math.min(W - 16, Math.max(16, spots[a].x));
+        spots[a].y = Math.min(H - 16, Math.max(16, spots[a].y));
+      }
+      if (!moved) break;
+    }
+    spots.forEach(function (q) { q.x = r1(q.x); q.y = r1(q.y); });
+
+    /* home first, so shelter numbers always sit on top */
+    var hg = el("g", { transform: "translate(" + h.x + " " + h.y + ")" }, markLayer);
+    var hin = el("g", { "class": "c-home" }, hg);
+    el("rect", { x: -13, y: -13, width: 26, height: 26, rx: 3 }, hin);
+    el("path", { d: "M-7 2L0-6L7 2M-5 1V8H5V1", "class": "c-roof" }, hin);
+
+    /* label: pick the side whose box keeps 40px from every marker, inside the frame */
+    var lw = String(opts.labels.home || "").length * 9.6 + 6, lh = 16, gap = 20;
+    var cands = [
+      { x: h.x + gap, y: h.y - lh / 2, a: "start", ox: gap, oy: 5 },
+      { x: h.x - gap - lw, y: h.y - lh / 2, a: "end", ox: -gap, oy: 5 },
+      { x: h.x - lw / 2, y: h.y - 22 - lh, a: "middle", ox: 0, oy: -26 },
+      { x: h.x - lw / 2, y: h.y + 22, a: "middle", ox: 0, oy: 36 },
+      { x: h.x - 13, y: h.y + 20, a: "start", ox: -13, oy: 34 },
+      { x: h.x + 13 - lw, y: h.y - 20 - lh, a: "end", ox: 13, oy: -24 }
+    ];
+    function boxDist(c, q) {
+      var dx = Math.max(c.x - q.x, 0, q.x - (c.x + lw)), dy = Math.max(c.y - q.y, 0, q.y - (c.y + lh));
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    var best = null, bestScore = -1;
+    cands.forEach(function (c) {
+      var inside = c.x >= 2 && c.x + lw <= W - 2 && c.y >= 2 && c.y + lh <= H - 2;
+      var sc = spots.reduce(function (m, q) { return Math.min(m, boxDist(c, q)); }, 40);
+      if (!inside) sc = Math.min(sc, 1) - 100;
+      if (sc > bestScore + 0.01) { best = c; bestScore = sc; }
+    });
+    var lab = el("text", { x: best.ox, y: best.oy, "text-anchor": best.a, "class": "c-homelabel" }, hin);
+    lab.textContent = opts.labels.home;
+
     shelters.forEach(function (s, idx) {
-      var p = { x: px(s.lng), y: py(s.lat) };
+      var p = spots[idx];
       var delay = 250 + idx * 130;
       var path = el("path", {
         d: routePath(h, p, idx % 2 === 1),
@@ -122,26 +176,22 @@
       markers.push(g);
     });
 
-    special.forEach(function (s) {
-      var sg = el("g", { transform: "translate(" + px(s.lng) + " " + py(s.lat) + ")" }, markLayer);
+    special.forEach(function (s, si0) {
+      var sp = spots[shelters.length + si0];
+      var sg = el("g", { transform: "translate(" + sp.x + " " + sp.y + ")" }, markLayer);
       var si = el("g", { "class": "c-special" }, sg);
       el("rect", { x: -11, y: -11, width: 22, height: 22, transform: "rotate(45)" }, si);
       el("path", { d: "M-5 0H5M0-5V5" }, si);
     });
 
-    /* home marker: square plate with a roof, label offset away from the edge */
-    var hg = el("g", { transform: "translate(" + h.x + " " + h.y + ")" }, markLayer);
-    var hin = el("g", { "class": "c-home" }, hg);
-    el("rect", { x: -13, y: -13, width: 26, height: 26, rx: 3 }, hin);
-    el("path", { d: "M-7 2L0-6L7 2M-5 1V8H5V1", "class": "c-roof" }, hin);
-    var left = h.x > W * 0.55;
-    var lab = el("text", {
-      x: left ? -20 : 20,
-      y: h.y > H - PAD.b - 30 ? -18 : 5,
-      "text-anchor": left ? "end" : "start",
-      "class": "c-homelabel"
-    }, hin);
-    lab.textContent = opts.labels.home;
+    /* distance scale bar */
+    var pxPerMi = scale / 69.05, miles = 1, opts2 = [0.25, 0.5, 1, 2, 5, 10];
+    for (var m = 0; m < opts2.length; m++) { miles = opts2[m]; if (opts2[m] * pxPerMi >= 44) break; }
+    var bw = r1(miles * pxPerMi), by = H - 12;
+    var sb = el("g", { "class": "c-scale" }, svg);
+    el("path", { d: "M" + PAD.l + " " + (by - 5) + "V" + by + "H" + (PAD.l + bw) + "V" + (by - 5) }, sb);
+    var st2 = el("text", { x: PAD.l + bw + 8, y: by + 1 }, sb);
+    st2.textContent = String(miles) + " " + (opts.labels.mi || "mi");
 
     host.appendChild(svg);
 

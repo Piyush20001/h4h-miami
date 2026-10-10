@@ -405,4 +405,45 @@
   };
 
   SC.onLang = function (fn) { SC.listeners.push(fn); };
+  /* Shared UI helpers. setText turns every "311" into a tel:311 link (text stays textContent-safe). */
+  SC.setText = function (node, text) {
+    node.textContent = "";
+    String(text === undefined || text === null ? "" : text).split(/(\b311\b)/).forEach(function (part) {
+      if (part === "311") {
+        var a = document.createElement("a");
+        a.href = "tel:311";
+        a.className = "tel";
+        a.textContent = "311";
+        node.appendChild(a);
+      } else if (part) node.appendChild(document.createTextNode(part));
+    });
+    return node;
+  };
+
+  /* One trace row, used by the card stages and the Ask trace. state: done | run | fail */
+  SC.stepRow = function (state, label, parts) {
+    var NS = "http://www.w3.org/2000/svg";
+    var li = document.createElement("li");
+    li.className = "step is-" + state;
+    var mk = document.createElement("span");
+    mk.className = "mk";
+    mk.setAttribute("aria-hidden", "true");
+    if (state === "done") {
+      var s = document.createElementNS(NS, "svg");
+      s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("width", 16); s.setAttribute("height", 16);
+      var p = document.createElementNS(NS, "path");
+      p.setAttribute("d", "M5 12.5L10 17.5L19 7");
+      s.appendChild(p); mk.appendChild(s);
+    }
+    li.appendChild(mk);
+    var body = document.createElement("span");
+    body.className = "sb";
+    var l = document.createElement("span");
+    l.className = "trace-tool";
+    l.textContent = label;
+    body.appendChild(l);
+    (parts || []).forEach(function (n) { if (n) body.appendChild(n); });
+    li.appendChild(body);
+    return li;
+  };
 })();

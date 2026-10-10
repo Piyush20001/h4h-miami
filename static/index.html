@@ -40,11 +40,10 @@
   <!-- 1. Language -->
   <section class="screen" id="s-lang" aria-labelledby="h-lang">
     <h1 id="h-lang" tabindex="-1" data-i18n="langTitle">Choose your language</h1>
-    <p class="hint" data-i18n="langHint">Tap a button to start.</p>
     <div class="stack" id="langbtns">
-      <button type="button" class="bigopt" data-pick="kre" lang="ht"><span class="lbl">Kreyòl</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
-      <button type="button" class="bigopt" data-pick="es" lang="es"><span class="lbl">Español</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
-      <button type="button" class="bigopt" data-pick="en" lang="en"><span class="lbl">English</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+      <button type="button" class="bigopt" data-pick="kre" lang="ht"><span class="lbl">Kreyòl</span></button>
+      <button type="button" class="bigopt" data-pick="es" lang="es"><span class="lbl">Español</span></button>
+      <button type="button" class="bigopt" data-pick="en" lang="en"><span class="lbl">English</span></button>
     </div>
     <div class="saved" id="saved" hidden>
       <button type="button" class="btn btn-ghost" id="openSaved"><span data-i18n="openSaved">Open my saved card</span></button>
@@ -57,9 +56,9 @@
     <h1 id="h-place" tabindex="-1" data-i18n="placeTitle">Where do you live?</h1>
     <p class="hint" data-i18n="placeHint">Pick the closest place.</p>
     <div class="stack">
-      <button type="button" class="bigopt" data-place="Little Haiti" data-lat="25.8300" data-lng="-80.1890"><span class="lbl">Little Haiti</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
-      <button type="button" class="bigopt" data-place="Hialeah" data-lat="25.8576" data-lng="-80.2781"><span class="lbl">Hialeah</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
-      <button type="button" class="bigopt" data-place="Brickell" data-lat="25.7617" data-lng="-80.1918"><span class="lbl">Brickell</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 12H19M13 6L19 12L13 18"/></svg></button>
+      <button type="button" class="bigopt" data-place="Little Haiti" data-lat="25.8300" data-lng="-80.1890"><span class="lbl">Little Haiti</span></button>
+      <button type="button" class="bigopt" data-place="Hialeah" data-lat="25.8576" data-lng="-80.2781"><span class="lbl">Hialeah</span></button>
+      <button type="button" class="bigopt" data-place="Brickell" data-lat="25.7617" data-lng="-80.1918"><span class="lbl">Brickell</span></button>
     </div>
     <button type="button" class="btn btn-ghost loc" id="useLoc">
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2V5M12 19V22M2 12H5M19 12H22"/></svg>
@@ -97,15 +96,6 @@
     <button type="button" class="btn btn-primary" id="make"><span data-i18n="makeCard">Make my card</span></button>
   </section>
 
-  <!-- 4. Loading -->
-  <section class="screen" id="s-loading" aria-labelledby="h-loading" hidden>
-    <h1 id="h-loading" tabindex="-1" data-i18n="loadingTitle">Gemma is writing your card…</h1>
-    <div class="bar" role="progressbar" aria-busy="true" data-i18n-attr="aria-label:loadingTitle"><span></span></div>
-    <p class="hint" data-i18n="loadingHint">Your zone and shelters are ready. This can take up to a minute.</p>
-    <p class="hint slow" id="loadingSlow" data-i18n="loadingSlow" hidden>It takes longer when the model runs on the laptop.</p>
-    <button type="button" class="btn btn-ghost" id="cancel"><span data-i18n="cancel">Cancel</span></button>
-  </section>
-
   <!-- Error (card generation) -->
   <section class="screen" id="s-error" aria-labelledby="h-error" hidden>
     <h1 id="h-error" tabindex="-1" data-i18n="errTitle">We could not make your card.</h1>
@@ -118,38 +108,18 @@
     <h1 class="sr" id="h-card" tabindex="-1" data-i18n="cardTitle">Your card</h1>
 
     <div class="col-a">
-      <div class="plate" id="plate" role="group"></div>
-      <p class="plate-note" id="plateNote"></p>
+      <div class="zone">
+        <div class="plate" id="plate" role="group"></div>
+        <p class="plate-note" id="plateNote"></p>
+      </div>
 
       <section class="chart-panel" aria-labelledby="h-chart">
         <h2 class="tab" id="h-chart" data-i18n="chartTitle">Your map</h2>
         <div id="chart"></div>
       </section>
-    </div>
-
-    <div class="col-b">
-      <section class="shelters" aria-labelledby="h-shel">
-        <div class="shel-head">
-          <h2 id="h-shel" data-i18n="sheltersTitle">Shelters near you</h2>
-          <span class="tag" data-i18n="sample">sample data</span>
-        </div>
-        <ol class="plates" id="plates"></ol>
-        <p class="meta" id="tapHint" data-i18n="tapHint">Tap a shelter to see its route.</p>
-      </section>
-
-      <article class="cardtext" id="cardtext"></article>
-
-      <div class="again" id="again" hidden>
-        <button type="button" class="btn btn-ghost" id="againBtn"><span id="againText"></span></button>
-      </div>
-
-      <details class="how" id="how">
-        <summary><span data-i18n="how">How we decided</span></summary>
-        <div class="how-body" id="howBody"></div>
-      </details>
 
       <section class="ask" id="ask" aria-labelledby="h-ask">
-        <h2 id="h-ask" data-i18n="askTitle">Ask a question</h2>
+        <h2 class="tab" id="h-ask" data-i18n="askTitle">Ask a question</h2>
         <p class="hint" data-i18n="askHint">We answer only from what your card says.</p>
         <p class="meta" id="chipsLabel" data-i18n="chipsLabel">Common questions</p>
         <div class="chips" role="group" aria-labelledby="chipsLabel" id="chips">
@@ -162,12 +132,41 @@
           <input id="askInput" type="text" maxlength="300" data-i18n-attr="placeholder:askPlaceholder" enterkeyhint="send">
           <button type="submit" class="btn btn-primary" id="askSend"><span data-i18n="send">Send</span></button>
         </form>
-        <button type="button" class="switch" id="offline" role="switch" aria-checked="false">
-          <span class="knob" aria-hidden="true"></span>
-          <span class="swtext"><b data-i18n="offlineSwitch">Force offline</b><small data-i18n="offlineHint">Use only the model on this laptop.</small></span>
-        </button>
+        <div class="askfoot">
+          <button type="button" class="switch" id="offline" role="switch" aria-checked="false" data-i18n-attr="title:offlineHint">
+            <span class="knob" aria-hidden="true"></span>
+            <span class="swtext" data-i18n="offlineSwitch">Force offline</span>
+          </button>
+        </div>
         <ol class="thread" id="thread" aria-live="polite" aria-relevant="additions text"></ol>
       </section>
+    </div>
+
+    <div class="col-b">
+      <section class="stages" id="stagesWrap" aria-labelledby="h-stages">
+        <h2 class="tab" id="h-stages" data-i18n="stTitle">How the card was made</h2>
+        <ol class="trace-steps live" id="stages" aria-live="polite"></ol>
+        <button type="button" class="btn btn-ghost small" id="stageRetry" hidden><span data-i18n="retry">Try again</span></button>
+      </section>
+
+      <section class="shelters" aria-labelledby="h-shel">
+        <h2 class="tab" id="h-shel" data-i18n="sheltersTitle">Shelters near you</h2>
+        <p class="warn311" id="warn311"></p>
+        <ol class="plates" id="plates"></ol>
+        <p class="meta" id="tapHint" data-i18n="tapHint">Tap a shelter to see its route.</p>
+        <p class="foot" id="sampleFoot" data-i18n="sampleFoot" hidden>These shelters are sample data, not a live list.</p>
+      </section>
+
+      <article class="cardtext" id="cardtext"></article>
+
+      <div class="again" id="again" hidden>
+        <button type="button" class="btn btn-ghost" id="againBtn"><span id="againText"></span></button>
+      </div>
+
+      <details class="how" id="how">
+        <summary><span data-i18n="how">How we decided</span></summary>
+        <div class="how-body" id="howBody"></div>
+      </details>
     </div>
   </section>
 </main>
@@ -178,6 +177,10 @@
       <span data-i18n="askBtn">Ask a question</span>
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 5V19M6 13L12 19L18 13"/></svg>
     </button>
+    <a class="btn btn-ghost btn-call" href="tel:311" id="dockCall">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 4H9L11 9L8.500 10.500C9.500 12.500 11.500 14.500 13.500 15.500L15 13L20 15V19C20 19.500 19.500 20 19 20C10.500 20 4 13.500 4 5C4 4.500 4.500 4 5 4Z"/></svg>
+      <span data-i18n="call311Btn">Call 311</span>
+    </a>
   </div>
 </div>
 

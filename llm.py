@@ -36,7 +36,9 @@ def _gemini_call(prompt: str, timeout: float) -> str:
         http_options=types.HttpOptions(timeout=int(timeout * 1000)),
     )
     resp = client.models.generate_content(
-        model=os.getenv("GEMMA_MODEL", "gemma-4-26b-a4b-it"), contents=prompt
+        model=os.getenv("GEMMA_MODEL", "gemma-4-26b-a4b-it"), contents=prompt,
+        # Gemma 4 otherwise spends thousands of hidden thinking tokens (75 s vs 4 s for a card)
+        config=types.GenerateContentConfig(thinking_config=types.ThinkingConfig(thinking_level="minimal")),
     )
     text = (resp.text or "").strip()
     if not text:

@@ -63,9 +63,9 @@
   }
 
   /* ---------- screens ---------- */
-  var SCREENS = ["lang", "place", "household", "loading", "error", "card"];
+  var SCREENS = ["lang", "place", "household", "error", "card"];
   var STEP = { lang: 1, place: 2, household: 3 };
-  var BACK = { place: "lang", household: "place", loading: "cancel", error: "household", card: "household" };
+  var BACK = { place: "lang", household: "place", error: "household", card: "household" };
   var chartCtl = null;
   var lastScreenWasCard = false;
 
@@ -76,6 +76,7 @@
     $("steps").hidden = !STEP[name];
     $("dock").hidden = name !== "card";
     document.body.classList.toggle("on-card", name === "card");
+    document.body.classList.toggle("on-lang", name === "lang");
     updateStep();
     window.scrollTo(0, 0);
     if (focus !== false) {
@@ -152,52 +153,80 @@
     });
   }
 
-  /* ---------- generate ---------- */
-  var ctrl = null, slowTimer = null, userCancelled = false;
+  /* ---------- generate: facts first, then the card text ---------- */
+  var ctrl = null, runId = 0;
 
-  function generate() {
-    if (!st.home) { show("place"); return; }
-    userCancelled = false;
-    $("loadingSlow").hidden = true;
-    show("loading");
-    ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var guard = setTimeout(function () { if (ctrl) ctrl.abort(); }, 180000);
-    clearTimeout(slowTimer);
-    slowTimer = setTimeout(function () { $("loadingSlow").hidden = false; }, 8000);
-    var lang = st.lang;
-    var body = {
-      lat: st.home.lat, lng: st.home.lng, lang: lang,
-      flags: { pet: !!st.flags.pet, no_car: !!st.flags.no_car, medical: !!st.flags.medical, kids: !!st.flags.kids },
-      force_offline: !!st.forceOffline
-    };
-    fetch("/api/card", {
+  function postJSON(url, body, signal) {
+    return fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-      signal: ctrl ? ctrl.signal : undefined
+      signal: signal
     }).then(function (res) {
       if (!res.ok) throw new Error("http " + res.status);
       return res.json();
-    }).then(function (d) {
-      if (userCancelled) return;
-      if (!d || !d.card_text) throw new Error("bad payload");
-      st.result = normalize(d, lang);
-      save(st.result);
-      show("card");
-      renderCard(true);
-    }).catch(function () {
-      if (userCancelled) return;
-      show("error");
-    }).then(function () {
-      clearTimeout(guard);
-      clearTimeout(slowTimer);
     });
   }
-  function cancelLoading() {
-    userCancelled = true;
+  function provisional(d, lang) {
+    var f = d.facts || {};
+    return normalize({
+      zone: f.zone, shelters: f.shelters, special_needs_shelters: f.special_needs_shelters,
+      facts: f, sources: d.sources, sample_data: d.sample_data, card_text: null, backend: null
+    }, lang);
+  }
+
+  function generate() {
+    if (!st.home) { show("place"); return; }
+    var my = ++runId;
     if (ctrl) ctrl.abort();
-    clearTimeout(slowTimer);
-    show("household");
+    var lang = st.lang;
+    var body = {
+      lat: st.home.lat, lng: st.home.lng, lang: lang,
+      flags: { pet: !!st.flags.pet, no_car: !!st.flags.no_car, medical: !!st.flags.medical, kids: !!st.flags.kids }
+    };
+    ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var guard = setTimeout(function () { if (ctrl) ctrl.abort(); }, 180000);
+    var mk = $("make");
+    mk.disabled = true;
+    var sig = ctrl ? ctrl.signal : undefined;
+
+    postJSON("/api/facts", body, sig).then(function (d) {
+      if (my !== runId) return null;
+      if (!d || !d.facts) throw new Error("bad facts");
+      mk.disabled = false;
+      st.result = provisional(d, lang);
+      st.stage = "run";
+      show("card");
+      renderCard(true);
+      var cb = {}; Object.keys(body).forEach(function (k) { cb[k] = body[k]; });
+      cb.force_offline = !!st.forceOffline;
+      return postJSON("/api/card", cb, sig).then(function (c) {
+        if (my !== runId) return;
+        if (!c || !c.card_text) throw new Error("bad payload");
+        st.result = normalize(c, lang);
+        st.stage = "done";
+        save(st.result);
+        renderCard(false);
+      }).catch(function () {
+        if (my !== runId) return;
+        st.stage = "fail";
+        renderStages();
+        renderCardText(st.result);
+        paintAsk();
+      });
+    }).catch(function () {
+      if (my !== runId) return;
+      mk.disabled = false;
+      show("error");
+    }).then(function () { clearTimeout(guard); mk.disabled = false; });
+  }
+  function abortRun() {
+    runId++;
+    if (ctrl) ctrl.abort();
+    $("make").disabled = false;
+  }
+  function paintAsk() {
+    if (SC.paintAsk) SC.paintAsk();
   }
 
   /* ---------- card render ---------- */
@@ -233,6 +262,7 @@
     root.setAttribute("lang", ({ kre: "ht", es: "es", en: "en" })[r.lang] || "en");
     var blocks = [];
     var ct = r.card_text;
+    if (!ct) return;
     if (typeof ct === "string") blocks = parseCard(ct);
     else {
       ["what_this_means", "where_to_go", "what_to_bring", "what_to_do_now"].forEach(function (k) {
@@ -251,31 +281,54 @@
         root.appendChild(h("h2", "tab", b.v));
       } else if (b.k === "ul") {
         var ul = h("ul", "items");
-        b.v.forEach(function (x) { ul.appendChild(h("li", null, x)); });
+        b.v.forEach(function (x) { ul.appendChild(SC.setText(h("li"), x)); });
         root.appendChild(ul);
       } else {
-        root.appendChild(h("p", isCallLine(b.v) ? "p warn" : "p", b.v));
+        root.appendChild(SC.setText(h("p", isCallLine(b.v) ? "p call" : "p"), b.v));
       }
     });
   }
 
-  function petMark(v) {
-    var m = h("span", "pet " + (v === true ? "ok" : v === false ? "no" : "unk"));
-    if (v === true) m.appendChild(svgIcon("M5 12.500L10 17.500L19 7", 18));
-    else if (v === false) m.appendChild(svgIcon("M6 6L18 18M18 6L6 18", 18));
-    else m.appendChild(svgIcon("M9 9.500C9 8 10.300 7 12 7S15 8 15 9.500C15 11.500 12 11.500 12 14M12 17.500V17.600", 18));
-    m.appendChild(h("span", null, t(v === true ? "petOk" : v === false ? "petNo" : "petUnknown")));
-    return m;
+  function bearing(a, b) {
+    var k = Math.cos((a.lat * Math.PI) / 180);
+    var deg = (Math.atan2((b.lng - a.lng) * k, b.lat - a.lat) * 180) / Math.PI;
+    return Math.round((deg + 360) % 360);
+  }
+  function arrowSvg(deg) {
+    var ns = "http://www.w3.org/2000/svg";
+    var sv = document.createElementNS(ns, "svg");
+    sv.setAttribute("viewBox", "0 0 32 32");
+    sv.setAttribute("width", 32); sv.setAttribute("height", 32);
+    sv.setAttribute("aria-hidden", "true");
+    sv.setAttribute("class", "bearing");
+    var p = document.createElementNS(ns, "path");
+    p.setAttribute("d", "M16 4L25 15H19V28H13V15H7Z");
+    p.setAttribute("transform", "rotate(" + deg + " 16 16)");
+    sv.appendChild(p);
+    return sv;
+  }
+  /* ONE word that explains the rank of this shelter, or null */
+  function reasonFor(s, i, list, wantsPet) {
+    if (wantsPet && s.pet_friendly === true) return { k: "rPet", c: "ok" };
+    var nearest = list.every(function (o) { return typeof o.distance_mi !== "number" || typeof s.distance_mi !== "number" || s.distance_mi <= o.distance_mi; });
+    if (nearest && (i === 0 || typeof s.distance_mi === "number")) return { k: "rNear", c: "near" };
+    if (wantsPet && s.pet_friendly === false) return { k: "petNo", c: "unk" };
+    if (wantsPet) return { k: "rUnk", c: "unk" };
+    return null;
   }
 
   function renderShelters(r) {
     var ol = $("plates");
     ol.textContent = "";
     var list = (r.shelters || []).slice(0, 3);
+    var home = r.home || st.home || (r.facts && r.facts.home);
+    var wantsPet = !!((r.facts && r.facts.flags) || {}).pet;
     $("tapHint").hidden = list.length === 0;
+    $("warn311").hidden = false;
+    SC.setText($("warn311"), t("CALL_311"));
+    $("sampleFoot").hidden = r.sample_data === false || list.length === 0;
     if (!list.length) {
-      var li = h("li", "noshel", t("noShelters"));
-      ol.appendChild(li);
+      ol.appendChild(SC.setText(h("li", "noshel"), t("noShelters")));
       return;
     }
     list.forEach(function (s, i) {
@@ -291,11 +344,22 @@
       body.appendChild(h("span", "ad", addr));
       var row = h("span", "row");
       if (typeof s.distance_mi === "number") row.appendChild(h("span", "dist", s.distance_mi.toFixed(1) + " " + t("mi")));
-      row.appendChild(petMark(s.pet_friendly === undefined ? null : s.pet_friendly));
+      var rs = reasonFor(s, i, list, wantsPet);
+      if (rs) {
+        var rn = h("span", "why " + rs.c);
+        if (rs.c === "ok") rn.appendChild(svgIcon("M5 12.500L10 17.500L19 7", 18));
+        rn.appendChild(h("span", null, t(rs.k)));
+        row.appendChild(rn);
+      }
       body.appendChild(row);
-      body.appendChild(h("span", "c311", t("call311")));
       b.appendChild(body);
-      b.appendChild(svgIcon("M4 12H19M13 6L19 12L13 18", 24, "go"));
+      if (home && typeof home.lat === "number" && typeof s.lat === "number" && typeof s.lng === "number") {
+        var ar = h("span", "dir");
+        ar.setAttribute("role", "img");
+        ar.setAttribute("aria-label", t("dirTo", { n: i + 1 }) + ": " + bearing(home, s) + "°");
+        ar.appendChild(arrowSvg(bearing(home, s)));
+        b.appendChild(ar);
+      }
       b.addEventListener("click", function () {
         var sel = chartCtl ? chartCtl.select(i) : -1;
         ol.querySelectorAll(".plate-btn").forEach(function (x, j) {
@@ -305,6 +369,27 @@
       li.appendChild(b);
       ol.appendChild(li);
     });
+  }
+
+  /* staged trace: same component as the Ask trace (SC.stepRow) */
+  function renderStages() {
+    var r = st.result, ol = $("stages");
+    ol.textContent = "";
+    if (!r) return;
+    var zt = r.zone ? t("stZone", { z: String(r.zone).toUpperCase() }) : t("outside");
+    ol.appendChild(SC.stepRow("done", zt));
+    var n = (r.shelters || []).length;
+    ol.appendChild(SC.stepRow("done", n === 0 ? t("stNoShel") : n === 1 ? t("stShelter1") : t("stShelters", { n: n })));
+    var stage = st.stage || (r.card_text ? "done" : "run");
+    if (stage === "done") {
+      var bk = ["gemini", "ollama", "none"].indexOf(r.backend) >= 0 ? r.backend : "none";
+      ol.appendChild(SC.stepRow("done", t("stDone"), [h("span", "badge b-" + bk, t("b_" + bk))]));
+    } else if (stage === "fail") {
+      ol.appendChild(SC.stepRow("fail", t("stFail")));
+    } else {
+      ol.appendChild(SC.stepRow("run", t("stWriting")));
+    }
+    $("stageRetry").hidden = stage !== "fail";
   }
 
   function renderHow(r) {
@@ -407,13 +492,13 @@
 
     if (f.medical) {
       var m = panel("x-med", t("medTitle"));
-      m.appendChild(h("p", "hint", t("medHint")));
+      m.appendChild(SC.setText(h("p", "hint"), t("medHint")));
       m.appendChild(checklist(["meds7", "medlist", "rx", "devices", "power", "id"].map(function (k) {
         return { key: k, label: "ck_" + k };
       }), ticks, "med."));
       var e = h("div", "eeap");
       e.appendChild(h("h3", "sub", t("eeapH")));
-      e.appendChild(h("p", "p", t("eeapWhat")));
+      e.appendChild(SC.setText(h("p", "p"), t("eeapWhat")));
       e.appendChild(telBtn(t("eeapCall")));
       var src = h("a", "srclink", t("eeapSrc"));
       src.href = "https://www.miamidade.gov/fire/eeap.asp";
@@ -427,7 +512,7 @@
         pl.appendChild(h("span", "nm", sn.name || ""));
         pl.appendChild(h("span", "ad", [sn.address, sn.city].filter(Boolean).join(", ")));
         if (typeof sn.distance_mi === "number") pl.appendChild(h("span", "dist", sn.distance_mi.toFixed(1) + " " + t("mi")));
-        pl.appendChild(h("span", "c311", t("snNote")));
+        pl.appendChild(SC.setText(h("span", "c311"), t("snNote")));
         m.appendChild(pl);
       }
       host.appendChild(m);
@@ -441,12 +526,12 @@
         var ul = h("ul", "items");
         ok.forEach(function (s) { ul.appendChild(h("li", null, s.name)); });
         p.appendChild(ul);
-      } else p.appendChild(h("p", "p warn", t("petNone")));
+      } else p.appendChild(SC.setText(h("p", "p strong"), t("petNone")));
       host.appendChild(p);
     }
     if (f.no_car) {
       var c = panel("x-car", t("carH"));
-      c.appendChild(h("p", "p", t("carText")));
+      c.appendChild(SC.setText(h("p", "p"), t("carText")));
       c.appendChild(telBtn(t("carCall")));
       host.appendChild(c);
     }
@@ -473,21 +558,28 @@
     var shel = (r.shelters || []).slice(0, 3);
     var home = r.home || st.home || (r.facts && r.facts.home);
     if (home && typeof home.lat === "number") {
+      var prevSel = chartCtl && animate === false ? chartCtl.selected : -1;
       chartCtl = StormChart.render($("chart"), {
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
-        labels: { home: t("home"), aria: t("chartAria", { n: shel.length }) },
+        labels: { home: t("home"), mi: t("mi"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       });
-    }
-    document.querySelector(".shel-head .tag").hidden = r.sample_data === false;
-    renderShelters(r);
+      renderShelters(r);
+      if (prevSel >= 0) {
+        chartCtl.select(prevSel);
+        var bs = $("plates").querySelectorAll(".plate-btn");
+        if (bs[prevSel]) bs[prevSel].setAttribute("aria-pressed", "true");
+      }
+    } else renderShelters(r);
+    renderStages();
     renderCardText(r);
     renderExtras(r);
     renderHow(r);
+    paintAsk();
 
     var again = $("again");
-    if (r.lang !== st.lang) {
+    if (r.card_text && r.lang !== st.lang) {
       $("againText").textContent = t("makeAgain", { lang: SC.tl(st.lang, "langNative") });
       again.hidden = false;
     } else again.hidden = true;
@@ -503,6 +595,7 @@
     st.flags = { pet: !!f.pet, no_car: !!f.no_car, medical: !!f.medical, kids: !!f.kids };
     paintFlags();
     if (s.lang && SC.strings[s.lang]) SC.setLang(s.lang);
+    st.stage = "done";
     show("card");
     renderCard(true);
   }
@@ -530,13 +623,13 @@
     });
     $("make").addEventListener("click", generate);
     $("retry").addEventListener("click", generate);
-    $("cancel").addEventListener("click", cancelLoading);
+    $("stageRetry").addEventListener("click", generate);
     $("openSaved").addEventListener("click", openSaved);
     $("againBtn").addEventListener("click", generate);
     $("back").addEventListener("click", function () {
       var to = BACK[st.screen];
-      if (to === "cancel") cancelLoading();
-      else if (to) show(to);
+      if (st.screen === "card") abortRun();
+      if (to) show(to);
     });
 
     SC.onLang(function () {
