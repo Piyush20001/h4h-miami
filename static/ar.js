@@ -57,6 +57,14 @@
     sv.appendChild(p);
     stage.appendChild(sv);
     stage.appendChild(h("p", "ar-cardinal", ""));
+    var mv = document.createElementNS(NS, "svg");
+    mv.setAttribute("viewBox", "0 0 120 120"); mv.setAttribute("class", "ar-mini"); mv.setAttribute("aria-hidden", "true");
+    [["path", "m-route"], ["path", "m-done"], ["circle", "m-end"], ["circle", "m-me"]].forEach(function (a) {
+      var n = document.createElementNS(NS, a[0]); n.setAttribute("class", a[1]);
+      if (a[0] === "circle") n.setAttribute("r", a[1] === "m-me" ? 6 : 5);
+      mv.appendChild(n);
+    });
+    top.appendChild(mv);
     ov.appendChild(stage);
 
     var foot = h("div", "ar-foot");
@@ -80,26 +88,76 @@
     shown += d * 0.35;
     return shown;
   }
+  /* along the walking route: aim at the next turn, not the destination */
+  function guide(from) {
+    var rt = target.route;
+    if (!rt || !rt.path || rt.path.length < 2) return null;
+    var P = rt.path.map(function (c) { return { lat: c[0], lng: c[1] }; });
+    var k = 0, kd = Infinity;
+    P.forEach(function (q, i) { var d = miles(from, q); if (d < kd) { kd = d; k = i; } });
+    if (!rt._idx) rt._idx = rt.steps.map(function (s) {
+      var best = 0, bd = Infinity;
+      P.forEach(function (q, i) { var d = miles({ lat: s.at[0], lng: s.at[1] }, q); if (d < bd) { bd = d; best = i; } });
+      return best;
+    });
+    if (kd > 0.06) return { aim: P[k], text: t("arOff"), off: true, k: k, P: P };
+    var nextI = -1;
+    for (var i = 0; i < rt._idx.length; i++) if (rt._idx[i] > k) { nextI = i; break; }
+    var endIdx = nextI >= 0 ? rt._idx[nextI] : P.length - 1;
+    var along = 0;
+    for (var j = k; j < endIdx; j++) along += miles(P[j], P[j + 1]);
+    var dtxt = along < 0.1 ? Math.round(along * 5280 / 10) * 10 + " ft" : along.toFixed(1) + " " + t("mi");
+    var aim = P[Math.min(k + 1, P.length - 1)];
+    if (miles(from, aim) < 0.008 && k + 2 < P.length) aim = P[k + 2];
+    var text = nextI >= 0 ? t("arNext", { d: dtxt, s: t("turn_" + rt.steps[nextI].turn, { s: rt.steps[nextI].street || t("unnamedSt") }) }) : t("arEnd") + " · " + dtxt;
+    return { aim: aim, text: text, off: false, k: k, P: P };
+  }
+
+  /* little north-up map of the route with a dot for her */
+  function mini(g, from) {
+    var box = ov.querySelector(".ar-mini");
+    if (!g) { box.hidden = true; return; }
+    box.hidden = false;
+    var P = g.P.concat([from]);
+    var la0 = Infinity, la1 = -Infinity, ln0 = Infinity, ln1 = -Infinity;
+    P.forEach(function (q) { la0 = Math.min(la0, q.lat); la1 = Math.max(la1, q.lat); ln0 = Math.min(ln0, q.lng); ln1 = Math.max(ln1, q.lng); });
+    var k = Math.cos(from.lat * Math.PI / 180), W = 120, pad = 12;
+    var sc = Math.min((W - 2 * pad) / Math.max((ln1 - ln0) * k, 1e-4), (W - 2 * pad) / Math.max(la1 - la0, 1e-4));
+    var cx = (ln0 + ln1) / 2, cy = (la0 + la1) / 2;
+    function X(q) { return (W / 2 + (q.lng - cx) * k * sc).toFixed(1); }
+    function Y(q) { return (W / 2 - (q.lat - cy) * sc).toFixed(1); }
+    var d = g.P.map(function (q, i) { return (i ? "L" : "M") + X(q) + " " + Y(q); }).join("");
+    box.querySelector(".m-route").setAttribute("d", d);
+    var done = g.P.slice(0, g.k + 1).map(function (q, i) { return (i ? "L" : "M") + X(q) + " " + Y(q); }).join("");
+    box.querySelector(".m-done").setAttribute("d", done || "M0 0");
+    var end = g.P[g.P.length - 1];
+    box.querySelector(".m-end").setAttribute("cx", X(end)); box.querySelector(".m-end").setAttribute("cy", Y(end));
+    box.querySelector(".m-me").setAttribute("cx", X(from)); box.querySelector(".m-me").setAttribute("cy", Y(from));
+  }
+
   function paint() {
     if (!ov || !target) return;
     var live = here && gpsAcc !== null && gpsAcc <= 150;
     var from = live ? here : target.home;
-    var d = miles(from, target), b = bearing(from, target);
+    var g = guide(from);
+    var d = miles(from, target), b = bearing(from, g ? g.aim : target);
+    mini(g, from);
     var dist = t("arDist", { d: d < 0.1 ? d.toFixed(2) : d.toFixed(1), c: card(b) });
+    if (target.route) dist = t("routeLeft", { d: target.route.miles.toFixed(1) });
     ov.querySelector(".ar-dist").textContent = live && d < 0.03 ? t("arNear") : live ? dist : dist + " · " + t("arFromSaved");
     var arrow = ov.querySelector(".ar-arrow");
     var hint, ahead = false;
     if (heading === null) {
       arrow.style.visibility = "hidden";
       ov.querySelector(".ar-cardinal").textContent = card(b);
-      hint = t("arNoCompass", { c: card(b) });
+      hint = g ? g.text + " · " + card(b) : t("arNoCompass", { c: card(b) });
     } else {
       arrow.style.visibility = "visible";
       ov.querySelector(".ar-cardinal").textContent = "";
       var r = ((b - heading) % 360 + 540) % 360 - 180;
       var near = live && d < 0.03;
       ahead = Math.abs(r) < (ov.classList.contains("is-ahead") ? 25 : 15); /* hysteresis: no flicker */
-      hint = near ? t("arNear") : ahead ? t("arAhead") : Math.abs(r) > 150 ? t("arBehind") : r > 0 ? t("arRight") : t("arLeft");
+      hint = near ? t("arNear") : g ? g.text : ahead ? t("arAhead") : Math.abs(r) > 150 ? t("arBehind") : r > 0 ? t("arRight") : t("arLeft");
       if (!near) arrow.style.transform = "rotate(" + ease(r).toFixed(1) + "deg)"; /* GPS bearing is noise this close: freeze */
     }
     ov.classList.toggle("is-ahead", ahead);
@@ -152,7 +210,7 @@
       window.addEventListener("deviceorientationabsolute", onOrient, true);
       window.addEventListener("deviceorientation", onOrient, true);
     }
-    ov.querySelector(".ar-note").textContent = (secure ? "" : t("arNeedHttps") + " ") + t("arUpright") + " " + t("arStraight");
+    ov.querySelector(".ar-note").textContent = (secure ? "" : t("arNeedHttps") + " ") + t("arUpright") + " " + (target.route ? t("arRouteNote") : t("arStraight"));
   }
 
   function openAr(tg) {
@@ -199,7 +257,8 @@
     b.appendChild(ic);
     b.appendChild(h("span", null, t("arBtn")));
     b.addEventListener("click", function () {
-      openAr({ lat: s.lat, lng: s.lng, name: s.name, kind: kind, home: home });
+      var rt = kind === "bus" && SC.routeFor && SC.state.result ? SC.routeFor(SC.state.result) : null;
+      openAr({ lat: s.lat, lng: s.lng, name: s.name, kind: kind, home: home, route: rt });
     });
     return b;
   };

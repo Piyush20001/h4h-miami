@@ -640,6 +640,42 @@
     }
   }
 
+  /* walking route along county streets to the nearest bus pickup; fetched once per card, works offline */
+  var routeCache = {};
+  function routeKey(r) {
+    var home = r.home || st.home || (r.facts && r.facts.home), b = busList(r, true)[0];
+    return home && b ? [home.lat, home.lng, b.lat, b.lng].join(",") : "";
+  }
+  function routeFor(r) { var k = routeKey(r); return k && routeCache[k] && routeCache[k] !== "x" ? routeCache[k] : null; }
+  function loadRoute(r, done) {
+    var k = routeKey(r);
+    if (!k || routeCache[k]) return done(routeFor(r));
+    var p = k.split(",");
+    routeCache[k] = "x";
+    fetch("/api/route?from=" + p[0] + "," + p[1] + "&to=" + p[2] + "," + p[3])
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (d) { routeCache[k] = d || "x"; done(d); })
+      .catch(function () { routeCache[k] = "x"; done(null); });
+  }
+  SC.routeFor = routeFor;
+  function stepText(s) {
+    return t("turn_" + s.turn, { s: s.street || t("unnamedSt") }) + " · " + (s.miles < 0.1 ? Math.round(s.miles * 5280) + " ft" : s.miles.toFixed(1) + " " + t("mi"));
+  }
+  function routeBlock(rt) {
+    var box = h("div", "ride-route");
+    var mins = Math.max(1, Math.round(rt.miles * 30)); /* 2 mph: an unhurried older walker */
+    box.appendChild(h("p", "ride-walk", t("routeSum", { d: rt.miles.toFixed(1), m: mins, n: Math.max(0, rt.steps.length - 1) })));
+    var det = h("details", "ride-steps-d");
+    det.appendChild(h("summary", null, t("routeSteps")));
+    var ol = h("ol", "route-steps");
+    rt.steps.forEach(function (s) { ol.appendChild(h("li", "turn-" + s.turn, stepText(s))); });
+    det.appendChild(ol);
+    box.appendChild(det);
+    box.appendChild(h("p", "ride-src", t("routeSrc")));
+    return box;
+  }
+  SC.stepText = stepText;
+
   /* no car: the map opens on the bus pickups; one button widens it to the shelters */
   function renderMapToggle(r) {
     var b = $("mapAll");
@@ -701,7 +737,16 @@
       top.appendChild(ar);
     }
     card.appendChild(top);
-    if (typeof b.distance_mi === "number") card.appendChild(h("p", "ride-walk", t("rideDist", { d: b.distance_mi.toFixed(1) })));
+    var rslot = h("div", "ride-rslot");
+    if (typeof b.distance_mi === "number") rslot.appendChild(h("p", "ride-walk", t("rideDist", { d: b.distance_mi.toFixed(1) })));
+    card.appendChild(rslot);
+    var had = !!routeFor(r);
+    loadRoute(r, function (rt) {
+      if (!rt || st.result !== r) return;
+      rslot.textContent = "";
+      rslot.appendChild(routeBlock(rt));
+      if (!had && f.no_car && !st.mapAll) renderCard(false); /* redraw the map with the route line */
+    });
     var steps = h("ol", "ride-steps");
     ["rideS1", "rideS2", "rideS3"].forEach(function (k) { steps.appendChild(h("li", null, t(k))); });
     card.appendChild(steps);
@@ -739,6 +784,7 @@
         home: home, shelters: shel,
         special: (r.facts && r.facts.flags && r.facts.flags.medical) ? (r.special_needs_shelters || []).slice(0, 1) : [],
         bus: busList(r), zone: r.zone, focusBus: busList(r).length > 0 && !st.mapAll,
+        route: busList(r).length && !st.mapAll ? routeFor(r) : null,
         labels: { home: t("home"), special: t("sn_tag"), bus: t("busShort"), legend: { home: t("lgHome"), shelter: t("lgShel"), special: t("lgSn"), bus: t("lgBus"), zone: t("lgZone") }, mi: t("mi"), cap: t("chartCap"), rec: t("recTag"), aria: t("chartAria", { n: shel.length }) },
         animate: !!animate && !reduced
       };

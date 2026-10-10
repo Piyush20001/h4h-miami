@@ -537,7 +537,7 @@ body.ar-open { overflow: hidden; }
 .ar-foot { margin-bottom: calc(12px + env(safe-area-inset-bottom)); display: grid; gap: 10px; }
 .ar-k { margin: 0; font-size: var(--meta); font-weight: 700; opacity: 0.8; }
 .ar-nm { margin: 2px 0 0; font-size: 24px; font-weight: 900; line-height: 1.15; }
-.ar-dist { margin: 6px 0 0; font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ar-dist { margin: 6px 0 0; font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .ar-stage { position: relative; z-index: 1; display: grid; place-items: center; }
 .ar-arrow { width: min(44vw, 190px); height: auto; filter: drop-shadow(0 12px 18px rgba(21, 41, 61, 0.35)); }
 .ar-arrow path { fill: rgba(255, 255, 255, 0.92); stroke: rgba(21, 41, 61, 0.35); stroke-width: 3; stroke-linejoin: round; transition: fill 0.2s ease-out; }
@@ -584,3 +584,20 @@ body.ar-open { overflow: hidden; }
 
 .c-bus .c-bustile { fill: #fff; stroke: var(--blue); stroke-width: 2.5; }
 .c-bus .c-busline { stroke: var(--blue); stroke-width: 2.2; fill: none; }
+
+/* walking route */
+.c-walkcase { fill: none; stroke: #fff; stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; }
+.c-walkroute { fill: none; stroke: var(--blue); stroke-width: 4.5; stroke-linejoin: round; stroke-linecap: round; }
+.ride-route { display: grid; gap: 8px; }
+.ride-steps-d > summary { min-height: 44px; display: flex; align-items: center; font-weight: 800; color: var(--blue); cursor: pointer; }
+.route-steps { margin: 4px 0 0; padding-left: 26px; display: grid; gap: 6px; line-height: 1.35; }
+.ride-src { margin: 0; font-size: 14px; color: var(--ink-2); }
+
+.ar-top { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; }
+.ar-top > p { grid-column: 1; }
+.ar-mini { grid-column: 2; grid-row: 1 / span 3; align-self: center; width: 96px; height: 96px; border-radius: 14px; background: rgba(244, 246, 245, 0.92); box-shadow: 0 8px 20px rgba(21, 41, 61, 0.3); }
+.ar-mini[hidden] { display: none; }
+.ar-mini .m-route { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.ar-mini .m-done { fill: none; stroke: #9aa9b5; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.ar-mini .m-end { fill: var(--green); stroke: #fff; stroke-width: 2; }
+.ar-mini .m-me { fill: var(--ink); stroke: #fff; stroke-width: 2.5; }

@@ -20,6 +20,7 @@ import prompts_ask
 import prompts_card
 import status
 import storms
+import route
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -89,6 +90,24 @@ def card():
 def zones():
     """Storm surge zone polygons for the map overlay (cached on the hub, works offline)."""
     return app.response_class((geo._DATA / "zones.geojson").read_text(), mimetype="application/geo+json")
+
+
+@app.get("/api/route")
+def walk_route():
+    """Walking route along county street centerlines (offline). 404 when outside the street data."""
+    try:
+        a = [float(x) for x in request.args["from"].split(",")]
+        b = [float(x) for x in request.args["to"].split(",")]
+    except (KeyError, ValueError):
+        return jsonify(error="from and to are lat,lng"), 400
+    r = route.walk(a[0], a[1], b[0], b[1])
+    return (jsonify(r), 200) if r else (jsonify(error="no_route"), 404)
+
+
+@app.get("/api/streets")
+def streets():
+    """Every street around the demo places, so the offline map shows the walking streets too."""
+    return app.response_class((geo._DATA / "streets.geojson").read_text(), mimetype="application/geo+json")
 
 
 @app.get("/api/roads")

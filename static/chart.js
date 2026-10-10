@@ -70,7 +70,8 @@
       return typeof s.lat === "number" && typeof s.lng === "number";
     }).slice(0, 2);
     if (opts.focusBus && bus.length) { shelters = []; special = []; }
-    var pts = [home].concat(shelters, special, bus);
+    var rpath = opts.route && opts.route.path ? opts.route.path.map(function (c) { return { lat: c[0], lng: c[1] }; }) : [];
+    var pts = [home].concat(shelters, special, bus, rpath);
 
     var minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
     pts.forEach(function (p) {
@@ -174,6 +175,11 @@
     el("path", { d: "M0 -12L6 6L0 2L-6 6Z" }, na);
     el("text", { y: 20, "text-anchor": "middle" }, na).textContent = "N";
 
+    if (rpath.length > 1) {
+      var rd = rpath.map(function (q, i) { return (i ? "L" : "M") + px(q.lng) + " " + py(q.lat); }).join("");
+      el("path", { d: rd, "class": "c-walkcase" }, svg);
+      el("path", { d: rd, "class": "c-walkroute" }, svg);
+    }
     var h = { x: px(home.lng), y: py(home.lat) };
     var routes = [], markers = [];
     var routeLayer = el("g", null, svg);

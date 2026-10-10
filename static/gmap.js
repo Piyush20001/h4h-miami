@@ -163,7 +163,7 @@
         icon: homeIcon()
       });
       hm.sc = false; markers.push(hm);
-      (opts.shelters || []).forEach(function (s, i) {
+      (opts.focusBus ? [] : opts.shelters || []).forEach(function (s, i) {
         var p = { lat: s.lat, lng: s.lng };
         if (!opts.focusBus) bounds.extend(p);
         var m = new gm.Marker({
@@ -186,13 +186,19 @@
         m.sc = false;
         markers.push(m);
       });
-      (opts.bus || []).slice(0, 2).forEach(function (b) {
+      (opts.bus || []).slice(0, 2).forEach(function (b, bi) {
         var p = { lat: b.lat, lng: b.lng };
-        bounds.extend(p);
+        if (!(opts.route && bi > 0)) bounds.extend(p); /* with a route, frame the walk to the first stop */
         var m = new gm.Marker({ map: map, position: p, title: b.name || "", zIndex: 4000, icon: busIcon() });
         m.sc = false;
         markers.push(m);
       });
+      if (opts.route && opts.route.path) {
+        var rp = opts.route.path.map(function (c) { return { lat: c[0], lng: c[1] }; });
+        rp.forEach(function (q) { bounds.extend(q); });
+        new gm.Polyline({ map: map, path: rp, strokeColor: "#ffffff", strokeOpacity: 1, strokeWeight: 9, zIndex: 1 });
+        new gm.Polyline({ map: map, path: rp, strokeColor: BLUE, strokeOpacity: 1, strokeWeight: 5, zIndex: 2 });
+      }
       var zl = String(opts.zone || "").toUpperCase();
       if (zl) {
         getZones().then(function (fc) {
