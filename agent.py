@@ -145,19 +145,19 @@ _MSG = {
     "kre": {
         "head": "Men plan mwen pou siklòn nan:",
         "zone": "Kay mwen nan zòn inondasyon {z}.", "nozone": "Kay mwen pa nan yon zòn inondasyon.",
-        "shelter": "Abri ki pi pre: {name}, {address}.", "noshelter": "Mwen poko jwenn yon abri pre.",
+        "shelter": "Abri pou mwen: {name}, {address}.", "noshelter": "Mwen poko jwenn yon abri pre.",
         "bus": "Pwen bis ki pi pre: {name}, {address}. Bis yo kouri sèlman lè gen lòd evakyasyon.",
         "call": "Rele 311 pou konfime si abri a ouvè."},
     "es": {
         "head": "Este es mi plan para la tormenta:",
         "zone": "Mi casa está en la zona de inundación {z}.", "nozone": "Mi casa no está en una zona de inundación.",
-        "shelter": "Refugio más cercano: {name}, {address}.", "noshelter": "Aún no encontré un refugio cercano.",
+        "shelter": "Mi refugio: {name}, {address}.", "noshelter": "Aún no encontré un refugio cercano.",
         "bus": "Parada de autobús más cercana: {name}, {address}. Los autobuses salen solo cuando se ordena una evacuación.",
         "call": "Llame al 311 para confirmar que el refugio está abierto."},
     "en": {
         "head": "Here is my plan for the storm:",
         "zone": "My home is in storm surge zone {z}.", "nozone": "My home is not in a surge zone.",
-        "shelter": "Nearest shelter: {name}, {address}.", "noshelter": "I have not found a nearby shelter yet.",
+        "shelter": "My shelter: {name}, {address}.", "noshelter": "I have not found a nearby shelter yet.",
         "bus": "Nearest bus pickup: {name}, {address}. Buses run only when evacuation is ordered.",
         "call": "Call 311 to confirm the shelter is open."},
 }

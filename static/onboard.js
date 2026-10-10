@@ -203,7 +203,7 @@
   /* ---------- flow ---------- */
   function schedule() {
     clearTimeout(timer);
-    if (beat < 2 && !closed) timer = setTimeout(function () { show(beat + 1); }, BEAT_MS);
+    /* no auto-advance: she reads at her own pace and taps Next */
   }
   function show(n) {
     beat = n;

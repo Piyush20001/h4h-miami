@@ -76,7 +76,7 @@
   }
   function traceBlock(trace, lang) {
     var det = h("details", "trace");
-    det.open = true;
+    det.open = false;
     det.appendChild(h("summary", null, SC.tl(lang, "traceTitle")));
     if (!trace.length) {
       det.appendChild(h("p", "trace-none", SC.tl(lang, "traceNone")));
@@ -92,7 +92,7 @@
     box.appendChild(h("p", "msg-text", msg));
     box.lastChild.style.whiteSpace = "pre-wrap";
     var row = h("div", "msg-actions");
-    var send = h("a", "btn small", SC.tl(lang, "msgSend"));
+    var send = h("a", "btn btn-primary small", SC.tl(lang, "msgSend"));
     send.href = "sms:?&body=" + encodeURIComponent(msg);
     var copy = h("button", "btn btn-ghost small", SC.tl(lang, "msgCopy"));
     copy.type = "button";

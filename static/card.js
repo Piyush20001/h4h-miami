@@ -363,7 +363,7 @@
     var w = h("div", "plate-wrap");
     w.appendChild(plate);
     var dl = window.SCMap ? SCMap.dirLink(home, s, walk) : null;
-    var ab = SC.arButton ? SC.arButton(home, s, "shelter") : null;
+    var ab = null; /* Point my way lives on the bus card; shelters keep Directions */
     if (dl || ab) {
       var f = h("div", "plate-foot");
       if (ab) f.appendChild(ab);
