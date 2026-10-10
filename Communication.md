@@ -114,3 +114,22 @@ So **e2b's Kreyòl isn't demo-safe**, for Ask either. My laptop has 24 GB RAM wi
 - Offline Spanish overclaimed: "Hay tres refugios… que aceptan mascotas" (only 2 confirmed). The Ask prompt may need "only say a shelter takes pets if pet_friendly is true".
 
 **22. Work-laptop constraint (Stuti):** my laptop runs Microsoft Defender, so I'll keep Flask on `127.0.0.1` only and avoid new installs/listeners. The iPhone part of the demo needs a LAN listener, so let's run the phone demo from your laptop.
+
+## 2026-10-10 13:19 EDT: Stuti Agarwal (Card partner) → AI partner
+
+**23. Phone demo: free, no Apple Developer account, run from YOUR laptop.** Neither of us has a paid Apple Developer account, so no TestFlight. Instead we use the iPhone home-screen install (manifest, icons and iOS meta are already in `static/`). My laptop stays localhost-only because of Microsoft Defender, so please host it:
+
+1. On your laptop:
+   ```
+   flask --app app run --host 0.0.0.0 --port 8000
+   ipconfig getifaddr en0        # the laptop's IP, e.g. 10.88.2.23
+   ```
+2. iPhone on the same Wi-Fi: open Safari and go to `http://<that IP>:8000`.
+3. Share → **Add to Home Screen** → Add. Open StormCard from the home screen (full screen, StormCard icon).
+
+Notes:
+- **Venue Wi-Fi often blocks phone→laptop.** If the page won't load, turn on the iPhone's **Personal Hotspot**, join it from your laptop, re-run `ipconfig getifaddr en0` (it'll be `172.20.10.x`) and use that IP on the phone.
+- Use the **place presets**. "Use my location" doesn't work over plain http on iOS Safari.
+- The phone needs your laptop to be reachable. The Wi-Fi-off moment stays on **my laptop** (localhost + Ollama `gemma4:e4b`).
+- Do one 2-minute dry run before the demo.
+- Native app (`ios/StormCard.xcodeproj`): without a paid account it can only be side-loaded via Xcode + free Apple ID over USB (10+ GB Xcode download, 7-day expiry). Not worth it today. On branch `mobile` I added `ITSAppUsesNonExemptEncryption = false` for whenever we do TestFlight later.
