@@ -163,3 +163,23 @@ def test_idk_with_pickup_becomes_just_the_fact():
 
 def test_latlng_reads_home_from_bare_facts():
     assert agent._latlng({"home": {"lat": 25.8005, "lng": -80.1993}}) == (25.8005, -80.1993)
+
+
+def test_right_now_plan_chains_tools_chosen_by_code(monkeypatch):
+    seen = []
+    def fake(prompt, force_offline=False, deadline=None):
+        seen.append(prompt)
+        return '{"answer": "1. Call 311. 2. Pack water. 3. Charge your phone. Call 311 to confirm."}', "ollama"
+    monkeypatch.setattr(agent.llm, "generate", fake)
+    card = {"home": {"lat": 25.83, "lng": -80.189}, "flags": {"no_car": True, "pet": True}}
+    out = agent.run("What should I do right now?", card, "en")
+    tools = [t["tool"] for t in out["trace"]]
+    assert tools[:3] == ["get_zone", "evacuation_help", "packing_list"] and len(seen) == 1
+    assert out["answer"].startswith("1.")
+
+
+def test_right_now_falls_back_to_code_plan(monkeypatch):
+    monkeypatch.setattr(agent.llm, "generate", lambda p, force_offline=False, deadline=None: ('{"answer": "Go to 123 Fake St."}', "ollama"))
+    card = {"home": {"lat": 25.83, "lng": -80.189}, "flags": {"no_car": True}}
+    out = agent.run("Kisa pou m fè kounye a?", card, "kre")
+    assert out["answer"].startswith("1. Si gen lòd evakyasyon") and "Fake" not in out["answer"]

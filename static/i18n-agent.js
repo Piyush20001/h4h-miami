@@ -4,7 +4,7 @@
   if (!window.SC || !window.SC.strings) return;
   var A = {
     kre: {
-      chip4: "Ekri fanmi m plan mwen", msgSend: "Voye tèks", msgCopy: "Kopye", msgCopied: "Kopye",
+      chip4: "Ekri fanmi m plan mwen", chip5: "Kisa pou m fè kounye a?", msgSend: "Voye tèks", msgCopy: "Kopye", msgCopied: "Kopye",
       tool_draft_message: "Ekri mesaj pou fanmi",
       tool_check: "Verifye repons lan",
       traceTitle: "Kijan StormCard deside",
@@ -17,7 +17,7 @@
       tool_fallback: "Repons dirèk (pa gen zouti)"
     },
     es: {
-      chip4: "Enviar mi plan a mi familia", msgSend: "Enviar mensaje", msgCopy: "Copiar", msgCopied: "Copiado",
+      chip4: "Enviar mi plan a mi familia", chip5: "¿Qué hago ahora?", msgSend: "Enviar mensaje", msgCopy: "Copiar", msgCopied: "Copiado",
       tool_draft_message: "Redactar mensaje para la familia",
       tool_check: "Verificar la respuesta",
       traceTitle: "Cómo decidió StormCard",
@@ -30,7 +30,7 @@
       tool_fallback: "Respuesta directa (sin herramientas)"
     },
     en: {
-      chip4: "Text my family my plan", msgSend: "Send text", msgCopy: "Copy", msgCopied: "Copied",
+      chip4: "Text my family my plan", chip5: "What should I do right now?", msgSend: "Send text", msgCopy: "Copy", msgCopied: "Copied",
       tool_draft_message: "Draft a message for family",
       tool_check: "Check the answer",
       traceTitle: "How StormCard decided",
