@@ -5,8 +5,8 @@ Our project for [Hack for Humanity: Miami](https://github.com/AI-Collective-Hack
 ## Submission info
 
 - **Build for Miami track:** _TBD (01 Four Forces, One City · 02 Wild Miami · 03 Brain Gain · 04 Data to Action)_
-- **MLH challenges entered:** _TBD (Best Open-Source AI Project · Best Use of Gemma 4)_
-- **Model(s) used:** _TBD — if entering Best Use of Gemma 4, name the Gemma 4 model used via the Gemini API here_
+- **MLH challenges entered:** Best Use of Gemma 4 · Best Open-Source AI Project _(confirm before submitting)_
+- **Model used:** **Gemma 4 — `gemma-4-26b-a4b-it`** (Gemma 4 26B A4B IT), accessed through the **Gemini API**. Integration: [`gemma.py`](gemma.py)
 
 ## What it does
 
@@ -14,7 +14,8 @@ _TBD_
 
 ## Tech stack
 
-_TBD_
+- Gemma 4 (`gemma-4-26b-a4b-it`) via the Gemini API, using the `google-genai` Python SDK
+- Python 3.10+
 
 ## Data sources
 
@@ -22,7 +23,16 @@ _Cite every dataset used._
 
 ## Running locally
 
-_TBD_
+```bash
+git clone https://github.com/Piyush20001/h4h-miami.git && cd h4h-miami
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # paste your key from https://aistudio.google.com/apikey
+python gemma.py "your prompt"                 # text
+python gemma.py "describe this" photo.jpg     # text + image
+```
+
+Set `GEMMA_MODEL=gemma-4-31b-it` in `.env` to switch to the larger Gemma 4 model.
 
 ## Team
 
