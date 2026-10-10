@@ -72,3 +72,45 @@ Thanks, your card slice is merged into branch **`feat/stormcard-mvp`**. On `card
 - **Offline model:** `gemma4:e2b-it-qat` (4.3 GB). My laptop has 8 GB RAM so e4b/e2b-mlx can't load. If yours has more, `OLLAMA_MODEL=gemma4:e4b` will give better Kreyòl for the offline demo.
 - **Ask for you:** could you have a Kreyòl speaker (or you) check `static/i18n.js` and the CALL_311/OFFICIAL lines? And please review the README data-sources section against your data.
 - **Re your #11–13:** `"think": false` is already in llm.py (found the same empty-content issue). Since your laptop runs `gemma4:e4b`, let's do the Wi-Fi-off demo moment on your laptop.
+
+## 2026-10-10 12:27 EDT: Stuti Agarwal (Card partner) → AI partner
+
+**14. 🚨 Gemini API: turn thinking down in `llm.py`.** By default, `gemma-4-26b-a4b-it` thinks before answering. The card prompt took **140 s**, so with `GEMINI_TIMEOUT=6` every call would silently fall back to Ollama. Fix (tested, about 5 s):
+```python
+from google.genai import types
+cfg = types.GenerateContentConfig(thinking_config=types.ThinkingConfig(thinking_level="minimal"), max_output_tokens=300)
+client.models.generate_content(model=MODEL, contents=[prompt], config=cfg)
+```
+`thinking_budget=0` returns 400 "Thinking budget is not supported for this model". At about 5 s, `GEMINI_TIMEOUT=6` is too tight; suggest 12. `response.text` already excludes the thought parts.
+
+**15. The card prompt is non-chat:** output is ONLY the `## SECTION` blocks, with no greeting or closing (verified online). Your Ask prompt likely wants the same "this is not a chat" rule.
+
+## 2026-10-10 12:34 EDT: Stuti Agarwal (Card partner) → AI partner
+
+Read your 12:55 merge notes, thanks. I'm now working on branch **`card-tuning`**, cut from `main` (= feat/stormcard-mvp).
+
+**16. ~~I edited `llm.py`~~ Done on your side:** you already added `thinking_level="minimal"` on main, so I dropped my copy. Gemini now answers in 4–5 s; you can lower `GEMINI_TIMEOUT` to about 12.
+
+**17. Prompt fixes, rebased onto your 2-section design (model writes only WHAT_THIS_MEANS + WHAT_TO_DO_NOW):** no evacuation-order overclaim, pet status "unknown" → "not confirmed, call 311", exact per-language leave-if-ordered sentence (no "evacuate", so `_ORDER` stops discarding good Spanish), localized `{{ZONE}}` fill ("Zòn Lanm Siklòn C"), Kreyòl word hints (kòd/kaj/abri), and "this is not a chat" output-only rule.
+
+**18. Offline model test (card prompt, Kreyòl, on my laptop):**
+
+| tag | disk | RAM | Kreyòl |
+|---|---|---|---|
+| gemma4:e4b (MLX) | 9.5 GB | 10 GB | best |
+| **gemma4:e4b-it-qat** | 6.1 GB | 5.4 GB (ctx 2048) | usable, slightly below e4b |
+| gemma4:e2b-it-qat | 4.3 GB | 3.6 GB | **unusable** ("kè"/heart for pet, nonsense words) |
+
+So **e2b's Kreyòl isn't demo-safe**, for Ask either. My laptop has 24 GB RAM with e4b and e4b-it-qat pulled, so let's do the Wi-Fi-off moment here with `OLLAMA_MODEL=gemma4:e4b-it-qat` (or e4b). Use `num_predict` 300, because 200 cuts off Kreyòl (cards used 197–244 tokens). Use `keep_alive` "30m", and warm it up with one call before turning Wi-Fi off.
+
+**19. In progress:** a per-language eval set (`evals/`). Kreyòl via `/api/card` currently passes validation only ~1 in 4 times online, and I'm finding out why.
+
+## 2026-10-10 12:40 EDT: Stuti Agarwal (Card partner) → AI partner
+
+**20. Home-screen app packaging (your `static/index.html`, `<head>` only):** I added `apple-mobile-web-app-status-bar-style`, `apple-mobile-web-app-title` and `<link rel="manifest">`, and pointed `apple-touch-icon` at `icons/apple-touch-icon.png`. New files: `static/manifest.webmanifest`, `static/icons/*`, `docs/MOBILE.md`. Phone note: "Use my location" won't work on the iPhone over plain http (Safari only allows geolocation on HTTPS), so use the presets.
+
+**21. E2E (API, Little Haiti, pet + no car):** card online 4–5 s (gemini) in kre/es/en; offline card instant; Ask online with tool calls; Ask offline works. Two offline Ask issues:
+- `gemma4:e4b-it-qat` Kreyòl produced nonsense ("Reyekonwi ke gen bèl bèl nòt…") and rambled on an off-topic question. Full `gemma4:e4b` is clearly better, so I'm using that on my laptop.
+- Offline Spanish overclaimed: "Hay tres refugios… que aceptan mascotas" (only 2 confirmed). The Ask prompt may need "only say a shelter takes pets if pet_friendly is true".
+
+**22. Work-laptop constraint (Stuti):** my laptop runs Microsoft Defender, so I'll keep Flask on `127.0.0.1` only and avoid new installs/listeners. The iPhone part of the demo needs a LAN listener, so let's run the phone demo from your laptop.
