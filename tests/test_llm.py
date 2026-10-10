@@ -75,10 +75,22 @@ def test_ollama_parses_message_content(monkeypatch):
     assert seen["url"].endswith("/api/chat")
     assert seen["json"]["model"] == "gemma4:e2b-it-qat"
     assert seen["json"]["stream"] is False
-    assert seen["json"]["options"] == {"num_predict": 400, "num_ctx": 4096, "temperature": 0.3}
+    assert seen["json"]["options"] == {"num_predict": 400, "num_ctx": 4096, "temperature": 0.2,
+                                       "top_p": 0.9, "top_k": 40, "repeat_penalty": 1.1}
+    assert seen["json"]["messages"] == [{"role": "user", "content": "p"}]
     assert seen["json"]["keep_alive"] and "format" not in seen["json"]
     llm._ollama("...\nYOUR JSON REPLY:")
     assert seen["json"]["format"] == "json"  # agent steps use constrained JSON decoding
+
+
+def test_ollama_rules_go_to_system_role(monkeypatch):
+    seen = {}
+    monkeypatch.setattr(llm, "_ollama_chat", lambda m, msgs, o, t: seen.update(msgs=msgs, o=o) or "ok")
+    monkeypatch.setenv("OLLAMA_TEMPERATURE", "0.5")
+    llm._ollama("RULES here\n\nCARD:\nzone C\n\nQUESTION:\nq")
+    assert seen["msgs"] == [{"role": "system", "content": "RULES here"},
+                            {"role": "user", "content": "CARD:\nzone C\n\nQUESTION:\nq"}]
+    assert seen["o"]["temperature"] == 0.5
 
 
 def test_warm_never_raises(monkeypatch):
