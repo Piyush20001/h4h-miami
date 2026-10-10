@@ -222,6 +222,7 @@
         if (my !== runId) return;
         st.stage = "fail";
         renderStages();
+        renderNext3(st.result);
         renderCardText(st.result);
         paintAsk();
       });
@@ -783,6 +784,7 @@
   function renderNext3(r) {
     var sec = $("next3"), ol = $("n3");
     ol.textContent = "";
+    if (st.stage === "run") { sec.hidden = true; return; } /* appear with the finished card, not before it */
     var f = (r.facts && r.facts.flags) || {};
     var b = busList(r, true)[0], s0 = (r.shelters || [])[0];
     var steps = [];
@@ -811,7 +813,9 @@
       li.appendChild(el);
       ol.appendChild(li);
     });
+    var wasHidden = sec.hidden;
     sec.hidden = false;
+    if (wasHidden && SC.motion) SC.motion.stagger(ol.children);
   }
 
   function renderCard(animate) {
