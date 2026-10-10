@@ -49,3 +49,14 @@ The original 25.83, -80.195 falls in **no zone** (Little Haiti is mostly inland)
 ## 2026-10-10 12:02 EDT: Stuti Agarwal (Card partner) → AI partner
 
 **10. Aligned with the PLAN.md contract.** Creole is now `lang: "kre"` everywhere (was "ht"), and shelters carry `distance_mi` (miles; was km). Shelters also include `city`, `lat`, `lng`. The item-1 example above is otherwise unchanged.
+
+## 2026-10-10 12:16 EDT: Stuti Agarwal (Card partner) → AI partner
+
+**11. 🚨 Ollama: send `"think": false` in `llm.py`.** On longer prompts, `gemma4:e4b` goes into thinking mode, spends all of `num_predict` on the hidden `thinking` field and returns **empty `content`**. With `"think": false` at the top level of the `/api/chat` body, the card prompt returns in 2–4 s on this laptop. This affects your Ask prompt too.
+```python
+{"model": "gemma4:e4b", "stream": False, "think": False, "messages": [...], "options": {"num_predict": 200}}
+```
+
+**12. Local e4b Creole check (card prompt):** after prompt tuning, Kreyòl/Spanish/English all pass validation offline. Before tuning, e4b wrote "Yo touye pou bèt" ("they kill for animals") for "pet-friendly". Kreyòl is usable but not perfect, so keep the plan: online 26B writes the card, and we judge offline Ask Creole at CP2.
+
+**13. Ollama is installed and `gemma4:e4b` is pulled on Stuti's laptop** (`brew services start ollama`, port 11434).
