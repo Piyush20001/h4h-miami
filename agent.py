@@ -27,7 +27,8 @@ TOOLS_DOC = """TOOLS (call at most one per turn):
 - get_zone {}: the storm surge zone letter for this home.
 - packing_list {"pet": bool, "no_car": bool, "medical": bool, "kids": bool}: what to pack.
 - lookup_guidance {"query": "keywords"}: official guidance sections with source URL.
-- evacuation_help {}: EEAP, 311 and free transport facts, plus the nearest county evacuation bus pick-up sites."""
+- evacuation_help {}: EEAP, 311 and free transport facts, plus the nearest county evacuation bus pick-up sites.
+- draft_message {"to": "family"}: draft a text message she can send to family with her plan."""
 
 
 # ---------- guidance helpers ----------
@@ -69,7 +70,7 @@ def _latlng(card):
 
 
 def _flag(card, key):
-    f = (card.get("facts") or {}).get("flags") if isinstance(card, dict) else None
+    f = ((card.get("facts") or {}).get("flags") or card.get("flags")) if isinstance(card, dict) else None
     return bool((f or {}).get(key))
 
 
@@ -140,7 +141,67 @@ def evacuation_help(card, **_):
     return result, "311, EEAP and bus pickup facts" + near
 
 
-TOOLS = {f.__name__: f for f in (find_shelters, get_zone, packing_list, lookup_guidance, evacuation_help)}
+_MSG = {
+    "kre": {
+        "head": "Men plan mwen pou siklòn nan:",
+        "zone": "Kay mwen nan zòn inondasyon {z}.", "nozone": "Kay mwen pa nan yon zòn inondasyon.",
+        "shelter": "Abri ki pi pre: {name}, {address}.", "noshelter": "Mwen poko jwenn yon abri pre.",
+        "bus": "Pwen bis ki pi pre: {name}, {address}. Bis yo kouri sèlman lè gen lòd evakyasyon.",
+        "call": "Rele 311 pou konfime si abri a ouvè."},
+    "es": {
+        "head": "Este es mi plan para la tormenta:",
+        "zone": "Mi casa está en la zona de inundación {z}.", "nozone": "Mi casa no está en una zona de inundación.",
+        "shelter": "Refugio más cercano: {name}, {address}.", "noshelter": "Aún no encontré un refugio cercano.",
+        "bus": "Parada de autobús más cercana: {name}, {address}. Los autobuses salen solo cuando se ordena una evacuación.",
+        "call": "Llame al 311 para confirmar que el refugio está abierto."},
+    "en": {
+        "head": "Here is my plan for the storm:",
+        "zone": "My home is in storm surge zone {z}.", "nozone": "My home is not in a surge zone.",
+        "shelter": "Nearest shelter: {name}, {address}.", "noshelter": "I have not found a nearby shelter yet.",
+        "bus": "Nearest bus pickup: {name}, {address}. Buses run only when evacuation is ordered.",
+        "call": "Call 311 to confirm the shelter is open."},
+}
+_MSG_INTRO = {"kre": "Men yon mesaj ou ka voye bay fanmi ou:",
+              "es": "Este es un mensaje que puede enviar a su familia:",
+              "en": "Here is a message you can send to your family:"}
+
+
+def draft_message(card, to="family", lang="en", **_):
+    """Message text is built by code from the card facts only; no model-written facts."""
+    m = _MSG.get(lang, _MSG["en"])
+    lat, lng = _latlng(card)
+    z = geo.get_zone(lat, lng)
+    lines = [m["head"], m["zone"].format(z=z) if z else m["nozone"]]
+    rows = geo.find_shelters(lat, lng, pet=_flag(card, "pet"), limit=1)
+    lines.append(m["shelter"].format(name=rows[0]["name"], address=rows[0].get("address", "")) if rows else m["noshelter"])
+    if _flag(card, "no_car"):
+        pk = geo.find_bus_pickups(lat, lng, limit=1)
+        if pk:
+            lines.append(m["bus"].format(name=pk[0]["name"], address=pk[0].get("address", "")))
+    lines.append(m["call"])
+    text = "\n".join(lines)
+    return {"message": text}, "drafted a message for family"
+
+
+TOOLS = {f.__name__: f for f in (find_shelters, get_zone, packing_list, lookup_guidance, evacuation_help,
+                                 draft_message)}
+
+_MSG_WORDS = {"family", "text", "message", "fanmi", "ekri", "mesaj", "familia", "mensaje", "texto"}
+
+
+def _wants_message(question):
+    return bool(_words(question) & _MSG_WORDS)
+
+
+def _emit(trace, on_step, item=None):
+    """Append a trace row and tell the live listener; a listener error never breaks the agent."""
+    if item is not None:
+        trace.append(item)
+    if on_step:
+        try:
+            on_step(trace[-1])
+        except Exception:
+            pass
 
 
 # ---------- loop ----------
@@ -217,8 +278,8 @@ TOOL CALLS SO FAR:
 YOUR JSON REPLY:"""
 
 
-def _fallback(question, card, lang, force_offline, trace, reason, deadline=None):
-    trace.append({"tool": "fallback", "args": {}, "result_summary": reason})
+def _fallback(question, card, lang, force_offline, trace, reason, deadline=None, on_step=None):
+    _emit(trace, on_step, {"tool": "fallback", "args": {}, "result_summary": reason})
     prompt = prompts_ask.build_ask_prompt(question, _card_text(card), lang)
     try:
         text, backend = llm.generate(prompt, force_offline, deadline=deadline)
@@ -269,10 +330,23 @@ def _with_pickup(answer, card, lang, trace):
     return answer + "\n\n" + _PICKUP_LINE[lang].format(name=p["name"], address=p.get("address", ""), d=p["distance_mi"])
 
 
-def run(question, card, lang, force_offline=False):
+def run(question, card, lang, force_offline=False, on_step=None):
     lang = lang if lang in LANG_NAMES else "en"
+    out = _run(question, card, lang, force_offline, on_step)
+    msg = next((t["message"] for t in out["trace"] if t.get("message")), None)
+    if msg:
+        out["message"] = msg
+    return out
+
+
+def _run(question, card, lang, force_offline, on_step):
     card = card if card is not None else {}
     trace, steps, backend = [], [], "facts_only"
+    if _wants_message(question):  # deterministic route: code-built message, no model call
+        result, summary = draft_message(card, lang=lang)
+        _emit(trace, on_step, {"tool": "draft_message", "args": {"to": "family"}, "result_summary": summary,
+                               "message": result["message"]})
+        return {"answer": _MSG_INTRO[lang], "backend": "facts_only", "trace": trace}
     start = time.monotonic()
     for n in range(MAX_STEPS + 1):
         final = n >= MAX_STEPS or time.monotonic() - start > DEADLINE_S / 2
@@ -285,29 +359,33 @@ def run(question, card, lang, force_offline=False):
         obj = _parse(text)
         if obj is None:
             return _fallback(question, card, lang, force_offline, trace, "model reply was not valid JSON",
-                             start + DEADLINE_S)
+                             start + DEADLINE_S, on_step)
         if isinstance(obj.get("answer"), str) and obj["answer"].strip():
             if not trace:  # ground every answer in at least one county source, so the trace shows real work
                 result, summary = TOOLS["lookup_guidance"](card, query=question)
-                trace.append({"tool": "lookup_guidance", "args": {"query": question}, "result_summary": summary})
+                _emit(trace, on_step, {"tool": "lookup_guidance", "args": {"query": question}, "result_summary": summary})
                 steps.append({"tool": "lookup_guidance", "args": {"query": question},
                               "raw": json.dumps(result, ensure_ascii=False)[:1800]})
                 continue
             answer = obj["answer"].strip()
             if not _grounded(answer, card, steps):
-                trace.append({"tool": "check", "args": {}, "result_summary": "answer had an unverified fact; replaced"})
+                _emit(trace, on_step, {"tool": "check", "args": {}, "result_summary": "answer had an unverified fact; replaced"})
                 return {"answer": IDK[lang], "backend": backend, "trace": trace}
             return {"answer": _with_pickup(answer, card, lang, trace), "backend": backend, "trace": trace}
         name = obj.get("tool")
         if final or name not in TOOLS:
             return _fallback(question, card, lang, force_offline, trace,
-                             "step limit reached" if final else "unknown tool or reply", start + DEADLINE_S)
+                             "step limit reached" if final else "unknown tool or reply", start + DEADLINE_S, on_step)
         args = obj.get("args") if isinstance(obj.get("args"), dict) else {}
         try:
-            result, summary = TOOLS[name](card, **args)
+            call = {**args, "lang": lang} if name == "draft_message" else args
+            result, summary = TOOLS[name](card, **call)
         except Exception as e:
             result, summary = {"error": "tool failed"}, f"tool failed ({type(e).__name__})"
-        trace.append({"tool": name, "args": args, "result_summary": summary})
+        row = {"tool": name, "args": args, "result_summary": summary}
+        if name == "draft_message" and isinstance(result.get("message"), str):
+            row["message"] = result["message"]
+        _emit(trace, on_step, row)
         raw = json.dumps(result, ensure_ascii=False)
         steps.append({"tool": name, "args": args, "raw": raw[:1800]})
-    return _fallback(question, card, lang, force_offline, trace, "step limit reached", start + DEADLINE_S)
+    return _fallback(question, card, lang, force_offline, trace, "step limit reached", start + DEADLINE_S, on_step)

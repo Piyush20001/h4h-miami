@@ -112,3 +112,44 @@ def test_pickup_named_by_code_when_model_omits_it():
     out = agent._with_pickup("Rele 311.", card, "kre", trace)
     assert "Magic City Trailer Park" in out and out.startswith("Rele 311.")
     assert agent._with_pickup("Rele 311.", card, "kre", []) == "Rele 311."
+
+
+CARD = {"facts": {"flags": {"pet": False, "no_car": False}, "home": {"lat": 25.83, "lng": -80.189}}}
+
+
+def test_draft_message_zone_and_shelter():
+    import geo
+    res, _ = agent.draft_message(CARD, lang="en")
+    msg = res["message"]
+    z = geo.get_zone(25.83, -80.189)
+    assert (f"zone {z}" in msg) if z else ("not in a surge zone" in msg)
+    assert geo.find_shelters(25.83, -80.189, limit=1)[0]["name"] in msg
+    assert "Call 311 to confirm the shelter is open." in msg
+    assert "bus pickup" not in msg
+
+
+def test_draft_message_pickup_only_when_no_car():
+    car = {"facts": {"flags": {"no_car": True}, "home": {"lat": 25.83, "lng": -80.189}}}
+    msg = agent.draft_message(car, lang="en")[0]["message"]
+    assert "Nearest bus pickup" in msg and "only when evacuation is ordered" in msg
+    assert "Pwen bis" in agent.draft_message(car, lang="kre")[0]["message"]
+
+
+def test_family_routes_to_draft_message_and_on_step(monkeypatch):
+    calls = script(monkeypatch, ['{"answer": "unused"}'])
+    seen = []
+    out = agent.run("Ekri fanmi m plan mwen", CARD, "kre", True, on_step=seen.append)
+    assert calls == [] and out["trace"][0]["tool"] == "draft_message"
+    assert out["message"] and seen == out["trace"]
+
+
+def test_on_step_called_and_errors_ignored(monkeypatch):
+    script(monkeypatch, ['{"tool": "get_zone", "args": {}}', '{"answer": "ok"}'])
+    seen = []
+    out = agent.run("zone?", {}, "en", True, on_step=seen.append)
+    assert [s["tool"] for s in seen] == [t["tool"] for t in out["trace"]] and seen
+
+    def boom(_):
+        raise RuntimeError("x")
+    script(monkeypatch, ['{"tool": "get_zone", "args": {}}', '{"answer": "ok"}'])
+    assert agent.run("zone?", {}, "en", True, on_step=boom)["answer"] == "ok"

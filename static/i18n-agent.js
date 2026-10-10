@@ -4,6 +4,8 @@
   if (!window.SC || !window.SC.strings) return;
   var A = {
     kre: {
+      chip4: "Ekri fanmi m plan mwen", msgSend: "Voye tèks", msgCopy: "Kopye", msgCopied: "Kopye",
+      tool_draft_message: "Ekri mesaj pou fanmi",
       traceTitle: "Kijan StormCard deside",
       traceNone: "Pa t gen okenn zouti ki rele.",
       tool_find_shelters: "Chèche abri ki pi pre",
@@ -14,6 +16,8 @@
       tool_fallback: "Repons dirèk (pa gen zouti)"
     },
     es: {
+      chip4: "Enviar mi plan a mi familia", msgSend: "Enviar mensaje", msgCopy: "Copiar", msgCopied: "Copiado",
+      tool_draft_message: "Redactar mensaje para la familia",
       traceTitle: "Cómo decidió StormCard",
       traceNone: "No se usó ninguna herramienta.",
       tool_find_shelters: "Buscar los refugios más cercanos",
@@ -24,6 +28,8 @@
       tool_fallback: "Respuesta directa (sin herramientas)"
     },
     en: {
+      chip4: "Text my family my plan", msgSend: "Send text", msgCopy: "Copy", msgCopied: "Copied",
+      tool_draft_message: "Draft a message for family",
       traceTitle: "How StormCard decided",
       traceNone: "No tools were used.",
       tool_find_shelters: "Find the nearest shelters",

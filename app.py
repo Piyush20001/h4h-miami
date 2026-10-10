@@ -1,5 +1,9 @@
 """StormCard Flask server: serves static/, POST /api/card, POST /api/ask."""
-from flask import Flask, jsonify, request
+import json
+import queue
+import threading
+
+from flask import Flask, Response, jsonify, request, stream_with_context
 
 import agent
 import os
@@ -87,6 +91,12 @@ def zones():
     return app.response_class((geo._DATA / "zones.geojson").read_text(), mimetype="application/geo+json")
 
 
+@app.get("/api/roads")
+def roads():
+    """Major roads (Miami-Dade County layers) so the offline map has streets to read."""
+    return app.response_class((geo._DATA / "roads.geojson").read_text(), mimetype="application/geo+json")
+
+
 @app.get("/api/status")
 def hub_status():
     """Hub mode for the UI: online (Gemini + Google map) or offline (local Gemma + chart). No user switch."""
@@ -119,21 +129,58 @@ def _card_as_text(card):
     return "\n\n".join([f"Storm surge zone: {zone or 'none'}", *sections, "Shelters:", *shelters])
 
 
-@app.post("/api/ask")
-def ask():
-    body = request.get_json(force=True) or {}
+def _ask_payload(body, on_step=None):
+    """Shared by /api/ask and /api/ask/stream. Returns (payload, error_response)."""
     question = (body.get("question") or "").strip()
     lang = body.get("lang") if body.get("lang") in prompts_ask.IDK else "en"
     if not question:
-        return jsonify(error="question is required"), 400
+        return None, (jsonify(error="question is required"), 400)
+    message = None
     try:
-        out = agent.run(question, body.get("card") or {}, lang, bool(body.get("force_offline")))
-        answer, backend, trace = out["answer"], out["backend"], out["trace"]
+        out = agent.run(question, body.get("card") or {}, lang, bool(body.get("force_offline")), on_step=on_step)
+        answer, backend, trace, message = out["answer"], out["backend"], out["trace"], out.get("message")
     except Exception:  # any failure still answers safely
         answer, backend, trace = prompts_ask.IDK[lang], "facts_only", []
     print(f"[ask] lang={lang} backend={backend} steps={[s['tool'] for s in trace]} q={question[:60]!r} "
           f"a={answer.strip()[:120]!r}", flush=True)
-    return jsonify(answer=answer.strip(), backend=backend, trace=trace)
+    payload = {"answer": answer.strip(), "backend": backend, "trace": trace}
+    if message:
+        payload["message"] = message
+    return payload, None
+
+
+@app.post("/api/ask")
+def ask():
+    payload, err = _ask_payload(request.get_json(force=True) or {})
+    return err if err else jsonify(**payload)
+
+
+@app.post("/api/ask/stream")
+def ask_stream():
+    """Same input as /api/ask; NDJSON: one {"step": ...} line per agent step, then {"done": true, ...}."""
+    body = request.get_json(force=True) or {}
+    if not (body.get("question") or "").strip():
+        return jsonify(error="question is required"), 400
+    q = queue.Queue()
+
+    def work():
+        try:
+            payload, _ = _ask_payload(body, on_step=lambda s: q.put({"step": s}))
+        except Exception:
+            payload = None
+        q.put({"done": True, **(payload or {"answer": "", "backend": "facts_only", "trace": []})})
+
+    threading.Thread(target=work, daemon=True).start()
+
+    def gen():
+        while True:
+            item = q.get()
+            yield json.dumps(item, ensure_ascii=False) + "\n"
+            if item.get("done"):
+                return
+
+    return Response(stream_with_context(gen()), mimetype="application/x-ndjson",
+                    headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"})
 
 
 if __name__ == "__main__":

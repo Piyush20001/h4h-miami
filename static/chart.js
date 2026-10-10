@@ -36,6 +36,17 @@
   function r1(n) { return Math.round(n * 10) / 10; }
 
   /* surge zones come from our own server, so they draw with the internet down */
+  var roadsP = null;
+  function roads() {
+    if (!roadsP) {
+      roadsP = fetch("/api/roads").then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { roadsP = null; return null; });
+    }
+    return roadsP;
+  }
+  function roadName(n) {
+    return String(n || "").replace(/^I (\d+).*$/, "I-$1").replace(/ EXPY$| EXT$/, "").replace(/^FLORIDA TPKE.*$/, "TURNPIKE");
+  }
   var zonesP = null;
   function zones() {
     if (!zonesP) {
@@ -113,6 +124,51 @@
         });
         if (d) el("path", { d: d, "fill-rule": "evenodd", "class": "c-z c-z" + z + (z === homeZone ? " is-home" : "") }, zoneLayer);
       });
+    });
+    var roadLayer = el("g", { "class": "c-roads", "clip-path": "url(#" + clipId + ")" }, grid);
+    var roadLabels = el("g", { "class": "c-roadlbl" }, svg);
+    roads().then(function (gj) {
+      if (!gj || !gj.features) return;
+      var best = {};
+      var byClass = [[], [], [], []];
+      gj.features.forEach(function (f) {
+        var c = f.geometry.coordinates, cls = Math.min(3, f.properties.c | 0);
+        var inView = false, d = "", lx = null, ly = null, len = 0, mid = null;
+        for (var i = 0; i < c.length; i++) {
+          if (c[i][0] >= lngLo && c[i][0] <= lngHi && c[i][1] >= latLo && c[i][1] <= latHi) inView = true;
+          var X = px(c[i][0]), Y = py(c[i][1]);
+          if (lx !== null) {
+            var sl = Math.abs(X - lx) + Math.abs(Y - ly);
+            if (sl < 1) continue;
+            len += sl;
+          }
+          d += (d ? "L" : "M") + X + " " + Y; lx = X; ly = Y;
+        }
+        if (!inView || !d) return;
+        byClass[cls].push(d);
+        var nm = roadName(f.properties.n);
+        var m = c[Math.floor(c.length / 2)];
+        var mx = px(m[0]), my = py(m[1]);
+        if (nm && mx > 20 && mx < W - 20 && my > 20 && my < H - 40 && (!best[nm] || len > best[nm].len)) best[nm] = { len: len, x: mx, y: my, c: cls };
+      });
+      /* the county joins many short pieces per road: keep the longest visible run per name */
+      [3, 2, 1, 0].forEach(function (cls) {
+        if (byClass[cls].length) el("path", { d: byClass[cls].join(""), "class": "c-road c-r" + cls }, roadLayer);
+      });
+      /* a few street names, biggest roads first, never on top of each other or a marker */
+      var taken = [h].concat(spots).concat((typeof boxes !== "undefined" ? boxes : []).map(function (b) { return { x: b.x + b.w / 2, y: b.y + b.h / 2, w: b.w }; }));
+      Object.keys(best).map(function (k) { return { n: k, b: best[k] }; })
+        .filter(function (o) { return o.b.len > 22; })
+        .sort(function (a, b) { return a.b.c - b.b.c || b.b.len - a.b.len; })
+        .slice(0, 24)
+        .forEach(function (o) {
+          var w = o.n.length * 6.4 + 8;
+          var clash = taken.some(function (q) { return Math.abs(q.x - o.b.x) < (q.w || 30) / 2 + w / 2 && Math.abs(q.y - o.b.y) < 22; });
+          if (clash || taken.length > 26) return;
+          taken.push({ x: o.b.x, y: o.b.y, w: w });
+          var t = el("text", { x: o.b.x, y: o.b.y + 4, "text-anchor": "middle", "class": o.b.c <= 1 ? "is-hwy" : "" }, roadLabels);
+          t.textContent = o.n;
+        });
     });
     var na = el("g", { "class": "c-north", transform: "translate(" + (W - 22) + " 26)" }, svg);
     el("path", { d: "M0 -12L6 6L0 2L-6 6Z" }, na);
@@ -215,6 +271,35 @@
       var bg = el("g", { transform: "translate(" + bp.x + " " + bp.y + ")" }, markLayer);
       leader(orig[shelters.length + special.length + bi], bp);
       busGlyph(el("g", { "class": "c-bus" + (bi === 0 ? " is-near" : "") }, bg), bi === 0 ? 13 : 10);
+    });
+
+    /* short names beside shelters and bus stops, so the map reads without the list */
+    var named = shelters.length ? shelters.map(function (s, i) { return { s: s, p: spots[i] }; })
+      : bus.map(function (s, i) { return { s: s, p: spots[special.length + i] }; });
+    var boxes = [{ x: h.x - 16, y: h.y - 16, w: 32, h: 32 }];
+    if (best) boxes.push({ x: h.x + best.ox - (best.a === "end" ? lw : best.a === "middle" ? lw / 2 : 0), y: h.y + best.oy - 13, w: lw, h: 16 });
+    spots.forEach(function (q) { boxes.push({ x: q.x - 14, y: q.y - 14, w: 28, h: 28 }); });
+    function hits(r) {
+      return r.x < 2 || r.x + r.w > W - 2 || boxes.some(function (o) { return r.x < o.x + o.w && o.x < r.x + r.w && r.y < o.y + o.h && o.y < r.y + r.h; });
+    }
+    named.forEach(function (o) {
+      var nm = String(o.s.name || "").replace(/\s+(Senior )?(High|Middle|Elementary|K-8).*$/i, "").replace(/ Trailer Park.*$/i, "");
+      if (!nm) return;
+      if (nm.length > 16) nm = nm.slice(0, 15) + "…";
+      var w = nm.length * 6.9 + 4;
+      var cands = [
+        { x: o.p.x + 17, y: o.p.y - 7, a: "start", tx: o.p.x + 17 },
+        { x: o.p.x - 17 - w, y: o.p.y - 7, a: "end", tx: o.p.x - 17 },
+        { x: o.p.x - w / 2, y: o.p.y + 16, a: "middle", tx: o.p.x },
+        { x: o.p.x - w / 2, y: o.p.y - 30, a: "middle", tx: o.p.x }
+      ];
+      for (var ci = 0; ci < cands.length; ci++) {
+        var c = cands[ci], r = { x: c.x, y: c.y, w: w, h: 15 };
+        if (hits(r)) continue;
+        boxes.push(r);
+        el("text", { x: c.tx, y: c.y + 11.5, "text-anchor": c.a, "class": "c-placelbl" }, markLayer).textContent = nm;
+        return;
+      }
     });
 
     /* distance scale bar */

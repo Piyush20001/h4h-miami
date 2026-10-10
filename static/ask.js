@@ -64,32 +64,59 @@
     });
     return parts.join(", ");
   }
+  function stepDone(s, lang) {
+    var name = String(s.tool || "");
+    var key = "tool_" + name;
+    var label = SC.tl(lang, key);
+    var a = argText(s.args);
+    return SC.stepRow("done", label === key ? name : label, [
+      a ? h("code", "trace-args", a) : null,
+      h("span", "trace-res", String(s.result_summary || ""))
+    ]);
+  }
   function traceBlock(trace, lang) {
     var det = h("details", "trace");
+    det.open = true;
     det.appendChild(h("summary", null, SC.tl(lang, "traceTitle")));
     if (!trace.length) {
       det.appendChild(h("p", "trace-none", SC.tl(lang, "traceNone")));
       return det;
     }
     var ol = h("ol", "trace-steps");
-    trace.forEach(function (s) {
-      var name = String(s.tool || "");
-      var key = "tool_" + name;
-      var label = SC.tl(lang, key);
-      var a = argText(s.args);
-      ol.appendChild(SC.stepRow("done", label === key ? name : label, [
-        a ? h("code", "trace-args", a) : null,
-        h("span", "trace-res", String(s.result_summary || ""))
-      ]));
-    });
+    trace.forEach(function (s) { ol.appendChild(stepDone(s, lang)); });
     det.appendChild(ol);
     return det;
   }
-  function fill(turn, answer, backend, trace, lang) {
+  function messageBox(msg, lang) {
+    var box = h("div", "msg-box");
+    box.appendChild(h("p", "msg-text", msg));
+    box.lastChild.style.whiteSpace = "pre-wrap";
+    var row = h("div", "msg-actions");
+    var send = h("a", "btn small", SC.tl(lang, "msgSend"));
+    send.href = "sms:?&body=" + encodeURIComponent(msg);
+    var copy = h("button", "btn btn-ghost small", SC.tl(lang, "msgCopy"));
+    copy.type = "button";
+    copy.addEventListener("click", function () {
+      try {
+        navigator.clipboard.writeText(msg).then(function () {
+          copy.textContent = SC.tl(lang, "msgCopied");
+        }, function () {});
+      } catch (e) { /* clipboard unavailable */ }
+    });
+    row.appendChild(send);
+    row.appendChild(copy);
+    box.appendChild(row);
+    return box;
+  }
+  function fill(turn, answer, backend, trace, lang, message) {
     turn.a.textContent = "";
     turn.a.appendChild(SC.setText(h("p", "ans"), answer));
     turn.a.appendChild(h("p", "badge b-" + backend, badgeText(backend)));
-    if (Array.isArray(trace)) turn.a.appendChild(traceBlock(trace, lang));
+    if (typeof message === "string" && message) turn.a.appendChild(messageBox(message, lang));
+    if (Array.isArray(trace)) {
+      document.querySelectorAll("#thread details.trace").forEach(function (d) { d.open = false; });
+      turn.a.appendChild(traceBlock(trace, lang));
+    }
     if (SC.motion) SC.motion.stagger(turn.a.children);
   }
   function fail(turn) {
@@ -110,18 +137,63 @@
     var lang = st.lang;
     var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
     var guard = setTimeout(function () { if (ctrl) ctrl.abort(); }, 120000);
-    fetch("/api/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q, lang: lang, card: st.result.api || st.result.card_text, force_offline: false }),
-      signal: ctrl ? ctrl.signal : undefined
-    }).then(function (res) {
-      if (!res.ok) throw new Error("http " + res.status);
-      return res.json();
-    }).then(function (d) {
-      if (!d || typeof d.answer !== "string") throw new Error("bad payload");
-      fill(turn, d.answer, d.backend || "none", d.trace, lang);
-    }).catch(function () {
+    var payload = JSON.stringify({ question: q, lang: lang, card: st.result.api || st.result.card_text, force_offline: false });
+    var sig = ctrl ? ctrl.signal : undefined;
+    var hdr = { "Content-Type": "application/json" };
+    var steps = 0, doneRow = null;
+
+    function viaJson() {
+      return fetch("/api/ask", { method: "POST", headers: hdr, body: payload, signal: sig }).then(function (res) {
+        if (!res.ok) throw new Error("http " + res.status);
+        return res.json();
+      }).then(function (d) {
+        if (!d || typeof d.answer !== "string") throw new Error("bad payload");
+        fill(turn, d.answer, d.backend || "none", d.trace, lang, d.message);
+      });
+    }
+    function onLine(line) {
+      var m;
+      try { m = JSON.parse(line); } catch (e) { return; }
+      if (m.step) {
+        var ol = turn.a.querySelector("ol.trace-steps.live");
+        if (!ol) return;
+        steps++;
+        var run = ol.lastChild;
+        var row = stepDone(m.step, lang);
+        if (run) ol.replaceChild(row, run); else ol.appendChild(row);
+        ol.appendChild(SC.stepRow("run", t("thinking")));
+      } else if (m.done) {
+        if (typeof m.answer !== "string") throw new Error("bad payload");
+        doneRow = m;
+      }
+    }
+    function viaStream() {
+      return fetch("/api/ask/stream", { method: "POST", headers: hdr, body: payload, signal: sig }).then(function (res) {
+        if (!res.ok || !res.body || !res.body.getReader) throw new Error("no stream");
+        var rd = res.body.getReader(), dec = new TextDecoder(), buf = "";
+        function pump() {
+          return rd.read().then(function (r) {
+            if (r.value) buf += dec.decode(r.value, { stream: !r.done });
+            var parts = buf.split("\n");
+            buf = r.done ? "" : parts.pop();
+            if (r.done && parts.length && !parts[parts.length - 1]) parts.pop();
+            parts.forEach(function (ln) { if (ln.trim()) onLine(ln); });
+            if (r.done) {
+              if (!doneRow) throw new Error("stream ended early");
+              fill(turn, doneRow.answer, doneRow.backend || "none", doneRow.trace, lang, doneRow.message);
+              return;
+            }
+            return pump();
+          });
+        }
+        return pump();
+      });
+    }
+    var noFetchStream = typeof TextDecoder === "undefined";
+    (noFetchStream ? viaJson() : viaStream().catch(function (e) {
+      if (steps > 0 || (ctrl && ctrl.signal.aborted)) throw e;
+      return viaJson();  // streaming unsupported or failed before any step
+    })).catch(function () {
       fail(turn);
     }).then(function () {
       clearTimeout(guard);
