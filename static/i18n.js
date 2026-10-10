@@ -8,7 +8,7 @@ window.I18N = {
     flag_pet: "Mwen gen yon bèt", flag_no_car: "Mwen pa gen machin",
     flag_medical: "Mwen gen bezwen medikal", flag_kids: "Mwen gen timoun",
     make_card: "Fè kat mwen",
-    zone_badge: "Zòn Siklòn {z}",
+    zone_badge: "Zòn Lanm Siklòn {z}",
     no_zone: "Adrès sa a pa nan yon zòn evakyasyon pou lanm siklòn.",
     not_flood_zone: "Sa a se zòn lanm siklòn nan, se pa zòn asirans inondasyon an.",
     shelters_heading: "Abri ki pi pre",
